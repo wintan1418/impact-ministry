@@ -1,36 +1,229 @@
 <% content_for :title, "IMPACT Ministry — A short, true word, every morning" %>
+<% content_for :description, "Daily devotionals, podcast, and prayer from a small Mississippi ministry. A short, true word before sunrise." %>
 
-<%# Placeholder for P0.5 verification. The full hero is built in P1.D. %>
-<section class="container-page" style="padding-top: 60px; padding-bottom: 120px;">
-  <div class="grid gap-20 lg:grid-cols-[1.05fr_1fr] items-center">
-    <div>
-      <div class="flex items-center gap-3 mb-7 fade-up">
-        <span class="meta">Today · <%= Date.current.strftime("%A, %B %-d") %></span>
-        <span style="width: 4px; height: 4px; border-radius: 9999px; background: var(--color-olive-30); display: inline-block;"></span>
-        <span class="scripture draw" style="font-size: 14px; color: var(--color-olive);">Habakkuk 2:1–4</span>
+<%# ============================================================
+     HERO — today's devotional title, scripture, teaser, CTA
+     ============================================================ %>
+<section style="padding-top: 60px; padding-bottom: 120px;">
+  <div class="container-page">
+    <div class="grid gap-20 lg:grid-cols-[1.05fr_1fr] items-center">
+      <div>
+        <div class="flex items-center gap-3 mb-7 fade-up">
+          <span class="meta">Today · <%= Date.current.strftime("%A, %B %-d") %></span>
+          <span class="inline-block" style="width: 4px; height: 4px; border-radius: 9999px; background: var(--color-olive-30);"></span>
+          <% if @today_devotional %>
+            <span class="scripture draw" style="font-size: 14px; color: var(--color-olive);"><%= @today_devotional.scripture_reference %></span>
+          <% else %>
+            <span class="scripture draw" style="font-size: 14px; color: var(--color-olive);">Habakkuk 2:1–4</span>
+          <% end %>
+        </div>
+
+        <h1 class="display fade-up m-0" style="font-size: clamp(48px, 6.5vw, 88px); line-height: 0.98; animation-delay: 120ms;">
+          <% if @today_devotional %>
+            <%= @today_devotional.title %>
+          <% else %>
+            When the<br><span class="italic font-normal">vision</span> tarries.
+          <% end %>
+        </h1>
+
+        <p class="reading fade-up mt-7 max-w-[520px]" style="animation-delay: 260ms;">
+          <% if @today_devotional&.excerpt.present? %>
+            <%= @today_devotional.excerpt %>
+          <% else %>
+            Waiting is not the absence of God's word. It is the long, slow work of trusting that what He has spoken still stands — even when the answer takes its time.
+          <% end %>
+        </p>
+
+        <div class="fade-up mt-10 flex flex-wrap items-center gap-7" style="animation-delay: 380ms;">
+          <%= link_to devotionals_today_path, class: "btn btn-primary breath", style: "padding: 16px 28px; font-size: 15px;" do %>
+            Read today's devotional <span aria-hidden="true">→</span>
+          <% end %>
+          <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
+            <%= number_with_delimiter(@readers_this_morning) %> people read this morning.
+          </p>
+        </div>
       </div>
 
-      <h1 class="display fade-up m-0" style="font-size: clamp(48px, 6.5vw, 88px); line-height: 0.98; animation-delay: 120ms;">
-        When the<br>
-        <span class="italic font-normal">vision</span> tarries.
-      </h1>
+      <%# Right column — phone-preview style devotional card stack %>
+      <div class="relative">
+        <div style="background: var(--color-linen); border-radius: 28px; padding: 24px; overflow: hidden;">
+          <div class="card fade-up" style="background: var(--color-cream); border-radius: 20px; padding: 28px; transform: rotate(-1deg); animation-delay: 200ms;">
+            <p class="meta m-0" style="color: var(--color-olive);">
+              <%= (@today_devotional&.scheduled_for || Date.current).strftime("%a, %b %-d") %> · The Morning Word
+            </p>
+            <h3 class="display mt-3 mb-3" style="font-size: 28px; letter-spacing: -0.01em;">
+              <%= (@today_devotional&.title || "When the Vision Tarries").to_s.truncate(36) %>
+            </h3>
+            <div class="pull" style="font-size: 16px; padding: 2px 0 2px 18px; margin-bottom: 16px;">
+              "Though it tarries, wait for it; because it will surely come."
+            </div>
+            <p class="m-0" style="font-family: var(--font-reading); font-size: 14px; color: var(--color-ink); line-height: 1.65;">
+              <%= (@today_devotional&.excerpt || "Habakkuk stood his watch. He did not pace, he did not panic — he stood, and he wrote down what God said, even though the answer was slow…").to_s.truncate(140) %>
+            </p>
+            <p class="mt-5 m-0" style="font-size: 12px; color: var(--color-crimson); font-weight: 500;">Read 2 more minutes →</p>
+          </div>
 
-      <p class="reading fade-up mt-7 max-w-[520px]" style="animation-delay: 260ms;">
-        Waiting is not the absence of God's word. It is the long, slow work of trusting that what He has spoken still stands — even when the answer takes its time.
-      </p>
-
-      <div class="fade-up mt-10 flex flex-wrap items-center gap-7" style="animation-delay: 380ms;">
-        <a href="#" class="btn btn-primary breath" style="padding: 16px 28px; font-size: 15px;">
-          Read today's devotional <span aria-hidden="true">→</span>
-        </a>
-        <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
-          <%= number_with_delimiter(@reader_count) %> people read this morning.
-        </p>
+          <div class="card" style="background: var(--color-cream); border-radius: 20px; padding: 18px; margin-top: -8px; margin-left: 32px; transform: rotate(1.5deg); opacity: 0.7;">
+            <p class="meta m-0" style="color: var(--color-olive);">
+              <%= (Date.current - 1).strftime("%a, %b %-d") %>
+            </p>
+            <p class="display m-0 mt-1" style="font-size: 18px;">
+              <%= Devotional.published.recent_first.where("scheduled_for < ?", Date.current).first&.title&.truncate(30) || "Quieted By His Love" %>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="ph fade-up" style="height: 520px; border-radius: var(--radius-image); animation-delay: 200ms;">
-      [ sunrise over delta pines ]
+<%# ============================================================
+     EMAIL CAPTURE — framed as invitation
+     ============================================================ %>
+<section style="padding-bottom: 140px;">
+  <div class="container-page">
+    <div class="grid gap-20 lg:grid-cols-[1fr_1.05fr] items-center">
+      <div>
+        <p class="meta mb-5">The morning word</p>
+        <h2 class="display m-0" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.0;">
+          Start your day<br><span class="italic font-normal">with us.</span>
+        </h2>
+        <p class="reading mt-5 max-w-[480px]" style="font-size: 18px;">
+          A short, true word in your inbox before sunrise. Two minutes to read. The rest of the day is yours.
+        </p>
+
+        <div class="mt-8 max-w-[480px]">
+          <%= render "shared/email_capture", source: "inline" %>
+        </div>
+
+        <div class="mt-8 flex gap-8 text-[13px]" style="color: var(--color-olive);">
+          <div>
+            <strong class="block" style="color: var(--color-navy); font-family: var(--font-serif); font-size: 22px; font-weight: 500;">
+              <%= number_with_delimiter(@readers_this_week) %>
+            </strong>
+            readers this week
+          </div>
+          <div>
+            <strong class="block" style="color: var(--color-navy); font-family: var(--font-serif); font-size: 22px; font-weight: 500;">
+              <%= @open_rate_percent %>%
+            </strong>
+            open rate
+          </div>
+          <div>
+            <strong class="block" style="color: var(--color-navy); font-family: var(--font-serif); font-size: 22px; font-weight: 500;">
+              <%= @average_read_minutes %> min
+            </strong>
+            average read
+          </div>
+        </div>
+      </div>
+
+      <%# Right — quiet visual rest %>
+      <div class="ph" style="height: 480px; border-radius: var(--radius-image);">
+        [ a photograph of a journal on a wooden desk ]
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ============================================================
+     MISSION PULL-QUOTE
+     ============================================================ %>
+<section style="padding-bottom: 140px;">
+  <div class="mx-auto" style="max-width: 920px; padding: 0 2rem;">
+    <p class="meta" style="text-align: center; margin-bottom: 36px;">What we believe</p>
+    <blockquote class="m-0 text-center" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(28px, 4vw, 44px); line-height: 1.25; color: var(--color-navy); letter-spacing: -0.01em;">
+      We believe scripture is older than our hurry, kinder than our news cycles, and steady enough to carry a person through a Tuesday — every Tuesday, for the rest of their life.
+    </blockquote>
+    <div class="text-center mt-9">
+      <%= link_to "Read our statement of faith", beliefs_page_path, class: "ulink", style: "color: var(--color-crimson); font-size: 14px; font-weight: 500;" %>
+    </div>
+  </div>
+</section>
+
+<%# ============================================================
+     PODCAST — Phase 2 will render real episode; placeholder here
+     ============================================================ %>
+<section style="padding-bottom: 140px;">
+  <div class="container-page">
+    <div class="flex justify-between items-baseline mb-7 flex-wrap gap-4">
+      <div>
+        <p class="meta">The IMPACT Podcast</p>
+        <h2 class="display m-0 mt-2" style="font-size: clamp(32px, 4vw, 48px); letter-spacing: -0.01em;">
+          Conversations on faith, work, and waiting.
+        </h2>
+      </div>
+      <a href="#" class="ulink" style="font-size: 14px;">All episodes →</a>
+    </div>
+
+    <div class="card card-hover overflow-hidden p-0 grid lg:grid-cols-[1.3fr_1fr] gap-0">
+      <div class="relative" style="min-height: 360px;">
+        <div class="ph" style="height: 100%; min-height: 360px; border-radius: 0;">
+          [ episode photo — pastor reuben & dr. anita keys ]
+        </div>
+        <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 40%, rgba(27,42,78,0.7));"></div>
+        <div class="absolute left-7 bottom-7" style="color: var(--color-cream);">
+          <p class="meta m-0" style="color: rgba(250,247,242,0.7);">Episode 14 · 42 min</p>
+        </div>
+        <div class="absolute right-7 bottom-7 flex items-center justify-center"
+             style="width: 64px; height: 64px; border-radius: 9999px; background: var(--color-crimson); color: var(--color-cream); box-shadow: var(--shadow-soft);"
+             aria-hidden="true">
+          ▶
+        </div>
+      </div>
+      <div class="p-12 flex flex-col justify-center" style="background: var(--color-linen);">
+        <h3 class="display m-0" style="font-size: 36px; letter-spacing: -0.02em; line-height: 1.1;">
+          The Long Obedience of Building Something Good
+        </h3>
+        <p class="m-0 mt-4" style="font-family: var(--font-reading); font-size: 15px; line-height: 1.65;">
+          Dr. Anita Keys joins to talk about staying faithful through the years where nothing seems to grow — and what waiting taught her about leadership in a season of urgency.
+        </p>
+        <div class="mt-7 flex gap-2 flex-wrap">
+          <span class="chip">Spotify</span>
+          <span class="chip">Apple Podcasts</span>
+          <span class="chip">YouTube</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ============================================================
+     TESTIMONY — full-width navy band
+     ============================================================ %>
+<section style="background: var(--color-navy); color: var(--color-cream); padding: 120px 0;">
+  <div class="container-page">
+    <p class="meta text-center" style="color: rgba(250,247,242,0.6); margin-bottom: 40px;">One story</p>
+    <div class="grid gap-14 md:grid-cols-[260px_1fr] max-w-[920px] mx-auto items-center">
+      <div class="ph" style="aspect-ratio: 1/1.15; border-radius: 16px; min-height: 240px;">
+        [ portrait — marcus, jackson MS ]
+      </div>
+      <div>
+        <blockquote class="m-0" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.35; color: var(--color-cream);">
+          "I hadn't opened a Bible in nine years. The morning email didn't ask me to. It just showed up, gentle, like a friend who knew I'd be back."
+        </blockquote>
+        <div class="mt-7 flex items-center gap-3 text-[13px]" style="color: rgba(250,247,242,0.7);">
+          <span style="font-family: var(--font-serif); color: var(--color-cream); font-size: 16px;">Marcus L.</span>
+          <span>·</span>
+          <span>Jackson, MS · subscriber since Jan 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ============================================================
+     GIVE INVITATION — dignified, small
+     ============================================================ %>
+<section style="padding: 120px 0;">
+  <div class="mx-auto text-center" style="max-width: 760px; padding: 0 2rem;">
+    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: clamp(20px, 2vw, 26px); color: var(--color-navy); line-height: 1.5;">
+      IMPACT runs on the generosity of people who've been impacted.
+    </p>
+    <div class="mt-6">
+      <a href="#" class="ulink" style="color: var(--color-crimson); font-size: 14px; font-weight: 500;">
+        Learn how to give →
+      </a>
     </div>
   </div>
 </section>

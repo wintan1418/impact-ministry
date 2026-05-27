@@ -1,3 +1,12 @@
+# Solid Queue recurring tasks. Picked up by `bin/jobs` workers in
+# production. Disabled in dev/test (recurring tasks are confusing in
+# local TDD loops — invoke jobs directly when needed).
+#
+# Times below are interpreted in `Application.config.time_zone` (set in
+# config/application.rb from DEVOTIONAL_TIMEZONE, default
+# America/Chicago). DEVOTIONAL_SEND_HOUR controls the dispatch hour;
+# the failsafe alert always runs one hour later.
+#
 # examples:
 #   periodic_cleanup:
 #     class: CleanSoftDeletedRecordsJob
@@ -9,7 +18,22 @@
 #     priority: 2
 #     schedule: at 5am every day
 
+<%
+  send_hour  = Integer(ENV.fetch("DEVOTIONAL_SEND_HOUR", "5"))
+  alert_hour = send_hour + 1
+%>
+
 production:
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
+
+  devotional_dispatch:
+    class: DevotionalDispatchJob
+    queue: devotionals
+    schedule: "every day at <%= send_hour %>:00"
+
+  failed_dispatch_alert:
+    class: FailedDispatchAlertJob
+    queue: default
+    schedule: "every day at <%= alert_hour %>:00"

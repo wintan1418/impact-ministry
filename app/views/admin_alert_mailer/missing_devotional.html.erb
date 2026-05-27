@@ -1,0 +1,28 @@
+<% content_for :preheader, "No devotional was published for #{@date.strftime('%A, %B %-d')}." %>
+
+<h1 style="margin:0 0 16px 0; font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:500; color:#C8102E;">
+  No devotional published today
+</h1>
+
+<p style="margin:0 0 16px 0;">
+  As of 06:00 Central, no devotional has been published for
+  <strong><%= @date.strftime("%A, %B %-d, %Y") %></strong>.
+</p>
+
+<p style="margin:0 0 24px 0;">
+  The dispatch job ran at 05:00 but found nothing scheduled. Open the
+  editor admin and either publish a backfill devotional now, or schedule
+  one for tomorrow.
+</p>
+
+<p style="margin:0 0 24px 0;">
+  <a href="<%= @admin_url %>"
+     style="display:inline-block; background-color:#1B2A4E; color:#FAF7F2; padding:12px 20px; border-radius:4px; text-decoration:none; font-weight:500;">
+    Open the devotionals admin
+  </a>
+</p>
+
+<p style="margin:0; font-size:13px; color:#8B7355;">
+  This alert is automated by FailedDispatchAlertJob. It runs daily one
+  hour after the dispatch attempt.
+</p>

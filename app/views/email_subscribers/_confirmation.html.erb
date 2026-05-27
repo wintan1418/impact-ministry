@@ -1,0 +1,14 @@
+<%#
+  Post-submit confirmation. A single quiet line — no confetti, no celebration.
+  500ms cross-fade in. See CLAUDE.md §11 (voice) and the design brief.
+
+  Locals:
+    source: String — the surface this signup came from (used by the turbo-frame id)
+%>
+<turbo-frame id="email-capture-<%= source %>">
+  <p class="text-olive italic font-serif text-lg leading-relaxed opacity-0 animate-[fadeIn_500ms_ease-out_forwards] transition-opacity duration-500"
+     style="font-family: 'Lora', Georgia, serif;"
+     data-email-capture-confirmation>
+    See you tomorrow morning.
+  </p>
+</turbo-frame>

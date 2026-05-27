@@ -1,0 +1,93 @@
+<% content_for :title, "The Morning Word — Archive · IMPACT Ministry" %>
+<% content_for :description, "Past devotionals, fully searchable. A short, true word, every morning." %>
+
+<%# Hero — every morning since the beginning. %>
+<section style="padding: 80px 0 60px; border-bottom: 1px solid var(--color-olive-15);">
+  <div class="container-page">
+    <div class="meta mb-5">The Morning Word · Archive</div>
+    <h1 class="display fade-up m-0" style="font-size: clamp(48px, 6vw, 80px); line-height: 1.0; max-width: 780px; margin-bottom: 24px;">
+      Every <span class="italic font-normal">morning</span>, since the beginning.
+    </h1>
+    <p class="reading mt-2" style="font-size: 18px; color: var(--color-olive); max-width: 540px; margin: 0;">
+      Past devotionals, fully searchable. <span class="hidden md:inline">Subscribers see what they've already read.</span>
+    </p>
+  </div>
+</section>
+
+<%# Sticky filter bar: tag chips + search. %>
+<section class="sticky top-[72px] z-40 border-b"
+         style="padding: 32px 0 28px; background: rgba(250,247,242,0.92); backdrop-filter: blur(6px); border-color: var(--color-olive-15);">
+  <div class="container-page flex flex-wrap items-center justify-between gap-6">
+    <div class="flex gap-2 flex-wrap">
+      <%= link_to "All", devotionals_path,
+            class: "chip #{'chip-active' if @tag.blank? || @tag == 'All'}" %>
+      <% @available_tags.each do |t| %>
+        <%= link_to t, devotionals_path(tag: t),
+              class: "chip #{'chip-active' if @tag == t}" %>
+      <% end %>
+    </div>
+
+    <%= form_with url: devotionals_path, method: :get, local: true,
+                  data: { turbo_frame: "_top" },
+                  class: "flex items-center gap-2" do |f| %>
+      <% if @tag.present? %>
+        <%= f.hidden_field :tag, value: @tag %>
+      <% end %>
+      <%= f.text_field :q, value: @query, placeholder: "Search the mornings",
+            "aria-label": "Search devotionals",
+            class: "input", style: "min-width: 240px; font-size: 14px; padding: 10px 16px;" %>
+    <% end %>
+  </div>
+</section>
+
+<%# Archive grid — 2-col desktop, 1-col mobile. %>
+<section style="padding: 64px 0 80px;">
+  <div class="container-page">
+    <% if @devotionals.any? %>
+      <div class="grid gap-12 md:grid-cols-2">
+        <% @devotionals.each_with_index do |d, i| %>
+          <%= link_to devotional_path(d), class: "card card-hover block",
+                style: "padding: 32px; background: rgba(255,255,255,0.5); animation: pageEnter 400ms var(--ease-impact) #{i * 60}ms both;" do %>
+            <div class="flex justify-between items-baseline mb-4">
+              <div class="meta"><%= d.scheduled_for.strftime("%a, %b %-d") %></div>
+              <% if (tag = d.tags.first).present? %>
+                <span class="chip" style="padding: 4px 10px; font-size: 11px; border: 0; background: var(--color-linen);">
+                  <%= tag %>
+                </span>
+              <% end %>
+            </div>
+            <h2 style="font-family: var(--font-serif); font-weight: 500; font-size: 30px; color: var(--color-navy); margin: 0 0 14px; letter-spacing: -0.02em; line-height: 1.1;">
+              <%= d.title %>
+            </h2>
+            <% if d.excerpt.present? %>
+              <p style="font-family: var(--font-reading); font-size: 16px; color: var(--color-ink); line-height: 1.6; margin: 0 0 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                <%= d.excerpt %>
+              </p>
+            <% end %>
+            <div class="flex justify-between items-center pt-4" style="border-top: 1px solid var(--color-olive-15);">
+              <div class="scripture" style="font-size: 14px; color: var(--color-navy);">
+                <%= d.scripture_reference %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if @devotionals.respond_to?(:total_pages) && @devotionals.total_pages > 1 %>
+        <div class="mt-16 text-center">
+          <%= paginate @devotionals %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-center" style="padding: 80px 0;">
+        <h2 class="display" style="font-size: 32px; margin: 0 0 12px;">No mornings match — yet.</h2>
+        <p class="reading" style="color: var(--color-olive); max-width: 440px; margin: 0 auto;">
+          Try a different tag or come back tomorrow. The next word is being written.
+        </p>
+        <div class="mt-8">
+          <%= link_to "Show all", devotionals_path, class: "btn btn-ghost" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>

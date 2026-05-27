@@ -1,0 +1,20 @@
+<% content_for :title, "Unsubscribed — IMPACT Ministry" %>
+
+<section class="max-w-xl mx-auto px-6 py-24 text-center">
+  <h1 class="font-serif text-3xl md:text-4xl text-navy" style="color: #1B2A4E; font-family: 'Fraunces', Georgia, serif;">
+    You won't hear from us again.
+  </h1>
+
+  <p class="mt-6 text-ink leading-relaxed" style="color: #1F1B16; font-family: 'Lora', Georgia, serif;">
+    Thanks for the time you gave us. The door stays open &mdash;
+    if you ever change your mind, we'd be glad to start again.
+  </p>
+
+  <div class="mt-10">
+    <%= render "shared/email_capture", source: "footer", label: "your@email.com" %>
+  </div>
+
+  <p class="mt-12 text-sm">
+    <%= link_to "Back to the home page", root_path, class: "text-olive underline underline-offset-4", style: "color: #8B7355;" %>
+  </p>
+</section>

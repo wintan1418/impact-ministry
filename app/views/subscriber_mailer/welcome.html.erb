@@ -1,0 +1,30 @@
+<% content_for :preheader, "A short, true word — landing in your inbox tomorrow morning." %>
+
+<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:24px; font-weight:500; color:#1B2A4E; margin:0 0 16px 0;">
+  Glad you're here.
+</h1>
+
+<p style="margin:0 0 16px 0;">
+  Starting tomorrow morning, you'll get one short devotional from us &mdash;
+  a scripture, a thought, a quiet word to start the day. We aim for clear and true,
+  never long.
+</p>
+
+<p style="margin:0 0 24px 0;">
+  Want a head start? Today's devotional is already published:
+</p>
+
+<p style="margin:0 0 32px 0;">
+  <a href="<%= url_for(controller: "devotionals", action: "today", only_path: false, host: ENV["APP_HOST"].presence || "localhost") rescue root_url %>"
+     style="display:inline-block; background-color:#1B2A4E; color:#FAF7F2; padding:12px 24px; border-radius:4px; text-decoration:none; font-weight:500;">
+    Read today's devotional
+  </a>
+</p>
+
+<p style="margin:0 0 8px 0;">
+  Reply to this email any time &mdash; the inbox is read by a person.
+</p>
+
+<p style="margin:32px 0 0 0; font-size:13px; color:#8B7355;">
+  Not for you? <a href="<%= @unsubscribe_url %>" style="color:#8B7355; text-decoration:underline;">Unsubscribe in one click</a>.
+</p>

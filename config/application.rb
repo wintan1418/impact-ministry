@@ -38,5 +38,12 @@ module ImpactMinistry
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Devotional dispatch lives in Central time; matches CLAUDE.md §5.
+    config.time_zone = ENV.fetch("DEVOTIONAL_TIMEZONE", "America/Chicago")
+
+    # Render branded 404/422/500 pages through ErrorsController via the routes
+    # table (see /404, /422, /500 in config/routes.rb).
+    config.exceptions_app = ->(env) { ImpactMinistry::Application.routes.call(env) }
   end
 end

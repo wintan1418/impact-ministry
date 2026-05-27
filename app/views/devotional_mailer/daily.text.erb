@@ -1,0 +1,35 @@
+<%= Date.current.strftime("%A, %B %-d").upcase %>
+
+<%= @devotional.scripture_reference %>
+
+<%= @devotional.title %>
+<%= "-" * [ @devotional.title.length, 4 ].max %>
+
+<%
+  preview =
+    if @devotional.excerpt.present?
+      @devotional.excerpt
+    elsif @devotional.body.present?
+      @devotional.body.to_plain_text
+    else
+      ""
+    end
+
+  preview_words = preview.to_s.split(/\s+/).reject(&:blank?)
+  preview = preview_words.first(80).join(" ")
+  preview << "..." if preview_words.length > 80
+%>
+<% if preview.present? %>
+<%= preview %>
+
+<% end %>
+Read the full devotional:
+<%= @devotional_url %>
+
+<% if @tomorrow %>
+Tomorrow: <%= @tomorrow.scripture_reference %>
+
+<% end %>
+--
+We're praying with you. If today's not for you, unsubscribe:
+<%= @unsubscribe_url %>

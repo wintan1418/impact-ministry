@@ -1,0 +1,148 @@
+<%#
+  About / Mission — long-form editorial layout.
+  Faithful port of design/source/screens/about.jsx (§4.8 of the design brief).
+  Magazine-feature treatment: pull quotes, leadership grid, numbered statement of faith.
+%>
+<% content_for :title,       @page_title %>
+<% content_for :description, @page_description if @page_description %>
+
+<article class="page-enter">
+  <%# Hero — kicker, headline, lede %>
+  <section style="padding: 80px 0 60px;">
+    <div class="container-read">
+      <div class="meta" style="margin-bottom: 18px;">About IMPACT</div>
+      <h1 class="display m-0" style="font-size: clamp(48px, 6vw, 84px); line-height: 0.98; margin-bottom: 32px;">
+        A ministry shaped by <span style="font-style: italic; font-weight: 400;">Mississippi mornings.</span>
+      </h1>
+      <p class="m-0" style="font-family: var(--font-reading); font-size: 21px; color: var(--color-ink); line-height: 1.6;">
+        IMPACT Ministry was started in 2026 by a small group of pastors, writers, and neighbors who wanted to make something the internet didn't already have: a quiet, daily place to think about God without being sold a conference ticket.
+      </p>
+    </div>
+  </section>
+
+  <%# Editorial photo — Yazoo river at dawn %>
+  <section style="padding: 40px 0 80px;">
+    <div class="container-read">
+      <div class="ph" style="height: 480px; border-radius: var(--radius-image);">
+        [ delta river bend at dawn ]
+      </div>
+      <div style="font-size: 12px; color: var(--color-olive); text-align: center; margin-top: 12px; font-style: italic;">
+        The Yazoo River, photographed by a friend at 5:48am.
+      </div>
+    </div>
+  </section>
+
+  <%# Body with pull quote %>
+  <section style="padding: 40px 0 80px;">
+    <div class="container-read">
+      <div style="font-family: var(--font-reading); font-size: 19px; line-height: 1.8; color: var(--color-ink);">
+        <p>We are based in Jackson and serve from Greenville to Tupelo to anywhere with an inbox. Our daily devotional reaches more than eleven thousand subscribers across forty-two states. Our podcast goes deeper, slower. Our prayer wall is full of strangers who have agreed to carry each other's weight for a few minutes a day.</p>
+
+        <div class="pull" style="margin: 48px 0; font-size: 28px; line-height: 1.35;">
+          We believe the church does not need more noise. It needs more quiet places where people meet the same God they've been meeting for two thousand years.
+        </div>
+
+        <p>Our mission is simple, and it is the same on every page we publish: <em>to put scripture in the hands of people who would not otherwise pick it up, and to do it with the warmth and weight the scripture itself deserves.</em></p>
+
+        <p>That looks like a daily email at sunrise. It looks like a podcast that takes its time. It looks like a small fund that pays a neighbor's rent the same week she asks. It looks like a partner-church program quietly funding seven small congregations across the state.</p>
+
+        <p>If any of that sounds like a thing you'd like to be part of — as a reader, a giver, or a partner — we are glad you found us.</p>
+      </div>
+    </div>
+  </section>
+
+  <%# Leadership — portrait-style cards, 4-up desktop, 2-up tablet, 1-up mobile %>
+  <section style="padding: 80px 0; background: var(--color-linen);">
+    <div class="container-page">
+      <div style="text-align: center; margin-bottom: 56px;">
+        <div class="meta" style="margin-bottom: 14px;">The team</div>
+        <h2 class="display m-0" style="font-size: clamp(36px, 4vw, 54px); line-height: 1.05;">
+          Who built this.
+        </h2>
+      </div>
+
+      <%
+        leadership = [
+          { name: "Reuben Hollis",   role: "Founder · Lead Pastor",         note: "Pastored in Greenwood for eleven years before starting IMPACT. Writes most of the morning words." },
+          { name: "Sarah-Beth Kim",  role: "Editor · Devotional",           note: "Former English teacher. Believes every sentence should earn its place. The reason the writing is good." },
+          { name: "Marcus Levine",   role: "Director · Partner Churches",   note: "Coordinates grants and design help for small congregations across Mississippi." },
+          { name: "Dr. Anita Keys",  role: "Board Chair",                   note: "Theologian, professor, the calm voice on every Sunday call. Keeps us honest." }
+        ]
+      %>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <% leadership.each do |person| %>
+          <div>
+            <div class="ph" style="aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; margin-bottom: 18px;">
+              [ <%= person[:name].split(" ").first.downcase %> ]
+            </div>
+            <div style="font-family: var(--font-serif); font-size: 22px; color: var(--color-navy); margin-bottom: 4px;">
+              <%= person[:name] %>
+            </div>
+            <div class="meta" style="margin-bottom: 10px; color: var(--color-crimson);">
+              <%= person[:role] %>
+            </div>
+            <p style="font-family: var(--font-reading); font-size: 14px; color: var(--color-ink); line-height: 1.6; margin: 0;">
+              <%= person[:note] %>
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <%# Statement of faith — numbered convictions in cards %>
+  <section style="padding: 100px 0;">
+    <div class="container-read">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <div class="meta" style="margin-bottom: 14px;">What we hold</div>
+        <h2 class="display m-0" style="font-size: clamp(36px, 4vw, 54px); line-height: 1.05;">
+          Statement of faith.
+        </h2>
+      </div>
+
+      <%
+        convictions = [
+          ["One God",        "We confess one God — Father, Son, and Holy Spirit — whose love made the world and whose mercy is remaking it."],
+          ["One scripture",  "We hold the Bible to be the inspired, trustworthy word of God — older than our preferences and stronger than our doubts."],
+          ["One gospel",     "We believe Jesus lived, died, and rose again, and that anyone who trusts Him is brought into a family that does not end."],
+          ["One Spirit",     "We believe the Holy Spirit lives in those who follow Jesus, comforts the grieving, and gives courage to the timid."],
+          ["One table",      "We hold to a wide table — open to every nation, color, and class — under the lordship of one Christ."],
+          ["One commission", "We believe the church is sent to love its neighbors, serve its cities, and tell the truth about Jesus with kindness."]
+        ]
+      %>
+
+      <div class="flex flex-col" style="gap: 18px;">
+        <% convictions.each_with_index do |(title, body), i| %>
+          <div class="card" style="padding: 28px;">
+            <div style="display: flex; align-items: baseline; gap: 20px;">
+              <div style="font-family: var(--font-serif); font-style: italic; color: var(--color-crimson); font-size: 24px; min-width: 36px;">
+                <%= format("%02d", i + 1) %>
+              </div>
+              <div>
+                <div style="font-family: var(--font-serif); font-size: 22px; color: var(--color-navy); margin-bottom: 6px;">
+                  <%= title %>
+                </div>
+                <p style="font-family: var(--font-reading); font-size: 16px; color: var(--color-ink); line-height: 1.65; margin: 0;">
+                  <%= body %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <%# Inline email capture at the bottom %>
+  <section style="padding: 0 0 96px;">
+    <div class="container-read">
+      <hr class="hairline" style="margin: 0 0 40px;">
+      <div class="meta" style="margin-bottom: 12px;">Stay in touch</div>
+      <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 22px; color: var(--color-navy); margin-bottom: 18px;">
+        Want a short word every morning?
+      </p>
+      <%= render "shared/email_capture", source: "inline" %>
+    </div>
+  </section>
+</article>

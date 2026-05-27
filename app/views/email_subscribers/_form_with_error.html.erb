@@ -1,0 +1,37 @@
+<%#
+  Email capture form re-rendered with an inline error. Crimson hairline border
+  on the input, olive help line. No toast. (CLAUDE.md §3.)
+
+  Locals:
+    source: String — the surface this submission came from
+    email:  String — what the user typed (we re-fill it so they don't lose their entry)
+    error_message: String — short, human, no jargon
+%>
+<turbo-frame id="email-capture-<%= source %>">
+  <%= form_with url: "/subscribe",
+                method: :post,
+                data: { turbo_frame: "email-capture-#{source}", controller: "email-capture" },
+                class: "w-full" do |f| %>
+    <%= f.hidden_field :source, value: source %>
+
+    <div class="flex flex-col sm:flex-row items-stretch gap-3">
+      <%= f.email_field :email,
+            value: email,
+            placeholder: "your@email.com",
+            required: true,
+            autocomplete: "email",
+            "aria-label": "Email address",
+            "aria-invalid": "true",
+            class: "input flex-1 border-crimson",
+            style: "border-color: #C8102E;",
+            data: { "email-capture-target": "input" } %>
+      <button type="submit" class="btn btn-primary" data-email-capture-target="button">
+        Send me tomorrow's
+        <span aria-hidden="true">→</span>
+      </button>
+    </div>
+    <p class="input-help text-olive" data-email-capture-target="help" style="color: #8B7355;">
+      <%= error_message %>
+    </p>
+  <% end %>
+</turbo-frame>

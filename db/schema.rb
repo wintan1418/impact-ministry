@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_184212) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_200203) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.bigint "author_id"
@@ -56,6 +67,79 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_184212) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "devotional_deliveries", force: :cascade do |t|
+    t.datetime "clicked_at"
+    t.datetime "created_at", null: false
+    t.bigint "devotional_id", null: false
+    t.bigint "email_subscriber_id", null: false
+    t.datetime "opened_at"
+    t.string "postmark_message_id"
+    t.datetime "sent_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["clicked_at"], name: "index_devotional_deliveries_on_clicked_at"
+    t.index ["devotional_id", "email_subscriber_id"], name: "index_devotional_deliveries_on_devotional_and_subscriber", unique: true
+    t.index ["devotional_id"], name: "index_devotional_deliveries_on_devotional_id"
+    t.index ["email_subscriber_id"], name: "index_devotional_deliveries_on_email_subscriber_id"
+    t.index ["opened_at"], name: "index_devotional_deliveries_on_opened_at"
+    t.index ["postmark_message_id"], name: "index_devotional_deliveries_on_postmark_message_id", unique: true, where: "(postmark_message_id IS NOT NULL)"
+    t.index ["sent_at"], name: "index_devotional_deliveries_on_sent_at"
+  end
+
+  create_table "devotionals", force: :cascade do |t|
+    t.bigint "author_id", null: false
+    t.datetime "created_at", null: false
+    t.text "excerpt"
+    t.datetime "published_at"
+    t.date "scheduled_for", null: false
+    t.string "scripture_reference", null: false
+    t.string "slug", null: false
+    t.string "tags", default: [], array: true
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_devotionals_on_author_id"
+    t.index ["published_at"], name: "index_devotionals_on_published_at"
+    t.index ["scheduled_for"], name: "index_devotionals_on_scheduled_for", unique: true
+    t.index ["slug"], name: "index_devotionals_on_slug", unique: true
+    t.index ["tags"], name: "index_devotionals_on_tags", using: :gin
+    t.index ["title"], name: "index_devotionals_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "email_subscribers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "name"
+    t.jsonb "preferences", default: {}, null: false
+    t.string "source", default: "manual", null: false
+    t.datetime "subscribed_at"
+    t.string "token", null: false
+    t.datetime "unsubscribed_at"
+    t.datetime "updated_at", null: false
+    t.index "lower((email)::text)", name: "index_email_subscribers_on_lower_email", unique: true
+    t.index ["token"], name: "index_email_subscribers_on_token", unique: true
+    t.index ["unsubscribed_at"], name: "index_email_subscribers_on_unsubscribed_at"
+  end
+
+  create_table "friendly_id_slugs", force: :cascade do |t|
+    t.datetime "created_at"
+    t.string "scope"
+    t.string "slug", null: false
+    t.integer "sluggable_id", null: false
+    t.string "sluggable_type", limit: 50
+    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
+    t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
+    t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
+  end
+
+  create_table "pages", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "published", default: true, null: false
+    t.jsonb "seo_meta", default: {}, null: false
+    t.string "slug", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_pages_on_slug", unique: true
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -63,6 +147,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_184212) do
     t.string "user_agent"
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "key", null: false
+    t.string "kind", default: "string", null: false
+    t.datetime "updated_at", null: false
+    t.text "value"
+    t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -79,5 +173,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_184212) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "devotional_deliveries", "devotionals"
+  add_foreign_key "devotional_deliveries", "email_subscribers"
+  add_foreign_key "devotionals", "users", column: "author_id"
   add_foreign_key "sessions", "users"
 end

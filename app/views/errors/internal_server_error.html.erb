@@ -1,0 +1,15 @@
+<% content_for :title, "We hit a snag" %>
+
+<section class="container-read" style="padding-top: 96px; padding-bottom: 120px; text-align: center;">
+  <p class="meta">500</p>
+  <h1 class="display mt-4" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.05;">
+    Something on our end<br>
+    <span class="italic font-normal">needs a moment.</span>
+  </h1>
+  <p class="reading mt-6" style="font-size: 19px;">
+    We've been notified. The word still stands.
+  </p>
+  <div class="mt-10 flex items-center justify-center gap-4">
+    <%= link_to "Home", root_path, class: "btn btn-ghost" %>
+  </div>
+</section>

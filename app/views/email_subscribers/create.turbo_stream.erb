@@ -1,0 +1,10 @@
+<%= turbo_stream.replace "email-capture-#{@source}" do %>
+  <% if @error_message.present? %>
+    <%= render "form_with_error",
+               source: @source,
+               email: @subscriber&.email,
+               error_message: @error_message %>
+  <% else %>
+    <%= render "confirmation", source: @source %>
+  <% end %>
+<% end %>

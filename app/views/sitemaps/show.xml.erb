@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <%# Static surface %>
+  <url>
+    <loc><%= "#{@protocol}://#{@host}/" %></loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <% @pages.each do |page| %>
+    <url>
+      <loc><%= "#{@protocol}://#{@host}/pages/#{page.slug}" %></loc>
+      <lastmod><%= page.updated_at.iso8601 %></lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+    </url>
+  <% end %>
+
+  <% @devotionals.each do |d| %>
+    <url>
+      <loc><%= "#{@protocol}://#{@host}/devotionals/#{d.slug}" %></loc>
+      <lastmod><%= (d.published_at || d.updated_at).iso8601 %></lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+    </url>
+  <% end %>
+</urlset>

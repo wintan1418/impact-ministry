@@ -1,0 +1,16 @@
+NO DEVOTIONAL PUBLISHED TODAY
+=============================
+
+As of 06:00 Central, no devotional has been published for
+<%= @date.strftime("%A, %B %-d, %Y") %>.
+
+The dispatch job ran at 05:00 but found nothing scheduled. Open the
+editor admin and either publish a backfill devotional now, or schedule
+one for tomorrow.
+
+Open the devotionals admin:
+<%= @admin_url %>
+
+--
+This alert is automated by FailedDispatchAlertJob. It runs daily one
+hour after the dispatch attempt.

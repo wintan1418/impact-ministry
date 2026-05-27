@@ -1,0 +1,62 @@
+<% content_for :preheader, "#{@devotional.scripture_reference} — a short, true word for #{Date.current.strftime('%A, %B %-d')}." %>
+
+<!-- Date pre-header line, small, all-caps -->
+<p style="margin:0 0 8px 0; font-family:Helvetica,Arial,sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8B7355;">
+  <%= Date.current.strftime("%A, %B %-d") %>
+</p>
+
+<!-- Scripture reference — italic navy, the anchor of the piece -->
+<p style="margin:0 0 12px 0; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:15px; color:#1B2A4E;">
+  <%= @devotional.scripture_reference %>
+</p>
+
+<!-- Title — display serif, generous -->
+<h1 style="margin:0 0 24px 0; font-family:Georgia,'Times New Roman',serif; font-size:28px; font-weight:500; line-height:1.25; letter-spacing:-0.01em; color:#1B2A4E;">
+  <%= @devotional.title %>
+</h1>
+
+<!-- Excerpt / preview of body -->
+<%
+  preview =
+    if @devotional.excerpt.present?
+      @devotional.excerpt
+    elsif @devotional.body.present?
+      @devotional.body.to_plain_text
+    else
+      ""
+    end
+
+  preview_words = preview.to_s.split(/\s+/).reject(&:blank?)
+  preview = preview_words.first(80).join(" ")
+  preview << "..." if preview_words.length > 80
+%>
+
+<% if preview.present? %>
+  <p style="margin:0 0 28px 0; font-family:Georgia,'Times New Roman',serif; font-size:17px; line-height:1.7; color:#1F1B16;">
+    <%= preview %>
+  </p>
+<% end %>
+
+<!-- CTA — read the full devotional -->
+<p style="margin:0 0 32px 0;">
+  <a href="<%= @devotional_url %>"
+     style="display:inline-block; background-color:#1B2A4E; color:#FAF7F2; padding:12px 24px; border-radius:4px; text-decoration:none; font-family:Helvetica,Arial,sans-serif; font-weight:500; font-size:15px;">
+    Read the full devotional
+  </a>
+</p>
+
+<!-- Tomorrow teaser — book/chapter only, see CLAUDE.md §5 -->
+<% if @tomorrow %>
+  <p style="margin:24px 0 0 0; padding-top:20px; border-top:1px solid rgba(139,115,85,0.30); font-family:Helvetica,Arial,sans-serif; font-size:13px; color:#8B7355;">
+    <span style="text-transform:uppercase; letter-spacing:0.12em;">Tomorrow:</span>
+    <span style="font-family:Georgia,'Times New Roman',serif; font-style:italic; color:#1B2A4E;">
+      <%= @tomorrow.scripture_reference %>
+    </span>
+  </p>
+<% end %>
+
+<!-- Unsubscribe — quiet, single line -->
+<p style="margin:32px 0 0 0; font-family:Helvetica,Arial,sans-serif; font-size:13px; color:#8B7355;">
+  We're praying with you. If today's not for you,
+  <a href="<%= @unsubscribe_url %>" style="color:#8B7355; text-decoration:underline;">unsubscribe</a>.
+</p>

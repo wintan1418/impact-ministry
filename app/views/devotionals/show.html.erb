@@ -1,0 +1,144 @@
+<% content_for :title, "#{@devotional.title} — The Morning Word · IMPACT Ministry" %>
+<% content_for :description, (@devotional.excerpt.presence || "A short, true word from IMPACT Ministry.") %>
+<% content_for :og_type, "article" %>
+
+<%# Read-progress bar — Stimulus controller updates width on scroll. %>
+<div data-controller="read-progress">
+  <div class="progress" data-read-progress-target="bar"></div>
+
+  <%# Reader toolbar — sticky under nav. %>
+  <div class="sticky top-[72px] z-40 border-b" style="background: rgba(250,247,242,0.92); backdrop-filter: blur(6px); border-color: var(--color-olive-15);">
+    <div class="container-page flex items-center justify-between" style="height: 56px;">
+      <div class="flex items-center gap-4">
+        <%= link_to devotionals_path, class: "flex items-center gap-2 text-[13px]", style: "color: var(--color-olive);" do %>
+          <span aria-hidden="true">←</span> Archive
+        <% end %>
+        <span class="hidden sm:inline-block" style="width: 4px; height: 4px; border-radius: 9999px; background: var(--color-olive-30);"></span>
+        <div class="meta hidden sm:block"><%= @devotional.scheduled_for.strftime("%A, %B %-d") %></div>
+      </div>
+      <div class="flex items-center gap-1">
+        <%= link_to "Share", "mailto:?subject=#{u(@devotional.title)}&body=#{u(devotional_url(@devotional))}",
+            class: "btn btn-ghost", style: "padding: 8px 14px; font-size: 13px;" %>
+      </div>
+    </div>
+  </div>
+
+  <article data-read-progress-target="article" class="container-read reading" style="padding: 72px 0 80px;">
+
+    <%# Pre-header: date + streak placeholder %>
+    <div class="flex items-center gap-3 mb-10">
+      <div class="card" style="padding: 10px 16px; display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.6);">
+        <span aria-hidden="true" style="color: var(--color-crimson); font-size: 16px;">◆</span>
+        <span style="font-family: var(--font-serif); font-weight: 500; color: var(--color-navy); font-size: 17px;">
+          <%= signed_in? ? "Day 1" : "Begin" %><span style="color: var(--color-olive); font-size: 12px; font-weight: 400; margin-left: 4px;">your morning</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="meta mb-5">The Morning Word · <%= @devotional.scheduled_for.strftime("%a, %b %-d") %></div>
+
+    <h1 class="display fade-up m-0" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.02em; margin-bottom: 36px;">
+      <%= @devotional.title %>
+    </h1>
+
+    <%# Scripture pull — italic, crimson hairline %>
+    <div class="pull fade-up" style="animation-delay: 120ms;">
+      <%= @devotional.excerpt.presence || @devotional.scripture_reference %>
+      <div style="margin-top: 14px; font-style: normal; font-family: var(--font-sans); font-size: 12px; color: var(--color-olive); letter-spacing: 0.06em; text-transform: uppercase;">
+        <%= @devotional.scripture_reference %>
+      </div>
+    </div>
+
+    <%# Featured image (optional) %>
+    <% if @devotional.featured_image.attached? %>
+      <figure class="my-10">
+        <%= image_tag @devotional.featured_image,
+              alt: @devotional.title,
+              class: "w-full",
+              style: "border-radius: var(--radius-image);" %>
+      </figure>
+    <% end %>
+
+    <%# Long-form body — ActionText. Drop-cap via CSS first-letter. %>
+    <div class="devotional-body" style="margin-top: 36px;">
+      <%= @devotional.body %>
+    </div>
+
+    <%# Audio attachment (if present) %>
+    <% if @devotional.audio.attached? %>
+      <div class="mt-10 card" style="padding: 18px;">
+        <div class="meta mb-2">Read aloud</div>
+        <audio controls preload="none" class="w-full">
+          <source src="<%= url_for(@devotional.audio) %>" type="<%= @devotional.audio.content_type %>">
+          Your browser does not support audio playback.
+        </audio>
+      </div>
+    <% end %>
+
+    <hr class="hairline" style="margin: 64px 0 40px;">
+
+    <%# Tomorrow teaser %>
+    <% tomorrow = @devotional.tomorrow %>
+    <% if tomorrow %>
+      <div class="grid gap-8 md:grid-cols-2 items-center">
+        <div>
+          <div class="meta mb-2">Tomorrow · <%= tomorrow.scheduled_for.strftime("%b %-d") %></div>
+          <div style="font-family: var(--font-serif); font-style: italic; font-size: 24px; color: var(--color-navy); line-height: 1.3;">
+            <%= tomorrow.title %>
+          </div>
+          <div class="meta mt-2" style="font-style: normal;">
+            <%= tomorrow.scripture_reference %>
+          </div>
+        </div>
+        <div class="flex items-center md:justify-end gap-3">
+          <%= link_to "Share this morning",
+                "mailto:?subject=#{u(@devotional.title)}&body=#{u(devotional_url(@devotional))}",
+                class: "btn btn-ghost", style: "font-size: 14px;" %>
+        </div>
+      </div>
+    <% else %>
+      <div class="meta">Tomorrow's word is being written.</div>
+    <% end %>
+
+    <%# Inline email capture (only if not signed in) %>
+    <% unless signed_in? %>
+      <div style="margin-top: 72px;">
+        <div class="card" style="padding: 32px;">
+          <p class="meta mb-3">Don't miss tomorrow.</p>
+          <h2 class="display" style="font-size: 32px; line-height: 1.1; margin: 0 0 10px;">
+            The morning word, before sunrise.
+          </h2>
+          <p class="reading mb-6" style="font-size: 16px; color: var(--color-olive); max-width: 460px;">
+            Two minutes to read. Unsubscribe in one click.
+          </p>
+          <%= render "shared/email_capture", source: "inline" %>
+        </div>
+      </div>
+    <% end %>
+  </article>
+</div>
+
+<%# Drop-cap on first paragraph of devotional body — Fraunces serif, navy. %>
+<style>
+  .devotional-body p:first-of-type::first-letter {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    color: var(--color-navy);
+    float: left;
+    font-size: 4.2em;
+    line-height: 0.85;
+    margin: 0.08em 0.08em 0 0;
+  }
+  .devotional-body p {
+    margin: 0 0 1.1em;
+  }
+  .devotional-body h2, .devotional-body h3 {
+    font-family: var(--font-serif);
+    color: var(--color-navy);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 1.6em 0 0.5em;
+  }
+  .devotional-body em { font-style: italic; }
+  .devotional-body a { color: var(--color-crimson); text-decoration: underline; text-decoration-color: var(--color-olive-30); }
+</style>

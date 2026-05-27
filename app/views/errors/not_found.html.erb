@@ -1,0 +1,16 @@
+<% content_for :title, "404 — Page not found" %>
+
+<section class="container-read" style="padding-top: 96px; padding-bottom: 120px; text-align: center;">
+  <p class="meta">404</p>
+  <h1 class="display mt-4" style="font-size: clamp(48px, 6vw, 80px); line-height: 1.0;">
+    The page you wanted<br>
+    <span class="italic font-normal">isn't here.</span>
+  </h1>
+  <p class="reading mt-6" style="font-size: 19px;">
+    Pages move. Links break. The word stays.
+  </p>
+  <div class="mt-10 flex items-center justify-center gap-4">
+    <%= link_to "Read today's devotional", (respond_to?(:devotionals_today_path) ? devotionals_today_path : "/"), class: "btn btn-primary" %>
+    <%= link_to "Home", root_path, class: "btn btn-ghost" %>
+  </div>
+</section>

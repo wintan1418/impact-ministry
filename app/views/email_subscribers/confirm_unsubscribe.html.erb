@@ -1,0 +1,27 @@
+<% content_for :title, "Unsubscribe — IMPACT Ministry" %>
+
+<section class="max-w-xl mx-auto px-6 py-24 text-center">
+  <p class="uppercase tracking-[0.18em] text-xs text-olive" style="color: #8B7355;">
+    One click away
+  </p>
+
+  <h1 class="mt-4 font-serif text-3xl md:text-4xl text-navy" style="color: #1B2A4E; font-family: 'Fraunces', Georgia, serif;">
+    Stop the morning notes?
+  </h1>
+
+  <p class="mt-6 text-ink leading-relaxed" style="color: #1F1B16; font-family: 'Lora', Georgia, serif;">
+    We'll stop sending devotionals to
+    <strong class="font-medium"><%= @subscriber.email %></strong>.
+    No hard feelings, no follow-ups.
+  </p>
+
+  <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+    <%= button_to "Yes, unsubscribe me",
+                  unsubscribe_path(token: @subscriber.token),
+                  method: :delete,
+                  class: "btn btn-primary",
+                  data: { turbo_confirm: nil } %>
+
+    <%= link_to "Never mind", root_path, class: "text-olive underline underline-offset-4", style: "color: #8B7355;" %>
+  </div>
+</section>

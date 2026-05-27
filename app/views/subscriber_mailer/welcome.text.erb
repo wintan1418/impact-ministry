@@ -1,0 +1,15 @@
+Glad you're here.
+
+Starting tomorrow morning, you'll get one short devotional from us —
+a scripture, a thought, a quiet word to start the day. We aim for clear
+and true, never long.
+
+Want a head start? Today's devotional is already published:
+<%= (url_for(controller: "devotionals", action: "today", only_path: false, host: ENV["APP_HOST"].presence || "localhost") rescue root_url) %>
+
+Reply to this email any time — the inbox is read by a person.
+
+--
+
+Not for you? Unsubscribe in one click:
+<%= @unsubscribe_url %>

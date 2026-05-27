@@ -35,5 +35,10 @@
     <p class="input-help" data-email-capture-target="help">
       One short word, before sunrise. Unsubscribe in one click.
     </p>
+
+    <%# Cloudflare Turnstile — invisible in dev/test (always-pass test keys). %>
+    <div class="mt-3">
+      <%= render "shared/turnstile", action: "subscribe-#{source}" %>
+    </div>
   </turbo-frame>
 <% end %>

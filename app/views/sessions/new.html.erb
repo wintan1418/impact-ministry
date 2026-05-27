@@ -1,31 +1,43 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <% if alert = flash[:alert] %>
-    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
-  <% end %>
+<% content_for :title, "Sign in — IMPACT Ministry" %>
 
-  <% if notice = flash[:notice] %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-  <% end %>
+<section class="container-read" style="padding-top: 96px; padding-bottom: 120px;">
+  <p class="meta">Sign in</p>
+  <h1 class="display mt-4" style="font-size: clamp(40px, 5vw, 60px); line-height: 1.05;">
+    Welcome back.
+  </h1>
+  <p class="reading mt-4" style="font-size: 17px;">
+    Sign in to see your streak, your saved highlights, and tomorrow's word.
+  </p>
 
-  <h1 class="font-bold text-4xl">Sign in</h1>
-
-  <%= form_with url: session_url, class: "contents" do |form| %>
-    <div class="my-5">
-      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address], class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div class="my-5">
-      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72, class: "block shadow-sm rounded-md border border-gray-400 focus:outline-blue-600 px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
-      <div class="inline">
-        <%= form.submit "Sign in", class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <%= form_with url: session_url, class: "mt-10" do |form| %>
+    <div class="space-y-6">
+      <div>
+        <%= form.label :email_address, "Email address", class: "meta block mb-2" %>
+        <%= form.email_field :email_address,
+                              required: true,
+                              autofocus: true,
+                              autocomplete: "username",
+                              placeholder: "you@example.com",
+                              value: params[:email_address],
+                              "aria-label": "Email address",
+                              class: "input" %>
       </div>
 
-      <div class="mt-4 text-sm text-gray-500 sm:mt-0">
-        <%= link_to "Forgot password?", new_password_path, class: "text-gray-700 underline hover:no-underline" %>
+      <div>
+        <%= form.label :password, "Password", class: "meta block mb-2" %>
+        <%= form.password_field :password,
+                                 required: true,
+                                 autocomplete: "current-password",
+                                 placeholder: "your password",
+                                 maxlength: 72,
+                                 "aria-label": "Password",
+                                 class: "input" %>
+      </div>
+
+      <div class="flex items-center justify-between flex-wrap gap-4 pt-2">
+        <%= form.submit "Sign in", class: "btn btn-primary" %>
+        <%= link_to "Forgot password?", new_password_path, class: "ulink", style: "color: var(--color-olive); font-size: 14px;" %>
       </div>
     </div>
   <% end %>
-</div>
+</section>

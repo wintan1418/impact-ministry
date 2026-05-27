@@ -1,1 +1,11 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# IMPACT Ministry — robots policy
+# Crawl everything public; keep admin / account / letter_opener private.
+
+User-agent: *
+Disallow: /admin
+Disallow: /account
+Disallow: /letter_opener
+Disallow: /session
+Disallow: /passwords
+
+Sitemap: https://impactministry.org/sitemap.xml

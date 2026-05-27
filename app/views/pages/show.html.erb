@@ -1,0 +1,32 @@
+<%#
+  Generic editor-managed page — long-form editorial layout.
+  Used by /beliefs, /contact, /privacy, /terms, and anything the team adds.
+  The about page has its own bespoke template at pages/about.html.erb.
+%>
+<% content_for :title,       @page_title %>
+<% content_for :description, @page_description if @page_description %>
+
+<article class="page-enter" style="padding: 80px 0 96px;">
+  <header class="container-read" style="margin-bottom: 40px;">
+    <div class="meta" style="margin-bottom: 18px;"><%= @page.title %></div>
+    <h1 class="display m-0" style="font-size: clamp(44px, 5.5vw, 76px); line-height: 1.0;">
+      <%= @page.title %>
+    </h1>
+    <p class="m-0" style="margin-top: 14px; font-family: var(--font-serif); font-style: italic; font-size: 15px; color: var(--color-olive);">
+      Last updated <%= l(@page.updated_at.to_date, format: :long) %>
+    </p>
+  </header>
+
+  <div class="container-read reading">
+    <%= @page.body %>
+  </div>
+
+  <div class="container-read" style="margin-top: 72px;">
+    <hr class="hairline" style="margin: 0 0 40px;">
+    <div class="meta" style="margin-bottom: 12px;">Stay in touch</div>
+    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 22px; color: var(--color-navy); margin-bottom: 18px;">
+      Want a short word every morning?
+    </p>
+    <%= render "shared/email_capture", source: "inline" %>
+  </div>
+</article>

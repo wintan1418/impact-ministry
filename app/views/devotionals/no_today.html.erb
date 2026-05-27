@@ -1,0 +1,26 @@
+<% content_for :title, "Tomorrow, before sunrise — IMPACT Ministry" %>
+<% content_for :description, "The morning word is being written. Subscribe to receive it." %>
+
+<section class="container-read" style="padding: 120px 0 80px;">
+  <div class="fade-up">
+    <div class="meta mb-5">The Morning Word</div>
+    <h1 class="display m-0" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.02em; margin-bottom: 28px;">
+      Tomorrow, <span class="italic font-normal">before sunrise.</span>
+    </h1>
+    <p class="reading" style="font-size: 19px; color: var(--color-ink); max-width: 520px;">
+      Today's word is still being written. We send a short, true word every morning at 5:30am — two minutes to read, the rest of the day is yours. Leave your email and the next one will find you.
+    </p>
+
+    <div class="mt-10" style="max-width: 480px;">
+      <%= render "shared/email_capture", source: "inline" %>
+    </div>
+
+    <hr class="hairline" style="margin: 56px 0 32px;">
+
+    <p>
+      <%= link_to devotionals_path, class: "ulink", style: "color: var(--color-navy); font-size: 15px;" do %>
+        Read past mornings <span aria-hidden="true">→</span>
+      <% end %>
+    </p>
+  </div>
+</section>

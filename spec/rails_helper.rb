@@ -22,6 +22,9 @@ end
 
 # Capybara configuration: rack_test by default, headless Chrome for `js: true`.
 Capybara.default_driver = :rack_test
+# Allow `fill_in "Email address"` to match inputs that use aria-label
+# (we don't always render a visible <label>, e.g. compact email captures).
+Capybara.enable_aria_label = true
 
 Capybara.register_driver :headless_chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new

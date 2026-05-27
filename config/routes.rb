@@ -15,6 +15,42 @@ Rails.application.routes.draw do
   # --- Public ---
   root "home#show"
 
+  # --- Static editor-managed pages (Page model) ---
+  # Top-level slugs are explicit so they stay short, memorable, and reservable.
+  # See docs/ROUTES.md and CLAUDE.md §10.
+  get "about",   to: "pages#show", defaults: { slug: "about" },   as: :about_page
+  get "beliefs", to: "pages#show", defaults: { slug: "beliefs" }, as: :beliefs_page
+  get "contact", to: "pages#show", defaults: { slug: "contact" }, as: :contact_page
+  get "privacy", to: "pages#show", defaults: { slug: "privacy" }, as: :privacy_page
+  get "terms",   to: "pages#show", defaults: { slug: "terms" },   as: :terms_page
+
+  # Catch-all for editor-created pages (anything published via /admin/pages).
+  get "pages/:slug", to: "pages#show", as: :page
+
+  # --- Devotionals (Phase 1.A) ---
+  get "devotionals/today" => "devotionals#today", as: :devotionals_today
+  resources :devotionals, only: [ :index, :show ], param: :slug
+
+  # --- Email capture (Phase 1.B) ---
+  post   "subscribe"          => "email_subscribers#create",              as: :subscribe
+  get    "unsubscribe/:token" => "email_subscribers#confirm_unsubscribe", as: :confirm_unsubscribe
+  delete "unsubscribe/:token" => "email_subscribers#destroy",             as: :unsubscribe
+
+  # --- Postmark webhooks (Phase 1.E) ---
+  # POST /postmark/webhooks — Open, Click, Bounce, SpamComplaint, Delivery.
+  # Always returns 200 (Postmark retries on non-2xx).
+  namespace :postmark do
+    resources :webhooks, only: [ :create ]
+  end
+
+  # --- Sitemap + error pages (Phase 1.F) ---
+  get "sitemap.xml" => "sitemaps#show", as: :sitemap, defaults: { format: :xml }
+
+  # Exception pages — wired via `config.exceptions_app = routes` in application.rb.
+  match "/404", to: "errors#not_found",             via: :all
+  match "/422", to: "errors#unprocessable_entity",  via: :all
+  match "/500", to: "errors#internal_server_error", via: :all
+
   # See docs/ROUTES.md for the full URL surface plan. Routes get added per phase.
 
   # PWA (disabled until needed)
