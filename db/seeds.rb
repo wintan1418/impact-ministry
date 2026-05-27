@@ -143,3 +143,195 @@ setting_seeds.each do |attrs|
     puts "Seeded setting: #{attrs[:key]}"
   end
 end
+
+# =================================================================
+# Sample content for development only.
+# Idempotent — re-runs safely. Skipped in production so live seeds
+# stay clean and the team writes real devotionals via /admin.
+# =================================================================
+if Rails.env.development?
+  admin_user = User.find_by(role: "admin") or abort("Need an admin user before seeding sample content")
+
+  # --- Devotionals: today + 13 days back + 3 days ahead -------------
+  devotionals = [
+    { offset:  3, title: "A Word for the Week You Haven't Lived Yet", scripture: "Ecclesiastes 3:1",     tags: %w[seasons hope] },
+    { offset:  2, title: "When the Calendar Tightens",                 scripture: "James 4:13–15",       tags: %w[time waiting] },
+    { offset:  1, title: "Tomorrow's Bread",                           scripture: "Matthew 6:34",        tags: %w[trust provision] },
+    { offset:  0, title: "When the Vision Tarries",                    scripture: "Habakkuk 2:1–4",      tags: %w[waiting habakkuk] },
+    { offset: -1, title: "Quieted by His Love",                        scripture: "Zephaniah 3:17",      tags: %w[rest love] },
+    { offset: -2, title: "The Long Obedience",                         scripture: "Hebrews 12:1–2",      tags: %w[endurance] },
+    { offset: -3, title: "A Lamp at Midnight",                         scripture: "Psalm 119:105",       tags: %w[scripture night] },
+    { offset: -4, title: "The Patience of Joseph",                     scripture: "Genesis 50:20",       tags: %w[providence forgiveness] },
+    { offset: -5, title: "What the Watchman Saw",                      scripture: "Isaiah 21:11–12",     tags: %w[waiting watchful] },
+    { offset: -6, title: "Bread for the Day",                          scripture: "Matthew 6:11",        tags: %w[provision] },
+    { offset: -7, title: "Manna in the Morning",                       scripture: "Exodus 16:21",        tags: %w[provision morning] },
+    { offset: -8, title: "The Yoke is Easy",                           scripture: "Matthew 11:28–30",    tags: %w[rest invitation] },
+    { offset: -9, title: "Streams in the Wasteland",                   scripture: "Isaiah 43:19",        tags: %w[renewal] },
+    { offset:-10, title: "All Things Hold Together",                   scripture: "Colossians 1:17",     tags: %w[providence christ] },
+    { offset:-11, title: "If These Were Silent, the Stones Would Cry", scripture: "Luke 19:40",          tags: %w[praise] },
+    { offset:-12, title: "He Restores My Soul",                        scripture: "Psalm 23:3",          tags: %w[restoration] },
+    { offset:-13, title: "Be Still, and Know",                         scripture: "Psalm 46:10",         tags: %w[stillness] }
+  ]
+
+  devotional_excerpts = {
+    "When the Vision Tarries" =>
+      "Waiting is not the absence of God's word. It is the long, slow work of trusting that what He has spoken still stands — even when the answer takes its time.",
+    "Quieted by His Love" =>
+      "There is a kind of quiet you cannot manufacture. It comes only when Someone larger than your worry leans in close and decides not to leave.",
+    "The Long Obedience" =>
+      "Faith is rarely a single decision. It is a thousand small mornings of choosing to put one foot down where the last one was.",
+    "Be Still, and Know" =>
+      "Stillness is not idleness. It is the holy work of letting God be God while you remember, slowly, that you are not.",
+    "Bread for the Day" =>
+      "He did not promise a year's supply. He promised today. And today, that has always been enough."
+  }
+
+  devotional_bodies = {
+    default: <<~HTML,
+      <p>The prophet stood his watch. He did not pace, he did not panic — he stood. He climbed the tower and waited for an answer, even though the news from the lowlands was bad and the silence from heaven was longer than he had hoped.</p>
+      <p>What we forget about waiting is that it is also work. The watchman is doing a job. The vision he is waiting for has already been spoken; his task is not to manufacture it, but to receive it when it comes. <em>For still the vision awaits its appointed time.</em> Not yours. Not ours. <em>Its.</em></p>
+      <p>You do not have to make tomorrow happen. You only have to be awake when it arrives.</p>
+    HTML
+    "When the Vision Tarries" => <<~HTML,
+      <p>Habakkuk stood his watch. He did not pace, he did not panic — he stood. And he wrote down what God said, even though the answer was slow.</p>
+      <p>The hardest thing about waiting on God is not the not-knowing. It is the suspicion, late at night, that maybe nothing is coming at all. That what was spoken has been forgotten. That the silence is the answer.</p>
+      <p>But the text gives us a different word. <em>The vision awaits its appointed time; it hastens to the end — it will not lie.</em> Not your timing. Its. And not your strength to hold it up — its own strength to arrive when the soil is right.</p>
+      <p>Today, your job is small. Stand the watch. Keep faith with what was spoken. The vision will not lie.</p>
+    HTML
+    "Quieted by His Love" => <<~HTML,
+      <p>Zephaniah closes a brutal book with a tender line. After the warnings, after the fire, after the bones of judgment have been laid out plain, the prophet sets down a sentence that does not sound like the same God: <em>he will quiet you by his love</em>.</p>
+      <p>Not <em>cheer you up</em>. Not <em>distract you</em>. Quiet. The kind of quiet that comes when someone larger than your worry leans in close and decides not to leave.</p>
+      <p>If your morning is loud — and most are — let this word fall first.</p>
+    HTML
+    "Be Still, and Know" => <<~HTML
+      <p>The psalm does not promise rescue from the trouble. It promises a kind of knowing that arrives in stillness, in the middle of trouble. The nations rage. The mountains slip into the heart of the sea. And right there — in the middle of all that — <em>be still, and know that I am God</em>.</p>
+      <p>The stillness is not the goal. The knowing is the goal. The stillness is the soil the knowing grows in.</p>
+      <p>Take two minutes. Close the laptop. Read the verse once. Let it sit.</p>
+    HTML
+  }
+
+  devotionals.each do |spec|
+    date = Date.current + spec[:offset].days
+    next if Devotional.exists?(scheduled_for: date)
+
+    d = Devotional.new(
+      title:                spec[:title],
+      scripture_reference:  spec[:scripture],
+      excerpt:              devotional_excerpts[spec[:title]] ||
+                            "A short word for #{date.strftime('%A')} morning — read in under two minutes.",
+      author:               admin_user,
+      scheduled_for:        date,
+      tags:                 spec[:tags]
+    )
+    d.body = devotional_bodies[spec[:title]] || devotional_bodies[:default]
+    # Publish anything from today and earlier; leave the next 3 days as scheduled-draft.
+    d.published_at = Time.current if spec[:offset] <= 0
+    d.save!
+    state = d.published_at ? "published" : "scheduled"
+    puts "Seeded devotional (#{state}): #{d.scheduled_for} · #{d.title}"
+  end
+
+  # --- Email subscribers (sample audience for stats) ---------------
+  TARGET_SUBSCRIBERS = 80
+  sources = EmailSubscriber::SOURCES - %w[manual]  # spread across capture surfaces
+  existing = EmailSubscriber.count
+
+  if existing < TARGET_SUBSCRIBERS
+    needed = TARGET_SUBSCRIBERS - existing
+    attempts = 0
+    created = 0
+    while created < needed && attempts < needed * 4
+      attempts += 1
+      email = Faker::Internet.email(domain: %w[example.com example.org test.local].sample)
+      next if EmailSubscriber.exists?(email: email.downcase)
+
+      EmailSubscriber.create!(
+        email:          email,
+        name:           Faker::Name.name,
+        source:         sources.sample,
+        subscribed_at:  rand(30.days).seconds.ago
+      )
+      created += 1
+    end
+    puts "Seeded #{created} sample email subscribers — now #{EmailSubscriber.count} total."
+  else
+    puts "Email subscribers already populated (#{existing})."
+  end
+
+  # --- Podcast episodes (sample season 1) --------------------------
+  podcast_seeds = [
+    { ep: 8, offset_days:   5, photo: "microphone", title: "Sermons That Don't Outshout the Text",
+      guests: [ "Wendell Anders" ],
+      desc: "A homiletics professor on the long-lost art of preaching that lets the passage breathe — and what happens to a congregation when the preacher gets out of the way." },
+    { ep: 7, offset_days:  -3, photo: "doorway-light", title: "The Long Obedience of Building Something Good",
+      guests: [ "Dr. Anita Keys" ],
+      desc: "Dr. Anita Keys joins to talk about staying faithful through the years where nothing seems to grow — and what waiting taught her about leadership in a season of urgency." },
+    { ep: 6, offset_days: -10, photo: "path-pines",  title: "Mississippi Mornings",
+      guests: [ "Pastor Reuben Hollis" ],
+      desc: "What the Delta teaches you about scripture, slowness, and the particular kind of dignity small places carry. A long conversation with the founder of IMPACT." },
+    { ep: 5, offset_days: -17, photo: "open-bible",  title: "A Bible You Can Lean On",
+      guests: [ "Sarah-Beth Kim" ],
+      desc: "Our devotional editor on why translation choices matter, what we lose when we hurry, and how to teach a teenager to slow down and read for a lifetime." },
+    { ep: 4, offset_days: -24, photo: "handshake",   title: "When a Small Church Hires a Designer",
+      guests: [ "Marcus Levine", "Renée Bowman" ],
+      desc: "Our partner-churches director and a graphic designer who left a corporate gig to help five rural congregations rebuild their visual language. What surprised them, what didn't, and what's still hard." },
+    { ep: 3, offset_days: -31, photo: "praying-hands", title: "Praying When You Don't Feel It",
+      guests: [ "Father James Lloyd" ],
+      desc: "A Catholic monk turned street pastor on the daily office, the dryness, and the discipline of speaking when there is nothing inside you that wants to speak." },
+    { ep: 2, offset_days: -38, photo: "morning-desk", title: "On Writing a Word Worth Reading",
+      guests: [ "Editorial round-table" ],
+      desc: "The whole devotional team in one room. How a paragraph gets to your inbox at 5am — the false starts, the rewrites, the cut darlings." },
+    { ep: 1, offset_days: -45, photo: "delta-sunrise", title: "Why a Podcast, Why Now",
+      guests: [ "Pastor Reuben Hollis", "Sarah-Beth Kim" ],
+      desc: "The pilot. A short conversation about what this show is, what it isn't, and why we're starting it in 2026 instead of waiting until everything was perfect." }
+  ]
+
+  podcast_seeds.each do |s|
+    next if PodcastEpisode.exists?(season: 1, episode_number: s[:ep])
+    date = Date.current + s[:offset_days].days
+    ep = PodcastEpisode.new(
+      title:             s[:title],
+      season:            1,
+      episode_number:    s[:ep],
+      description:       s[:desc],
+      guest_names:       s[:guests],
+      duration_seconds:  (32 + rand(20)) * 60,    # 32–52 min
+      scheduled_for:     date,
+      cover_photo_slug:  s[:photo]
+    )
+    ep.published_at = Time.current if s[:offset_days] < 0
+    ep.save!
+    state = ep.published_at ? "published" : "scheduled"
+    puts "Seeded podcast (#{state}): S#{ep.season} E#{ep.episode_number} · #{ep.title}"
+  end
+
+  # --- Devotional deliveries (open rate visualization) ------------
+  # For each published devotional, create a delivery row per subscriber if missing.
+  # ~58% open rate, ~12% click rate to feel realistic.
+  if DevotionalDelivery.count < (Devotional.published.count * EmailSubscriber.active.count * 0.5)
+    published_devotionals = Devotional.published.where("scheduled_for <= ?", Date.current)
+    active_subs           = EmailSubscriber.active.to_a
+    created = 0
+
+    published_devotionals.find_each do |d|
+      active_subs.each do |sub|
+        next if DevotionalDelivery.exists?(devotional_id: d.id, email_subscriber_id: sub.id)
+        sent = d.scheduled_for.to_time.change(hour: 5, min: rand(0..10)) + rand(0..30 * 60).seconds
+        opened  = rand < 0.58 ? sent + rand(60..6.hours).seconds : nil
+        clicked = (opened && rand < 0.22) ? opened + rand(30..600).seconds : nil
+        DevotionalDelivery.create!(
+          devotional: d,
+          email_subscriber: sub,
+          sent_at: sent,
+          opened_at: opened,
+          clicked_at: clicked,
+          postmark_message_id: "seed-#{d.id}-#{sub.id}"
+        )
+        created += 1
+      end
+    end
+    puts "Seeded #{created} delivery rows (open ~58%, click ~12%)."
+  else
+    puts "Delivery history already populated."
+  end
+end

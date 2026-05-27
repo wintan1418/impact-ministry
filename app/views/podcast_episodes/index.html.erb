@@ -1,64 +1,108 @@
 <% content_for :title, "Podcast — IMPACT Ministry" %>
-<% content_for :description, "Conversations on faith, work, and waiting. Coming this season." %>
+<% content_for :description, "Conversations on faith, work, and waiting. The IMPACT Ministry podcast." %>
 
 <%# ============================================================
-     HERO — episode image + framed CTA
+     HERO — latest episode feature card
      ============================================================ %>
-<section class="pt-10 md:pt-16 pb-16 md:pb-24">
+<section class="pt-10 md:pt-16 pb-12 md:pb-20">
   <div class="container-page">
-    <div class="grid gap-10 md:gap-14 lg:grid-cols-[1.05fr_1fr] items-center">
+    <div class="flex justify-between items-baseline flex-wrap gap-4 mb-8 md:mb-10">
       <div>
-        <p class="meta mb-5">The IMPACT Podcast</p>
-        <h1 class="display m-0" style="font-size: clamp(40px, 6vw, 80px); line-height: 0.98; letter-spacing: -0.02em;">
-          Conversations on faith,<br>
-          <span class="italic font-normal">work, and waiting.</span>
+        <p class="meta">The IMPACT Podcast</p>
+        <h1 class="display m-0 mt-3" style="font-size: clamp(36px, 5vw, 64px); line-height: 1.0; letter-spacing: -0.02em;">
+          Conversations on faith,<br><span class="italic font-normal">work, and waiting.</span>
         </h1>
-        <p class="reading mt-6 max-w-[540px]" style="font-size: 19px;">
-          Slow conversations with pastors, writers, and neighbors trying to live well in
-          a hurried decade. The first season releases mid-2026.
-        </p>
-
-        <div class="mt-9 max-w-[520px]">
-          <p class="meta mb-3">Be the first to hear</p>
-          <%= render "shared/email_capture", source: "podcast" %>
-        </div>
-
-        <div class="mt-9 flex gap-2 flex-wrap">
-          <span class="chip">Spotify</span>
-          <span class="chip">Apple Podcasts</span>
-          <span class="chip">YouTube</span>
-          <span class="chip">RSS</span>
-        </div>
       </div>
-
-      <div class="relative">
-        <%= image_tag photo_url("microphone", w: 720, h: 880), alt: "A close-up of a podcast microphone in warm light", class: "w-full h-auto", style: "border-radius: var(--radius-image); aspect-ratio: 4 / 5; object-fit: cover;" %>
-        <div class="card" style="position: absolute; left: -16px; bottom: 24px; padding: 18px 22px; background: var(--color-cream); box-shadow: var(--shadow-soft);">
-          <p class="meta m-0" style="color: var(--color-crimson);">Season one · drops mid-2026</p>
-          <p class="m-0 mt-1" style="font-family: var(--font-serif); font-size: 18px; color: var(--color-navy);">Six episodes. One season at a time.</p>
-        </div>
+      <div class="flex gap-2 flex-wrap">
+        <span class="chip">Spotify</span>
+        <span class="chip">Apple Podcasts</span>
+        <span class="chip">YouTube</span>
+        <span class="chip">RSS</span>
       </div>
     </div>
-  </div>
-</section>
 
-<%# ============================================================
-     What to expect — three cards
-     ============================================================ %>
-<section class="pb-20 md:pb-28">
-  <div class="container-page">
-    <p class="meta mb-8 text-center">What to expect</p>
-    <div class="grid gap-6 md:gap-8 md:grid-cols-3">
-      <% [
-        { title: "Long-form, never fast", body: "Forty-minute episodes. No outro music. No sponsor reads. The conversation breathes." },
-        { title: "Guests with weight",     body: "Pastors, writers, school principals, addiction counselors. People who've been doing the work for a while." },
-        { title: "A reading list",         body: "Every episode comes with the texts referenced — Scripture, books, essays. We treat your time like it's worth something." }
-      ].each do |card| %>
-        <div class="card p-7 md:p-8">
-          <p class="display m-0" style="font-size: 24px; line-height: 1.15;"><%= card[:title] %></p>
-          <p class="reading mt-3 m-0" style="font-size: 16px;"><%= card[:body] %></p>
+    <% if @latest_episode %>
+      <%= link_to podcast_episode_path(@latest_episode.slug), class: "card card-hover overflow-hidden p-0", style: "display: grid; grid-template-columns: 1fr;" do %>
+        <div class="grid lg:grid-cols-[1.3fr_1fr]">
+          <div class="relative" style="min-height: 320px;">
+            <%= image_tag photo_url(@latest_episode.cover_photo_slug.presence || "microphone", w: 1000, h: 700),
+                          alt: "Cover image for #{@latest_episode.title}",
+                          class: "w-full h-full",
+                          style: "object-fit: cover; min-height: 320px;" %>
+            <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 40%, rgba(27,42,78,0.7));"></div>
+            <div class="absolute left-5 bottom-5 md:left-7 md:bottom-7" style="color: var(--color-cream);">
+              <p class="meta m-0" style="color: rgba(250,247,242,0.7);">
+                Season <%= @latest_episode.season %> · Episode <%= @latest_episode.episode_number %>
+                <% if @latest_episode.duration_label %> · <%= @latest_episode.duration_label %><% end %>
+              </p>
+            </div>
+            <div class="absolute right-5 bottom-5 md:right-7 md:bottom-7 flex items-center justify-center"
+                 style="width: 56px; height: 56px; border-radius: 9999px; background: var(--color-crimson); color: var(--color-cream); box-shadow: var(--shadow-soft);"
+                 aria-hidden="true">▶</div>
+          </div>
+          <div class="p-6 md:p-10 lg:p-12 flex flex-col justify-center" style="background: var(--color-linen);">
+            <h2 class="display m-0" style="font-size: clamp(24px, 3vw, 36px); letter-spacing: -0.02em; line-height: 1.1;">
+              <%= @latest_episode.title %>
+            </h2>
+            <% if @latest_episode.guest_names.any? %>
+              <p class="meta mt-3" style="color: var(--color-olive);">with <%= @latest_episode.guest_names.to_sentence %></p>
+            <% end %>
+            <p class="m-0 mt-4" style="font-family: var(--font-reading); font-size: 15px; line-height: 1.65;">
+              <%= truncate(@latest_episode.description.to_s, length: 220) %>
+            </p>
+            <p class="mt-6" style="font-size: 13px; color: var(--color-crimson); font-weight: 500;">Listen →</p>
+          </div>
         </div>
       <% end %>
-    </div>
+    <% else %>
+      <div class="card p-12 text-center">
+        <p class="meta mb-3">Season one drops mid-2026</p>
+        <h2 class="display m-0" style="font-size: 32px;">No episodes published yet.</h2>
+        <p class="reading mt-4">Leave your email below and we'll send the first one before it goes live anywhere else.</p>
+        <div class="mt-6 max-w-[420px] mx-auto">
+          <%= render "shared/email_capture", source: "podcast" %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </section>
+
+<%# ============================================================
+     EPISODE GRID
+     ============================================================ %>
+<% if @past_episodes.any? %>
+  <section class="pb-20 md:pb-28">
+    <div class="container-page">
+      <p class="meta mb-6">Past episodes</p>
+      <div class="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <% @past_episodes.each do |ep| %>
+          <%= link_to podcast_episode_path(ep.slug), class: "card card-hover overflow-hidden p-0" do %>
+            <div class="relative" style="height: 220px;">
+              <%= image_tag photo_url(ep.cover_photo_slug.presence || "microphone", w: 600, h: 440),
+                            alt: "Cover for #{ep.title}",
+                            class: "w-full h-full",
+                            style: "object-fit: cover;" %>
+              <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 50%, rgba(27,42,78,0.55));"></div>
+              <div class="absolute left-4 bottom-3" style="color: var(--color-cream);">
+                <p class="meta m-0" style="color: rgba(250,247,242,0.75);">
+                  S<%= ep.season %> · E<%= ep.episode_number %><% if ep.duration_label %> · <%= ep.duration_label %><% end %>
+                </p>
+              </div>
+            </div>
+            <div class="p-5 md:p-6">
+              <h3 class="display m-0" style="font-size: 20px; line-height: 1.2; letter-spacing: -0.01em;">
+                <%= ep.title %>
+              </h3>
+              <% if ep.guest_names.any? %>
+                <p class="meta mt-2" style="color: var(--color-olive);">with <%= ep.guest_names.to_sentence %></p>
+              <% end %>
+              <p class="mt-3 m-0" style="font-family: var(--font-reading); font-size: 14px; line-height: 1.55; color: var(--color-ink);">
+                <%= truncate(ep.description.to_s, length: 110) %>
+              </p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>

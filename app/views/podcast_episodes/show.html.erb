@@ -1,0 +1,55 @@
+<% content_for :title, "#{@episode.title} — IMPACT Ministry Podcast" %>
+<% content_for :description, truncate(@episode.description.to_s, length: 160) %>
+
+<article class="container-read" style="padding-top: 60px; padding-bottom: 96px;">
+  <p class="meta">
+    <%= link_to "Podcast", podcast_path, class: "ulink" %> ·
+    Season <%= @episode.season %> · Episode <%= @episode.episode_number %>
+    <% if @episode.duration_label %> · <%= @episode.duration_label %><% end %>
+  </p>
+
+  <h1 class="display mt-5" style="font-size: clamp(36px, 5vw, 60px); line-height: 1.05; letter-spacing: -0.02em;">
+    <%= @episode.title %>
+  </h1>
+
+  <% if @episode.guest_names.any? %>
+    <p class="meta mt-4" style="color: var(--color-olive);">with <%= @episode.guest_names.to_sentence %></p>
+  <% end %>
+
+  <%= image_tag photo_url(@episode.cover_photo_slug.presence || "microphone", w: 1200, h: 700),
+                alt: "Cover image for #{@episode.title}",
+                class: "w-full mt-9",
+                style: "border-radius: var(--radius-image); aspect-ratio: 16 / 9; object-fit: cover;" %>
+
+  <% if @episode.audio_url.present? %>
+    <div class="mt-8">
+      <audio controls preload="none" class="w-full">
+        <source src="<%= @episode.audio_url %>" type="audio/mpeg">
+        Your browser doesn't support the audio tag — download the file <a href="<%= @episode.audio_url %>">here</a>.
+      </audio>
+    </div>
+  <% end %>
+
+  <div class="reading mt-8" style="font-size: 18px;">
+    <% (@episode.description.to_s.split(/\n+/)).each do |p| %>
+      <p><%= p %></p>
+    <% end %>
+  </div>
+
+  <% if @episode.transcript.present? %>
+    <details class="mt-12" style="border-top: 1px solid var(--color-olive-30); padding-top: 24px;">
+      <summary style="cursor: pointer; font-family: var(--font-serif); color: var(--color-navy); font-size: 18px;">
+        Read the transcript
+      </summary>
+      <div class="reading mt-6" style="font-size: 16px;">
+        <% @episode.transcript.split(/\n+/).each do |p| %>
+          <p><%= p %></p>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+
+  <hr class="hairline my-12">
+
+  <%= render "shared/email_capture", source: "podcast" %>
+</article>

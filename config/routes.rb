@@ -33,7 +33,8 @@ Rails.application.routes.draw do
 
   # --- Stub surfaces (placeholder pages until Phase 2/3 controllers land) ---
   # Each links from the nav and renders a real designed page with email capture.
-  get "podcast" => "podcast_episodes#index", as: :podcast
+  get "podcast"        => "podcast_episodes#index", as: :podcast
+  get "podcast/:slug"  => "podcast_episodes#show",  as: :podcast_episode
   get "pray"    => "prayer_requests#index",  as: :pray
   get "partner" => "partnerships#new",       as: :partner
   get "give"    => "giving#show",            as: :give

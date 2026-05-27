@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_200203) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_204222) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -138,6 +138,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_200203) do
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_pages_on_slug", unique: true
+  end
+
+  create_table "podcast_episodes", force: :cascade do |t|
+    t.string "audio_url"
+    t.string "cover_photo_slug"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "duration_seconds"
+    t.integer "episode_number", null: false
+    t.string "guest_names", default: [], array: true
+    t.datetime "published_at"
+    t.date "scheduled_for"
+    t.integer "season", default: 1, null: false
+    t.string "slug", null: false
+    t.string "title", null: false
+    t.text "transcript"
+    t.datetime "updated_at", null: false
+    t.string "video_url"
+    t.index ["published_at"], name: "index_podcast_episodes_on_published_at"
+    t.index ["season", "episode_number"], name: "index_podcast_episodes_on_season_and_episode_number", unique: true
+    t.index ["slug"], name: "index_podcast_episodes_on_slug", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|

@@ -5,6 +5,9 @@ class HomeController < ApplicationController
     @mission_quote = Setting.get(:homepage_hero_quote).presence ||
                      "“We believe scripture is older than our hurry, kinder than our news cycles, and steady enough to carry a person through a Tuesday.”"
 
+    @latest_episode = (defined?(PodcastEpisode) && PodcastEpisode.table_exists?) ?
+                      PodcastEpisode.published.recent_first.first : nil
+
     # Live-ish social proof. Real number on the email-capture section.
     @readers_this_morning = readers_this_morning_count
     @readers_this_week    = readers_this_week_count
