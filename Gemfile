@@ -64,7 +64,7 @@ gem "stripe", "~> 13.0"
 gem "aws-sdk-s3", "~> 1.180", require: false
 
 # In-app + email notification orchestration
-gem "noticed", "~> 2.6"
+gem "noticed", "~> 3.0"
 
 # Request throttling
 gem "rack-attack", "~> 6.7"
