@@ -275,11 +275,23 @@
     border-bottom-color: var(--color-olive-30);
   }
 
-  /* Mobile menu button is hidden by default; .nav-links is shown.
-     Below 880px (the design's breakpoint) we swap them. */
-  .menu-btn { display: none; }
-  .mobile-menu { display: none; }
-  .mobile-menu.is-open { display: block; }
+  /* Desktop nav-links + mobile menu button.
+     Below 880px (the design's breakpoint in shell.jsx) we swap them.
+     These rules use !important specifically because Tailwind's display
+     utilities (`flex`, `inline-flex`, `hidden`) live in `@layer utilities`
+     which is loaded AFTER `@layer components` — without !important the
+     utilities would override the media query and ship the wrong layout. */
+  .nav-links {
+    display: flex !important;
+    align-items: center;
+  }
+  .menu-btn {
+    display: none !important;
+    align-items: center;
+    justify-content: center;
+  }
+  .mobile-menu       { display: none !important; }
+  .mobile-menu.is-open { display: block !important; }
 
   @media (max-width: 880px) {
     .nav-links { display: none !important; }

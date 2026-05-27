@@ -17,8 +17,8 @@
       </span>
     <% end %>
 
-    <%# ---- Desktop links ---- %>
-    <div class="nav-links flex items-center" style="gap: 28px;">
+    <%# ---- Desktop links (display controlled by .nav-links rule + 880px media query) ---- %>
+    <div class="nav-links" style="gap: 28px;">
       <%= link_to "Devotional",  devotionals_today_path, class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
       <%= link_to "Archive",     devotionals_path,       class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
       <%= link_to "Podcast",     "#",                    class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
@@ -41,9 +41,9 @@
       <a href="#" class="btn btn-primary nav-link" style="padding: 10px 18px; font-size: 14px;">Give</a>
     </div>
 
-    <%# ---- Hamburger (mobile, < 880px) ---- %>
+    <%# ---- Hamburger (mobile, < 880px) — display controlled by .menu-btn rule ---- %>
     <button type="button"
-            class="menu-btn inline-flex items-center justify-center"
+            class="menu-btn"
             style="background: transparent; border: 0; padding: 8px; color: var(--color-navy);"
             data-action="mobile-nav#toggle"
             data-mobile-nav-target="button"
