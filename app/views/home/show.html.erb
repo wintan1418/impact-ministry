@@ -4,11 +4,11 @@
 <%# ============================================================
      HERO — today's devotional title, scripture, teaser, CTA
      ============================================================ %>
-<section style="padding-top: 60px; padding-bottom: 120px;">
+<section class="pt-10 md:pt-16 pb-16 md:pb-28 lg:pb-32">
   <div class="container-page">
-    <div class="grid gap-20 lg:grid-cols-[1.05fr_1fr] items-center">
+    <div class="grid gap-12 md:gap-16 lg:gap-20 lg:grid-cols-[1.05fr_1fr] items-center">
       <div>
-        <div class="flex items-center gap-3 mb-7 fade-up">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-6 sm:mb-7 fade-up">
           <span class="meta">Today · <%= Date.current.strftime("%A, %B %-d") %></span>
           <span class="inline-block" style="width: 4px; height: 4px; border-radius: 9999px; background: var(--color-olive-30);"></span>
           <% if @today_devotional %>
@@ -46,7 +46,7 @@
 
       <%# Right column — phone-preview style devotional card stack %>
       <div class="relative">
-        <div style="background: var(--color-linen); border-radius: 28px; padding: 24px; overflow: hidden;">
+        <div class="rounded-3xl overflow-hidden p-5 sm:p-6" style="background: var(--color-linen);">
           <div class="card fade-up" style="background: var(--color-cream); border-radius: 20px; padding: 28px; transform: rotate(-1deg); animation-delay: 200ms;">
             <p class="meta m-0" style="color: var(--color-olive);">
               <%= (@today_devotional&.scheduled_for || Date.current).strftime("%a, %b %-d") %> · The Morning Word
@@ -80,23 +80,23 @@
 <%# ============================================================
      EMAIL CAPTURE — framed as invitation
      ============================================================ %>
-<section style="padding-bottom: 140px;">
+<section class="pb-20 md:pb-28 lg:pb-36">
   <div class="container-page">
-    <div class="grid gap-20 lg:grid-cols-[1fr_1.05fr] items-center">
+    <div class="grid gap-12 md:gap-16 lg:gap-20 lg:grid-cols-[1fr_1.05fr] items-center">
       <div>
-        <p class="meta mb-5">The morning word</p>
-        <h2 class="display m-0" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.0;">
+        <p class="meta mb-4 md:mb-5">The morning word</p>
+        <h2 class="display m-0" style="font-size: clamp(36px, 5vw, 64px); line-height: 1.0;">
           Start your day<br><span class="italic font-normal">with us.</span>
         </h2>
         <p class="reading mt-5 max-w-[480px]" style="font-size: 18px;">
           A short, true word in your inbox before sunrise. Two minutes to read. The rest of the day is yours.
         </p>
 
-        <div class="mt-8 max-w-[480px]">
+        <div class="mt-7 md:mt-8 max-w-[480px]">
           <%= render "shared/email_capture", source: "inline" %>
         </div>
 
-        <div class="mt-8 flex gap-8 text-[13px]" style="color: var(--color-olive);">
+        <div class="mt-8 flex flex-wrap gap-x-8 gap-y-5 text-[13px]" style="color: var(--color-olive);">
           <div>
             <strong class="block" style="color: var(--color-navy); font-family: var(--font-serif); font-size: 22px; font-weight: 500;">
               <%= number_with_delimiter(@readers_this_week) %>
@@ -119,7 +119,7 @@
       </div>
 
       <%# Right — quiet visual rest %>
-      <div class="ph" style="height: 480px; border-radius: var(--radius-image);">
+      <div class="ph w-full" style="aspect-ratio: 5 / 6; max-height: 520px; border-radius: var(--radius-image);">
         [ a photograph of a journal on a wooden desk ]
       </div>
     </div>
@@ -129,13 +129,13 @@
 <%# ============================================================
      MISSION PULL-QUOTE
      ============================================================ %>
-<section style="padding-bottom: 140px;">
-  <div class="mx-auto" style="max-width: 920px; padding: 0 2rem;">
-    <p class="meta" style="text-align: center; margin-bottom: 36px;">What we believe</p>
-    <blockquote class="m-0 text-center" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(28px, 4vw, 44px); line-height: 1.25; color: var(--color-navy); letter-spacing: -0.01em;">
+<section class="pb-20 md:pb-28 lg:pb-36">
+  <div class="mx-auto px-5 md:px-8" style="max-width: 920px;">
+    <p class="meta text-center mb-8 md:mb-9">What we believe</p>
+    <blockquote class="m-0 text-center" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(24px, 4vw, 44px); line-height: 1.25; color: var(--color-navy); letter-spacing: -0.01em;">
       We believe scripture is older than our hurry, kinder than our news cycles, and steady enough to carry a person through a Tuesday — every Tuesday, for the rest of their life.
     </blockquote>
-    <div class="text-center mt-9">
+    <div class="text-center mt-8 md:mt-9">
       <%= link_to "Read our statement of faith", beliefs_page_path, class: "ulink", style: "color: var(--color-crimson); font-size: 14px; font-weight: 500;" %>
     </div>
   </div>
@@ -144,12 +144,12 @@
 <%# ============================================================
      PODCAST — Phase 2 will render real episode; placeholder here
      ============================================================ %>
-<section style="padding-bottom: 140px;">
+<section class="pb-20 md:pb-28 lg:pb-36">
   <div class="container-page">
     <div class="flex justify-between items-baseline mb-7 flex-wrap gap-4">
       <div>
         <p class="meta">The IMPACT Podcast</p>
-        <h2 class="display m-0 mt-2" style="font-size: clamp(32px, 4vw, 48px); letter-spacing: -0.01em;">
+        <h2 class="display m-0 mt-2" style="font-size: clamp(28px, 4vw, 48px); letter-spacing: -0.01em;">
           Conversations on faith, work, and waiting.
         </h2>
       </div>
@@ -157,28 +157,28 @@
     </div>
 
     <div class="card card-hover overflow-hidden p-0 grid lg:grid-cols-[1.3fr_1fr] gap-0">
-      <div class="relative" style="min-height: 360px;">
-        <div class="ph" style="height: 100%; min-height: 360px; border-radius: 0;">
+      <div class="relative" style="min-height: 240px;">
+        <div class="ph" style="height: 100%; min-height: 240px; border-radius: 0;">
           [ episode photo — pastor reuben & dr. anita keys ]
         </div>
         <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 40%, rgba(27,42,78,0.7));"></div>
-        <div class="absolute left-7 bottom-7" style="color: var(--color-cream);">
+        <div class="absolute left-5 bottom-5 md:left-7 md:bottom-7" style="color: var(--color-cream);">
           <p class="meta m-0" style="color: rgba(250,247,242,0.7);">Episode 14 · 42 min</p>
         </div>
-        <div class="absolute right-7 bottom-7 flex items-center justify-center"
-             style="width: 64px; height: 64px; border-radius: 9999px; background: var(--color-crimson); color: var(--color-cream); box-shadow: var(--shadow-soft);"
+        <div class="absolute right-5 bottom-5 md:right-7 md:bottom-7 flex items-center justify-center"
+             style="width: 56px; height: 56px; border-radius: 9999px; background: var(--color-crimson); color: var(--color-cream); box-shadow: var(--shadow-soft);"
              aria-hidden="true">
           ▶
         </div>
       </div>
-      <div class="p-12 flex flex-col justify-center" style="background: var(--color-linen);">
-        <h3 class="display m-0" style="font-size: 36px; letter-spacing: -0.02em; line-height: 1.1;">
+      <div class="p-6 md:p-10 lg:p-12 flex flex-col justify-center" style="background: var(--color-linen);">
+        <h3 class="display m-0" style="font-size: clamp(24px, 3vw, 36px); letter-spacing: -0.02em; line-height: 1.1;">
           The Long Obedience of Building Something Good
         </h3>
         <p class="m-0 mt-4" style="font-family: var(--font-reading); font-size: 15px; line-height: 1.65;">
           Dr. Anita Keys joins to talk about staying faithful through the years where nothing seems to grow — and what waiting taught her about leadership in a season of urgency.
         </p>
-        <div class="mt-7 flex gap-2 flex-wrap">
+        <div class="mt-6 md:mt-7 flex gap-2 flex-wrap">
           <span class="chip">Spotify</span>
           <span class="chip">Apple Podcasts</span>
           <span class="chip">YouTube</span>
@@ -191,18 +191,18 @@
 <%# ============================================================
      TESTIMONY — full-width navy band
      ============================================================ %>
-<section style="background: var(--color-navy); color: var(--color-cream); padding: 120px 0;">
+<section class="py-20 md:py-24 lg:py-28" style="background: var(--color-navy); color: var(--color-cream);">
   <div class="container-page">
-    <p class="meta text-center" style="color: rgba(250,247,242,0.6); margin-bottom: 40px;">One story</p>
-    <div class="grid gap-14 md:grid-cols-[260px_1fr] max-w-[920px] mx-auto items-center">
-      <div class="ph" style="aspect-ratio: 1/1.15; border-radius: 16px; min-height: 240px;">
+    <p class="meta text-center" style="color: rgba(250,247,242,0.6); margin-bottom: 32px;">One story</p>
+    <div class="grid gap-10 md:gap-14 md:grid-cols-[220px_1fr] lg:grid-cols-[260px_1fr] max-w-[920px] mx-auto items-center">
+      <div class="ph mx-auto md:mx-0 w-3/4 sm:w-1/2 md:w-full" style="aspect-ratio: 1/1.15; border-radius: 16px; min-height: 180px;">
         [ portrait — marcus, jackson MS ]
       </div>
       <div>
-        <blockquote class="m-0" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.35; color: var(--color-cream);">
+        <blockquote class="m-0 text-center md:text-left" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(20px, 2.4vw, 32px); line-height: 1.35; color: var(--color-cream);">
           "I hadn't opened a Bible in nine years. The morning email didn't ask me to. It just showed up, gentle, like a friend who knew I'd be back."
         </blockquote>
-        <div class="mt-7 flex items-center gap-3 text-[13px]" style="color: rgba(250,247,242,0.7);">
+        <div class="mt-6 md:mt-7 flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 text-[13px]" style="color: rgba(250,247,242,0.7);">
           <span style="font-family: var(--font-serif); color: var(--color-cream); font-size: 16px;">Marcus L.</span>
           <span>·</span>
           <span>Jackson, MS · subscriber since Jan 2026</span>
@@ -215,9 +215,9 @@
 <%# ============================================================
      GIVE INVITATION — dignified, small
      ============================================================ %>
-<section style="padding: 120px 0;">
-  <div class="mx-auto text-center" style="max-width: 760px; padding: 0 2rem;">
-    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: clamp(20px, 2vw, 26px); color: var(--color-navy); line-height: 1.5;">
+<section class="py-20 md:py-24 lg:py-28">
+  <div class="mx-auto text-center px-5 md:px-8" style="max-width: 760px;">
+    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: clamp(18px, 2vw, 26px); color: var(--color-navy); line-height: 1.5;">
       IMPACT runs on the generosity of people who've been impacted.
     </p>
     <div class="mt-6">

@@ -18,9 +18,14 @@
 %>
 <% action ||= "submit" %>
 
+<%# Invisible mode — the challenge runs silently in the background.
+    The widget UI never paints on the page. The hidden
+    cf-turnstile-response input still ships with the form submission, so
+    server-side TurnstileVerifier behaves identically. %>
 <div class="cf-turnstile"
      data-sitekey="<%= ENV["TURNSTILE_SITE_KEY"] %>"
      data-action="<%= action %>"
+     data-size="invisible"
      data-controller="turnstile"></div>
 
 <% content_for :scripts_turnstile do %>

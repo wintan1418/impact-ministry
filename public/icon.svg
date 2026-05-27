@@ -1,3 +1,9 @@
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="256" cy="256" r="256" fill="red"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- IMPACT Ministry mark — cream tile, navy serif "i", crimson dot. -->
+  <rect width="512" height="512" rx="96" fill="#FAF7F2"/>
+  <rect x="32" y="32" width="448" height="448" rx="72" fill="none" stroke="#8B7355" stroke-opacity="0.30" stroke-width="3"/>
+  <!-- Lowercase italic "i" stem -->
+  <rect x="232" y="180" width="48" height="200" rx="6" fill="#1B2A4E"/>
+  <!-- Crimson dot above (the "tittle") -->
+  <circle cx="256" cy="140" r="26" fill="#C8102E"/>
 </svg>

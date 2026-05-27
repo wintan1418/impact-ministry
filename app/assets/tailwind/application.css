@@ -97,10 +97,17 @@
    ========================================================= */
 
 @layer components {
-  /* Containers — reading lives in 680px, layout in 1200px */
-  .container-wide  { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
-  .container-page  { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-  .container-read  { max-width: 680px;  margin: 0 auto; padding: 0 1.5rem; }
+  /* Containers — reading lives in 680px, layout in 1200px.
+     Side padding tightens on phones so the design breathes without dead margins. */
+  .container-wide  { max-width: 1280px; margin: 0 auto; padding: 0 1.25rem; }
+  .container-page  { max-width: 1200px; margin: 0 auto; padding: 0 1.25rem; }
+  .container-read  { max-width: 680px;  margin: 0 auto; padding: 0 1.25rem; }
+
+  @media (min-width: 768px) {
+    .container-wide { padding: 0 2rem; }
+    .container-page { padding: 0 2rem; }
+    .container-read { padding: 0 1.5rem; }
+  }
 
   /* Typography roles */
   .display {

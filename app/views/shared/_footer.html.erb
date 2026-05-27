@@ -1,11 +1,11 @@
-<footer class="mt-32 border-t" style="border-color: var(--color-olive-30);">
-  <div class="container-wide py-16">
-    <div class="grid gap-12 md:grid-cols-[1.2fr_1fr] items-start">
+<footer class="mt-20 md:mt-28 lg:mt-32 border-t" style="border-color: var(--color-olive-30);">
+  <div class="container-wide py-12 md:py-16">
+    <div class="grid gap-10 md:gap-12 lg:grid-cols-[1.2fr_1fr] items-start">
 
       <%# Second email capture — footer surface %>
       <section aria-labelledby="footer-cap-title">
         <p class="meta mb-3">Before sunrise</p>
-        <h2 id="footer-cap-title" class="display text-[40px] leading-[1.05] m-0">
+        <h2 id="footer-cap-title" class="display leading-[1.05] m-0" style="font-size: clamp(28px, 4vw, 40px);">
           Start your day<br>
           <span class="italic font-normal">with us.</span>
         </h2>
@@ -17,8 +17,8 @@
         </div>
       </section>
 
-      <%# Footer nav %>
-      <nav class="grid grid-cols-2 gap-8 text-[15px]" aria-label="Footer">
+      <%# Footer nav — 2 cols on phones, 4 cols once we have room %>
+      <nav class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8 text-[15px]" aria-label="Footer">
         <div>
           <p class="meta mb-4">Read</p>
           <ul class="space-y-3 text-navy">
