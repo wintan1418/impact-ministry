@@ -25,8 +25,13 @@ Rails.application.configure do
     config.action_controller.perform_caching = false
   end
 
-  # Change to :null_store to avoid any caching.
-  config.cache_store = :memory_store
+  # Use Solid Cache against the cache DB (mirrors production behaviour).
+  config.cache_store = :solid_cache_store
+
+  # Use Solid Queue against the queue DB so `bin/jobs` can run the real
+  # supervisor in development (mirrors production behaviour).
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = ENV["R2_BUCKET"].present? ? :r2 : :local
@@ -38,7 +43,7 @@ Rails.application.configure do
   config.action_mailer.perform_caching = false
 
   # Set localhost to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.default_url_options = { host: "localhost", port: ENV.fetch("PORT", 5000).to_i }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
