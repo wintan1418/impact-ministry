@@ -275,6 +275,17 @@
     border-bottom-color: var(--color-olive-30);
   }
 
+  /* Mobile menu button is hidden by default; .nav-links is shown.
+     Below 880px (the design's breakpoint) we swap them. */
+  .menu-btn { display: none; }
+  .mobile-menu { display: none; }
+  .mobile-menu.is-open { display: block; }
+
+  @media (max-width: 880px) {
+    .nav-links { display: none !important; }
+    .menu-btn  { display: inline-flex !important; }
+  }
+
   /* Read-progress bar — top of devotional pages, crimson hairline */
   .progress {
     position: fixed;
