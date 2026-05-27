@@ -7,8 +7,8 @@
       <span class="meta hidden sm:inline">Ministry</span>
     <% end %>
 
-    <%# Desktop links %>
-    <div class="hidden lg:flex items-center gap-9 text-[15px] text-navy">
+    <%# Desktop links — tighter at md, looser at lg %>
+    <div class="hidden md:flex items-center gap-5 lg:gap-9 text-[14px] lg:text-[15px] text-navy">
       <%= link_to "Today",       devotionals_today_path, class: "ulink" if respond_to?(:devotionals_today_path) %>
       <%= link_to "Devotionals", devotionals_path,       class: "ulink" if respond_to?(:devotionals_path) %>
       <%= link_to "Podcast",     "#",                    class: "ulink" %>
@@ -26,7 +26,7 @@
 
       <%# Mobile menu toggle — visible below lg %>
       <button type="button"
-              class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-full"
+              class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full"
               style="border: 1px solid var(--color-olive-30);"
               data-action="mobile-nav#toggle"
               data-mobile-nav-target="button"
@@ -49,7 +49,7 @@
   <%# Mobile drawer %>
   <div id="mobile-menu"
        data-mobile-nav-target="menu"
-       class="lg:hidden hidden border-t"
+       class="md:hidden hidden border-t"
        style="border-color: var(--color-olive-30); background: rgba(250, 247, 242, 0.98); backdrop-filter: blur(8px);">
     <div class="container-wide py-6 flex flex-col gap-1 text-[17px]">
       <%= link_to "Today's devotional", (respond_to?(:devotionals_today_path) ? devotionals_today_path : "#"), class: "py-3 ulink" %>
