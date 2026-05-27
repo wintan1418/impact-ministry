@@ -119,9 +119,7 @@
       </div>
 
       <%# Right — quiet visual rest %>
-      <div class="ph w-full" style="aspect-ratio: 5 / 6; max-height: 520px; border-radius: var(--radius-image);">
-        [ a photograph of a journal on a wooden desk ]
-      </div>
+      <%= image_tag photo_url("morning-desk", w: 720, h: 860), alt: "A journal and coffee on a wooden desk in morning light", class: "w-full", style: "aspect-ratio: 5 / 6; max-height: 520px; border-radius: var(--radius-image); object-fit: cover;" %>
     </div>
   </div>
 </section>
@@ -156,11 +154,9 @@
       <a href="#" class="ulink" style="font-size: 14px;">All episodes →</a>
     </div>
 
-    <div class="card card-hover overflow-hidden p-0 grid lg:grid-cols-[1.3fr_1fr] gap-0">
-      <div class="relative" style="min-height: 240px;">
-        <div class="ph" style="height: 100%; min-height: 240px; border-radius: 0;">
-          [ episode photo — pastor reuben & dr. anita keys ]
-        </div>
+    <%= link_to podcast_path, class: "card card-hover overflow-hidden p-0 grid lg:grid-cols-[1.3fr_1fr] gap-0", style: "display: grid;" do %>
+      <div class="relative" style="min-height: 280px;">
+        <%= image_tag photo_url("microphone", w: 1000, h: 700), alt: "Microphone in warm studio light", class: "w-full h-full", style: "object-fit: cover; min-height: 280px;" %>
         <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 40%, rgba(27,42,78,0.7));"></div>
         <div class="absolute left-5 bottom-5 md:left-7 md:bottom-7" style="color: var(--color-cream);">
           <p class="meta m-0" style="color: rgba(250,247,242,0.7);">Episode 14 · 42 min</p>
@@ -184,7 +180,7 @@
           <span class="chip">YouTube</span>
         </div>
       </div>
-    </div>
+    <% end %>
   </div>
 </section>
 
@@ -195,9 +191,7 @@
   <div class="container-page">
     <p class="meta text-center" style="color: rgba(250,247,242,0.6); margin-bottom: 32px;">One story</p>
     <div class="grid gap-10 md:gap-14 md:grid-cols-[220px_1fr] lg:grid-cols-[260px_1fr] max-w-[920px] mx-auto items-center">
-      <div class="ph mx-auto md:mx-0 w-3/4 sm:w-1/2 md:w-full" style="aspect-ratio: 1/1.15; border-radius: 16px; min-height: 180px;">
-        [ portrait — marcus, jackson MS ]
-      </div>
+      <%= image_tag photo_url("portrait-man", w: 520, h: 600), alt: "Portrait of Marcus, a subscriber from Jackson, Mississippi", class: "mx-auto md:mx-0 w-3/4 sm:w-1/2 md:w-full", style: "aspect-ratio: 1/1.15; border-radius: 16px; min-height: 180px; object-fit: cover;" %>
       <div>
         <blockquote class="m-0 text-center md:text-left" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(20px, 2.4vw, 32px); line-height: 1.35; color: var(--color-cream);">
           "I hadn't opened a Bible in nine years. The morning email didn't ask me to. It just showed up, gentle, like a friend who knew I'd be back."
@@ -221,9 +215,9 @@
       IMPACT runs on the generosity of people who've been impacted.
     </p>
     <div class="mt-6">
-      <a href="#" class="ulink" style="color: var(--color-crimson); font-size: 14px; font-weight: 500;">
+      <%= link_to give_path, class: "ulink", style: "color: var(--color-crimson); font-size: 14px; font-weight: 500;" do %>
         Learn how to give →
-      </a>
+      <% end %>
     </div>
   </div>
 </section>

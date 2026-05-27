@@ -22,34 +22,32 @@
         <div>
           <p class="meta mb-4">Read</p>
           <ul class="space-y-3 text-navy">
-            <li><%= link_to "Today's devotional", (respond_to?(:devotionals_today_path) ? devotionals_today_path : "#"), class: "ulink" %></li>
-            <li><%= link_to "Archive", (respond_to?(:devotionals_path) ? devotionals_path : "#"), class: "ulink" %></li>
-            <li><%= link_to "Podcast", "#", class: "ulink" %></li>
-            <li><%= link_to "Resources", "#", class: "ulink" %></li>
+            <li><%= link_to "Today's devotional", devotionals_today_path, class: "ulink" %></li>
+            <li><%= link_to "Archive",            devotionals_path,       class: "ulink" %></li>
+            <li><%= link_to "Podcast",            podcast_path,           class: "ulink" %></li>
           </ul>
         </div>
         <div>
           <p class="meta mb-4">Connect</p>
           <ul class="space-y-3 text-navy">
-            <li><%= link_to "Prayer wall", "#", class: "ulink" %></li>
-            <li><%= link_to "Testimonies", "#", class: "ulink" %></li>
-            <li><%= link_to "Partner", "#", class: "ulink" %></li>
-            <li><%= link_to "Contact", "#", class: "ulink" %></li>
+            <li><%= link_to "Prayer wall", pray_path,         class: "ulink" %></li>
+            <li><%= link_to "Partner",     partner_path,      class: "ulink" %></li>
+            <li><%= link_to "Contact",     contact_page_path, class: "ulink" %></li>
           </ul>
         </div>
         <div>
           <p class="meta mb-4">About</p>
           <ul class="space-y-3 text-navy">
-            <li><%= link_to "Mission", "#", class: "ulink" %></li>
-            <li><%= link_to "Statement of faith", "#", class: "ulink" %></li>
-            <li><%= link_to "Give", "#", class: "ulink" %></li>
+            <li><%= link_to "Mission",             about_page_path,   class: "ulink" %></li>
+            <li><%= link_to "Statement of faith",  beliefs_page_path, class: "ulink" %></li>
+            <li><%= link_to "Give",                give_path,         class: "ulink" %></li>
           </ul>
         </div>
         <div>
           <p class="meta mb-4">Legal</p>
           <ul class="space-y-3 text-navy">
-            <li><%= link_to "Privacy", "#", class: "ulink" %></li>
-            <li><%= link_to "Terms", "#", class: "ulink" %></li>
+            <li><%= link_to "Privacy", privacy_page_path, class: "ulink" %></li>
+            <li><%= link_to "Terms",   terms_page_path,   class: "ulink" %></li>
           </ul>
         </div>
       </nav>

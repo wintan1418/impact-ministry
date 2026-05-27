@@ -1,0 +1,64 @@
+<% content_for :title, "Podcast — IMPACT Ministry" %>
+<% content_for :description, "Conversations on faith, work, and waiting. Coming this season." %>
+
+<%# ============================================================
+     HERO — episode image + framed CTA
+     ============================================================ %>
+<section class="pt-10 md:pt-16 pb-16 md:pb-24">
+  <div class="container-page">
+    <div class="grid gap-10 md:gap-14 lg:grid-cols-[1.05fr_1fr] items-center">
+      <div>
+        <p class="meta mb-5">The IMPACT Podcast</p>
+        <h1 class="display m-0" style="font-size: clamp(40px, 6vw, 80px); line-height: 0.98; letter-spacing: -0.02em;">
+          Conversations on faith,<br>
+          <span class="italic font-normal">work, and waiting.</span>
+        </h1>
+        <p class="reading mt-6 max-w-[540px]" style="font-size: 19px;">
+          Slow conversations with pastors, writers, and neighbors trying to live well in
+          a hurried decade. The first season releases mid-2026.
+        </p>
+
+        <div class="mt-9 max-w-[520px]">
+          <p class="meta mb-3">Be the first to hear</p>
+          <%= render "shared/email_capture", source: "podcast" %>
+        </div>
+
+        <div class="mt-9 flex gap-2 flex-wrap">
+          <span class="chip">Spotify</span>
+          <span class="chip">Apple Podcasts</span>
+          <span class="chip">YouTube</span>
+          <span class="chip">RSS</span>
+        </div>
+      </div>
+
+      <div class="relative">
+        <%= image_tag photo_url("microphone", w: 720, h: 880), alt: "A close-up of a podcast microphone in warm light", class: "w-full h-auto", style: "border-radius: var(--radius-image); aspect-ratio: 4 / 5; object-fit: cover;" %>
+        <div class="card" style="position: absolute; left: -16px; bottom: 24px; padding: 18px 22px; background: var(--color-cream); box-shadow: var(--shadow-soft);">
+          <p class="meta m-0" style="color: var(--color-crimson);">Season one · drops mid-2026</p>
+          <p class="m-0 mt-1" style="font-family: var(--font-serif); font-size: 18px; color: var(--color-navy);">Six episodes. One season at a time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ============================================================
+     What to expect — three cards
+     ============================================================ %>
+<section class="pb-20 md:pb-28">
+  <div class="container-page">
+    <p class="meta mb-8 text-center">What to expect</p>
+    <div class="grid gap-6 md:gap-8 md:grid-cols-3">
+      <% [
+        { title: "Long-form, never fast", body: "Forty-minute episodes. No outro music. No sponsor reads. The conversation breathes." },
+        { title: "Guests with weight",     body: "Pastors, writers, school principals, addiction counselors. People who've been doing the work for a while." },
+        { title: "A reading list",         body: "Every episode comes with the texts referenced — Scripture, books, essays. We treat your time like it's worth something." }
+      ].each do |card| %>
+        <div class="card p-7 md:p-8">
+          <p class="display m-0" style="font-size: 24px; line-height: 1.15;"><%= card[:title] %></p>
+          <p class="reading mt-3 m-0" style="font-size: 16px;"><%= card[:body] %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

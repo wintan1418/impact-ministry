@@ -1,0 +1,64 @@
+<% content_for :title, "Give — IMPACT Ministry" %>
+<% content_for :description, "A place is being prepared for your generosity." %>
+
+<% if @giving_enabled %>
+  <%# Live state — wired in Phase 3.15. Placeholder until then. %>
+  <section class="container-read" style="padding-top: 96px; padding-bottom: 120px;">
+    <p class="meta">Give</p>
+    <h1 class="display mt-4" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.05;">
+      Live giving — coming Phase 3.
+    </h1>
+    <p class="reading mt-6">
+      Stripe Checkout integration ships in Phase 3.15. Until then, the placeholder below stands.
+    </p>
+  </section>
+<% else %>
+  <%# Pre-501(c)(3) state — full-bleed image, headline, capture %>
+  <section class="relative" style="min-height: 80vh; overflow: hidden;">
+    <%# Photo background %>
+    <div class="absolute inset-0" style="<%= photo_bg_style("doorway-light", w: 1800, h: 1200) %>"></div>
+    <%# Cream overlay to keep type readable %>
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(250,247,242,0.92) 0%, rgba(250,247,242,0.86) 60%, rgba(250,247,242,0.96) 100%);"></div>
+
+    <div class="relative container-read" style="padding-top: 12vh; padding-bottom: 16vh;">
+      <p class="meta">A note about giving</p>
+      <h1 class="display mt-5" style="font-size: clamp(36px, 5.5vw, 72px); line-height: 1.0; letter-spacing: -0.02em;">
+        A place is being prepared<br>
+        <span class="italic font-normal">for your generosity.</span>
+      </h1>
+
+      <div class="reading mt-7" style="font-size: 19px; max-width: 600px;">
+        <p>
+          IMPACT Ministry, Inc. is a Mississippi nonprofit corporation pursuing 501(c)(3)
+          status. Until the IRS grants that designation, donations cannot be tax-deductible
+          and we have chosen not to receive funds publicly.
+        </p>
+        <p class="mt-5">
+          If you'd like to give once we're cleared, leave your email below. We'll write
+          you the morning giving opens — quietly, no campaign noise.
+        </p>
+      </div>
+
+      <div class="mt-9" style="max-width: 480px;">
+        <p class="meta mb-3">Tell me when giving opens</p>
+        <%= render "shared/email_capture", source: "podcast", label: "your@email.com" %>
+      </div>
+
+      <hr class="hairline mt-12" style="max-width: 600px;">
+
+      <%# Where the money will go — three icons + lines %>
+      <div class="mt-10 grid gap-7 md:grid-cols-3" style="max-width: 720px;">
+        <% [
+          { kicker: "Devotionals",       line: "Daily writing, editing, and email delivery — the morning word reaches every subscriber free of charge." },
+          { kicker: "Partner churches",  line: "Small grants to congregations doing faithful work in towns most ministry money never reaches." },
+          { kicker: "Local need",        line: "A small fund that pays a neighbor's rent or grocery bill the same week she asks." }
+        ].each do |row| %>
+          <div>
+            <p class="meta" style="color: var(--color-crimson);"><%= row[:kicker] %></p>
+            <p class="reading mt-2 m-0" style="font-size: 15px;"><%= row[:line] %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>

@@ -31,6 +31,13 @@ Rails.application.routes.draw do
   get "devotionals/today" => "devotionals#today", as: :devotionals_today
   resources :devotionals, only: [ :index, :show ], param: :slug
 
+  # --- Stub surfaces (placeholder pages until Phase 2/3 controllers land) ---
+  # Each links from the nav and renders a real designed page with email capture.
+  get "podcast" => "podcast_episodes#index", as: :podcast
+  get "pray"    => "prayer_requests#index",  as: :pray
+  get "partner" => "partnerships#new",       as: :partner
+  get "give"    => "giving#show",            as: :give
+
   # --- Email capture (Phase 1.B) ---
   post   "subscribe"          => "email_subscribers#create",              as: :subscribe
   get    "unsubscribe/:token" => "email_subscribers#confirm_unsubscribe", as: :confirm_unsubscribe
