@@ -1,0 +1,23 @@
+# Test environment uses a temporary disk root that's wiped between runs.
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp/storage") %>
+
+# Local dev disk storage — used as a fallback when R2_BUCKET is blank.
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+# Cloudflare R2 via the S3-compatible API. Used in production and in dev when R2_BUCKET is set.
+# region=auto and force_path_style are required for R2; the checksum settings disable
+# newer AWS SDK checksum modes that R2 does not support.
+r2:
+  service: S3
+  access_key_id: <%= ENV["R2_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["R2_SECRET_ACCESS_KEY"] %>
+  bucket: <%= ENV["R2_BUCKET"] %>
+  endpoint: <%= ENV["R2_ENDPOINT"] %>
+  region: <%= ENV.fetch("R2_REGION", "auto") %>
+  force_path_style: true
+  request_checksum_calculation: when_required
+  response_checksum_validation: when_required

@@ -1,0 +1,36 @@
+<% content_for :title, "IMPACT Ministry — A short, true word, every morning" %>
+
+<%# Placeholder for P0.5 verification. The full hero is built in P1.D. %>
+<section class="container-page" style="padding-top: 60px; padding-bottom: 120px;">
+  <div class="grid gap-20 lg:grid-cols-[1.05fr_1fr] items-center">
+    <div>
+      <div class="flex items-center gap-3 mb-7 fade-up">
+        <span class="meta">Today · <%= Date.current.strftime("%A, %B %-d") %></span>
+        <span style="width: 4px; height: 4px; border-radius: 9999px; background: var(--color-olive-30); display: inline-block;"></span>
+        <span class="scripture draw" style="font-size: 14px; color: var(--color-olive);">Habakkuk 2:1–4</span>
+      </div>
+
+      <h1 class="display fade-up m-0" style="font-size: clamp(48px, 6.5vw, 88px); line-height: 0.98; animation-delay: 120ms;">
+        When the<br>
+        <span class="italic font-normal">vision</span> tarries.
+      </h1>
+
+      <p class="reading fade-up mt-7 max-w-[520px]" style="animation-delay: 260ms;">
+        Waiting is not the absence of God's word. It is the long, slow work of trusting that what He has spoken still stands — even when the answer takes its time.
+      </p>
+
+      <div class="fade-up mt-10 flex flex-wrap items-center gap-7" style="animation-delay: 380ms;">
+        <a href="#" class="btn btn-primary breath" style="padding: 16px 28px; font-size: 15px;">
+          Read today's devotional <span aria-hidden="true">→</span>
+        </a>
+        <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
+          <%= number_with_delimiter(@reader_count) %> people read this morning.
+        </p>
+      </div>
+    </div>
+
+    <div class="ph fade-up" style="height: 520px; border-radius: var(--radius-image); animation-delay: 200ms;">
+      [ sunrise over delta pines ]
+    </div>
+  </div>
+</section>

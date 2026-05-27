@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for(:title).presence || "IMPACT Ministry — A short, true word, every morning" %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="IMPACT Ministry">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#FAF7F2">
+    <meta name="description" content="<%= content_for(:description).presence || 'A short, true word from IMPACT Ministry — daily devotionals, podcast, and prayer from Mississippi.' %>">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%# Open Graph %>
+    <meta property="og:title" content="<%= content_for(:og_title).presence || (content_for(:title).presence || 'IMPACT Ministry') %>">
+    <meta property="og:description" content="<%= content_for(:description).presence || 'A short, true word, every morning.' %>">
+    <meta property="og:type" content="<%= content_for(:og_type).presence || 'website' %>">
+    <meta property="og:site_name" content="IMPACT Ministry">
+
+    <%= yield :head %>
+
+    <%# Fonts — Fraunces (display), Inter (UI), Lora (long-form reading) %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <%= render "shared/analytics" if Rails.env.production? %>
+  </head>
+
+  <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <%= render "shared/nav" %>
+
+    <main id="main-content" class="page-enter">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+
+    <%= render "shared/footer" %>
+
+    <%# Cloudflare Turnstile script — only rendered when a page uses the turnstile partial. %>
+    <%= yield :scripts_turnstile %>
+
+    <%# Live region — used by Stimulus toast controller for global async confirmations only %>
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" data-controller="toast"></div>
+  </body>
+</html>

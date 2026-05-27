@@ -1,0 +1,369 @@
+@import "tailwindcss";
+
+/* =========================================================
+   IMPACT Ministry — design system
+   See docs/DESIGN_SYSTEM.md. Tokens are non-negotiable; new
+   colors / fonts go through a design review.
+   ========================================================= */
+
+@theme {
+  /* ---- Color ---- */
+  --color-navy:    #1B2A4E;  /* Cathedral Navy   — headlines, structural */
+  --color-cream:   #FAF7F2;  /* Communion Cream  — page background */
+  --color-crimson: #C8102E;  /* Sanctuary Crimson — accents, CTAs */
+  --color-linen:   #E8DFD0;  /* Linen — cards, dividers */
+  --color-olive:   #8B7355;  /* Olive Wood — metadata, secondary text */
+  --color-ink:     #1F1B16;  /* Body copy on cream — warmer than black */
+
+  /* Opacity variants used throughout (kept as raw vars below) */
+  --color-navy-soft:    rgba(27, 42, 78, 0.85);
+  --color-olive-30:     rgba(139, 115, 85, 0.30);
+  --color-olive-15:     rgba(139, 115, 85, 0.15);
+  --color-crimson-soft: rgba(200, 16, 46, 0.18);
+
+  /* ---- Type ---- */
+  --font-serif:   "Fraunces", "Times New Roman", serif;
+  --font-sans:    "Inter", system-ui, -apple-system, sans-serif;
+  --font-reading: "Lora", "Georgia", serif;
+  --font-mono:    ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* ---- Motion ---- */
+  --ease-impact: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ---- Elevation ---- */
+  --shadow-soft: 0 24px 64px -16px rgba(27, 42, 78, 0.12);
+  --shadow-card: 0 12px 32px -16px rgba(27, 42, 78, 0.10);
+  --shadow-cta-hover: 0 14px 28px -14px rgba(200, 16, 46, 0.55);
+
+  /* ---- Radius ---- */
+  --radius-card: 18px;
+  --radius-image: 20px;
+}
+
+/* =========================================================
+   Globals
+   ========================================================= */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Paper grain — subtle dual radial-gradient noise */
+    background-image:
+      radial-gradient(rgba(31, 27, 22, 0.025) 1px, transparent 1px),
+      radial-gradient(rgba(31, 27, 22, 0.018) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  ::selection {
+    background: var(--color-crimson-soft);
+    color: var(--color-navy);
+  }
+
+  /* Focus — visible, branded, never browser-default */
+  :focus-visible {
+    outline: 2px solid var(--color-crimson);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Reduced motion — kill decorative animation */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* =========================================================
+   Components & utilities
+   ========================================================= */
+
+@layer components {
+  /* Containers — reading lives in 680px, layout in 1200px */
+  .container-wide  { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+  .container-page  { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+  .container-read  { max-width: 680px;  margin: 0 auto; padding: 0 1.5rem; }
+
+  /* Typography roles */
+  .display {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--color-navy);
+  }
+  .scripture {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-navy);
+  }
+  .reading {
+    font-family: var(--font-reading);
+    font-size: 19px;
+    line-height: 1.7;
+    color: var(--color-ink);
+  }
+  .meta {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-olive);
+    font-weight: 500;
+  }
+
+  /* Hairline divider */
+  .hairline { border: 0; border-top: 1px solid var(--color-olive-30); }
+
+  /* Buttons — pill, never bouncy */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 15px;
+    padding: 14px 22px;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 220ms var(--ease-impact);
+    white-space: nowrap;
+  }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .btn-primary { background: var(--color-crimson); color: var(--color-cream); }
+  .btn-primary:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-cta-hover);
+  }
+  .btn-ghost { background: transparent; color: var(--color-navy); border-color: var(--color-olive-30); }
+  .btn-ghost:hover { border-color: var(--color-navy); }
+  .btn-dark { background: var(--color-navy); color: var(--color-cream); }
+  .btn-dark:hover { background: #0F1B3B; }
+
+  /* Form input — pill, olive border, crimson focus */
+  .input {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    background: transparent;
+    color: var(--color-ink);
+    border: 1px solid var(--color-olive-30);
+    border-radius: 9999px;
+    transition: border-color 200ms var(--ease-impact), background 200ms var(--ease-impact);
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--color-crimson);
+    background: rgba(255, 255, 255, 0.5);
+  }
+  .input.error { border-color: var(--color-crimson); }
+  .input-help  { color: var(--color-olive); font-size: 13px; margin-top: 6px; padding-left: 16px; }
+  .input-help-error { color: var(--color-crimson); }
+
+  /* Card */
+  .card {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--color-olive-15);
+    border-radius: var(--radius-card);
+    transition: transform 240ms var(--ease-impact), box-shadow 240ms var(--ease-impact);
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Chip — tags / filters */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 9999px;
+    border: 1px solid var(--color-olive-30);
+    background: transparent;
+    font-size: 13px;
+    color: var(--color-navy);
+    transition: all 200ms var(--ease-impact);
+  }
+  .chip:hover { border-color: var(--color-navy); }
+  .chip-active { background: var(--color-navy); color: var(--color-cream); border-color: var(--color-navy); }
+
+  /* Scripture pull — used in long-form devotional bodies */
+  .pull {
+    border-left: 2px solid var(--color-crimson);
+    padding: 4px 0 4px 22px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-navy);
+    font-size: 22px;
+    line-height: 1.5;
+  }
+
+  /* Animated underline link */
+  .ulink { position: relative; }
+  .ulink::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -3px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 260ms var(--ease-impact);
+  }
+  .ulink:hover::after { transform: scaleX(1); }
+
+  /* Image placeholder — striped, olive on linen */
+  .ph {
+    background:
+      repeating-linear-gradient(135deg,
+        rgba(139, 115, 85, 0.10) 0 1px,
+        transparent 1px 14px),
+      linear-gradient(180deg, #EFE7D6, #E3D8C0);
+    color: var(--color-olive);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  /* Sticky nav — transparent over hero, cream + hairline on scroll */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: background 300ms var(--ease-impact), border-color 300ms var(--ease-impact);
+    border-bottom: 1px solid transparent;
+    background: rgba(250, 247, 242, 0);
+  }
+  .nav-scrolled {
+    background: rgba(250, 247, 242, 0.92);
+    border-bottom-color: var(--color-olive-30);
+  }
+
+  /* Read-progress bar — top of devotional pages, crimson hairline */
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--color-crimson);
+    z-index: 60;
+    width: 0;
+    transition: width 80ms linear;
+  }
+
+  /* Toast — top-center, cream + hairline. Errors NEVER toast (see CLAUDE.md §3). */
+  .toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px);
+    background: var(--color-cream);
+    border: 1px solid var(--color-olive-30);
+    padding: 12px 18px;
+    border-radius: 12px;
+    color: var(--color-navy);
+    font-size: 14px;
+    box-shadow: var(--shadow-soft);
+    opacity: 0;
+    transition: all 240ms var(--ease-impact);
+    z-index: 100;
+    pointer-events: none;
+  }
+  .toast-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Skip-to-content (a11y) */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 16px;
+    background: var(--color-navy);
+    color: var(--color-cream);
+    padding: 10px 16px;
+    border-radius: 8px;
+    z-index: 200;
+    transition: top 180ms var(--ease-impact);
+  }
+  .skip-link:focus { top: 16px; }
+}
+
+/* =========================================================
+   Animations
+   ========================================================= */
+
+@layer utilities {
+  /* Shimmer skeleton on cream */
+  .skel {
+    background: linear-gradient(90deg, var(--color-linen) 0%, #F1EBDE 50%, var(--color-linen) 100%);
+    background-size: 200% 100%;
+    animation: skel 1.6s linear infinite;
+    border-radius: 8px;
+  }
+  @keyframes skel {
+    0%   { background-position:  200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Page enter */
+  .page-enter { animation: pageEnter 280ms var(--ease-impact) both; }
+  @keyframes pageEnter {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* Hero fade-up */
+  .fade-up { opacity: 0; transform: translateY(10px); animation: fadeUp 500ms var(--ease-impact) forwards; }
+  @keyframes fadeUp { to { opacity: 1; transform: none; } }
+
+  /* Draw-in underline — scripture reference on devotional pages */
+  .draw { position: relative; display: inline-block; }
+  .draw::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    height: 1px;
+    background: var(--color-crimson);
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: draw 700ms var(--ease-impact) 100ms forwards;
+  }
+  @keyframes draw { to { transform: scaleX(1); } }
+
+  /* Single breath — CTA hint, fires once after page load */
+  .breath { animation: breath 1400ms var(--ease-impact) 1500ms 1; }
+  @keyframes breath {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+}

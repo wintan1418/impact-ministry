@@ -1,0 +1,4 @@
+web: bin/rails server
+css: bin/rails tailwindcss:watch
+css_admin: bin/rails tailwindcss:active_admin:watch
+jobs: bin/jobs

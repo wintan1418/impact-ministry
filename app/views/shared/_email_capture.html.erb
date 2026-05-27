@@ -1,0 +1,39 @@
+<%#
+  Email capture form. Submits to /subscribe (POST) via Turbo Stream.
+  Renders the same form across surfaces with a `source` attribution.
+
+  Locals:
+    source:      String — footer | inline | exit_intent | prayer | podcast | manual
+    label:       String (optional) — overrides default placeholder
+    autofocus:   Boolean (default false)
+%>
+<% source ||= "inline" %>
+<% label ||= "your@email.com" %>
+<% autofocus = false unless local_assigns.key?(:autofocus) %>
+
+<%= form_with url: "/subscribe",
+              method: :post,
+              data: { turbo_frame: "email-capture-#{source}", controller: "email-capture" },
+              class: "w-full" do |f| %>
+  <%= f.hidden_field :source, value: source %>
+
+  <turbo-frame id="email-capture-<%= source %>">
+    <div class="flex flex-col sm:flex-row items-stretch gap-3">
+      <%= f.email_field :email,
+            placeholder: label,
+            required: true,
+            autocomplete: "email",
+            autofocus: autofocus,
+            "aria-label": "Email address",
+            class: "input flex-1",
+            data: { "email-capture-target": "input" } %>
+      <button type="submit" class="btn btn-primary" data-email-capture-target="button">
+        Send me tomorrow's
+        <span aria-hidden="true">→</span>
+      </button>
+    </div>
+    <p class="input-help" data-email-capture-target="help">
+      One short word, before sunrise. Unsubscribe in one click.
+    </p>
+  </turbo-frame>
+<% end %>

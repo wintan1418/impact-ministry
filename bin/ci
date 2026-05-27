@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Run the same gauntlet as .github/workflows/ci.yml locally, in order.
+# Exit on first failure so the dev sees what broke without scrolling past noise.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+echo "==> RSpec"
+bundle exec rspec
+
+echo "==> Brakeman"
+bin/brakeman --no-pager --quiet
+
+echo "==> Bundler audit"
+bundle exec bundler-audit check --update
+
+echo "==> RuboCop"
+bin/rubocop
+
+echo "==> CI gauntlet passed."

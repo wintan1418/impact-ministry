@@ -1,0 +1,67 @@
+<footer class="mt-32 border-t" style="border-color: var(--color-olive-30);">
+  <div class="container-wide py-16">
+    <div class="grid gap-12 md:grid-cols-[1.2fr_1fr] items-start">
+
+      <%# Second email capture — footer surface %>
+      <section aria-labelledby="footer-cap-title">
+        <p class="meta mb-3">Before sunrise</p>
+        <h2 id="footer-cap-title" class="display text-[40px] leading-[1.05] m-0">
+          Start your day<br>
+          <span class="italic font-normal">with us.</span>
+        </h2>
+        <p class="reading mt-4 max-w-[440px]" style="font-size: 17px;">
+          A short, true word in your inbox. Two minutes to read. The rest of the day is yours.
+        </p>
+        <div class="mt-6 max-w-[440px]">
+          <%= render "shared/email_capture", source: "footer", autofocus: false %>
+        </div>
+      </section>
+
+      <%# Footer nav %>
+      <nav class="grid grid-cols-2 gap-8 text-[15px]" aria-label="Footer">
+        <div>
+          <p class="meta mb-4">Read</p>
+          <ul class="space-y-3 text-navy">
+            <li><%= link_to "Today's devotional", (respond_to?(:devotionals_today_path) ? devotionals_today_path : "#"), class: "ulink" %></li>
+            <li><%= link_to "Archive", (respond_to?(:devotionals_path) ? devotionals_path : "#"), class: "ulink" %></li>
+            <li><%= link_to "Podcast", "#", class: "ulink" %></li>
+            <li><%= link_to "Resources", "#", class: "ulink" %></li>
+          </ul>
+        </div>
+        <div>
+          <p class="meta mb-4">Connect</p>
+          <ul class="space-y-3 text-navy">
+            <li><%= link_to "Prayer wall", "#", class: "ulink" %></li>
+            <li><%= link_to "Testimonies", "#", class: "ulink" %></li>
+            <li><%= link_to "Partner", "#", class: "ulink" %></li>
+            <li><%= link_to "Contact", "#", class: "ulink" %></li>
+          </ul>
+        </div>
+        <div>
+          <p class="meta mb-4">About</p>
+          <ul class="space-y-3 text-navy">
+            <li><%= link_to "Mission", "#", class: "ulink" %></li>
+            <li><%= link_to "Statement of faith", "#", class: "ulink" %></li>
+            <li><%= link_to "Give", "#", class: "ulink" %></li>
+          </ul>
+        </div>
+        <div>
+          <p class="meta mb-4">Legal</p>
+          <ul class="space-y-3 text-navy">
+            <li><%= link_to "Privacy", "#", class: "ulink" %></li>
+            <li><%= link_to "Terms", "#", class: "ulink" %></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <hr class="hairline my-12">
+
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[13px]" style="color: var(--color-olive);">
+      <p>© <%= Date.current.year %> IMPACT Ministry, Inc. Mississippi.</p>
+      <p class="italic" style="font-family: var(--font-serif);">
+        “Write the vision; make it plain.” — Habakkuk 2:2
+      </p>
+    </div>
+  </div>
+</footer>

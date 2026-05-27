@@ -1,0 +1,6 @@
+<%# Plausible — privacy-respecting analytics. No PII. Skipped outside production. %>
+<% if ENV["PLAUSIBLE_DOMAIN"].present? %>
+  <script defer
+          data-domain="<%= ENV["PLAUSIBLE_DOMAIN"] %>"
+          src="<%= ENV.fetch("PLAUSIBLE_SCRIPT_URL", "https://plausible.io/js/script.js") %>"></script>
+<% end %>

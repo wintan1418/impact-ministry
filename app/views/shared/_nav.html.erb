@@ -1,0 +1,25 @@
+<nav class="nav" data-controller="scroll-nav" aria-label="Primary">
+  <div class="container-wide flex items-center justify-between py-5">
+    <%= link_to root_path, class: "flex items-center gap-3", "aria-label": "IMPACT Ministry — home" do %>
+      <span class="display text-[22px] tracking-tight">IMPACT</span>
+      <span class="meta">Ministry</span>
+    <% end %>
+
+    <div class="hidden md:flex items-center gap-9 text-[15px] text-navy">
+      <%= link_to "Today",       devotionals_today_path, class: "ulink" if respond_to?(:devotionals_today_path) %>
+      <%= link_to "Devotionals", devotionals_path,       class: "ulink" if respond_to?(:devotionals_path) %>
+      <%= link_to "Podcast",     "#",                    class: "ulink" %>
+      <%= link_to "Pray",        "#",                    class: "ulink" %>
+      <%= link_to "Give",        "#",                    class: "ulink" %>
+      <%= link_to "About",       "#",                    class: "ulink" %>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <% if signed_in? %>
+        <%= link_to "Account", "#", class: "btn btn-ghost", style: "padding: 10px 18px; font-size: 14px;" %>
+      <% else %>
+        <%= link_to "Sign in", new_session_path, class: "btn btn-ghost", style: "padding: 10px 18px; font-size: 14px;" %>
+      <% end %>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,28 @@
+<%#
+  Cloudflare Turnstile widget.
+
+  Locals:
+    action: optional widget action label (default "submit"). Useful when one
+            page has multiple forms — Cloudflare reports per-action analytics.
+
+  The widget injects a hidden input named `cf-turnstile-response` into the
+  enclosing form once the user passes the challenge. Servers verify the token
+  via TurnstileVerifier.
+
+  In dev/test, .env.example ships Cloudflare's "always pass" test keys, so the
+  widget completes invisibly.
+
+  The script tag is captured via content_for(:scripts_turnstile) so the layout
+  can render it exactly once per page — even if the partial is rendered for
+  multiple forms on the same page.
+%>
+<% action ||= "submit" %>
+
+<div class="cf-turnstile"
+     data-sitekey="<%= ENV["TURNSTILE_SITE_KEY"] %>"
+     data-action="<%= action %>"
+     data-controller="turnstile"></div>
+
+<% content_for :scripts_turnstile do %>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<% end %>
