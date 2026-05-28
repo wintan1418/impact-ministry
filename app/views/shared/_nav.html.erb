@@ -1,7 +1,7 @@
-<%# Top nav — direct port of design/source/components/shell.jsx
-    Wordmark = Mark SVG (circle + crossed "I") + IMPACT MINISTRY in serif caps.
-    Right side: 6 ulinks + search icon + crimson "Give" CTA.
-    Hidden below 880px; hamburger drawer takes over. %>
+<%# Top nav — ports design/source/components/shell.jsx.
+    Wordmark + 6 ulinks + "More" mega-menu + search + crimson "Give".
+    Below 880px the desktop strip is hidden and the hamburger drawer
+    takes over (the drawer lists every surface — no orphaned routes). %>
 <nav class="nav" data-controller="scroll-nav mobile-nav" aria-label="Primary">
   <div class="container-page flex items-center justify-between" style="height: 72px;">
 
@@ -17,16 +17,75 @@
       </span>
     <% end %>
 
-    <%# ---- Desktop links (display controlled by .nav-links rule + 880px media query) ---- %>
+    <%# ---- Desktop links ---- %>
     <div class="nav-links" style="gap: 28px;">
       <%= link_to "Devotional",  devotionals_today_path, class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
       <%= link_to "Archive",     devotionals_path,       class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
       <%= link_to "Podcast",     podcast_path,           class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
       <%= link_to "Prayer Wall", pray_path,              class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
       <%= link_to "About",       about_page_path,        class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
-      <%= link_to "Partner",     partner_path,           class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
 
-      <%# Search icon (overlay opens in Phase 2 search ticket) %>
+      <%# More — hover trigger for the mega-menu. tabindex makes it
+          keyboard-focusable; :focus-within keeps the panel open during
+          tab navigation through child links. %>
+      <div class="nav-more" tabindex="0">
+        <span class="nav-link ulink" style="font-size: 14px; color: var(--color-navy); cursor: default; display: inline-flex; align-items: center; gap: 6px;">
+          More
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <polyline points="2,4 5,7 8,4"/>
+          </svg>
+        </span>
+
+        <%# ---- Mega-menu panel ---- %>
+        <div class="nav-mega" role="menu" aria-label="More links">
+          <div class="container-page nav-mega-grid">
+            <div class="nav-mega-col">
+              <p class="meta">Read</p>
+              <ul>
+                <li><%= link_to "Today's devotional", devotionals_today_path, class: "nav-mega-link" %></li>
+                <li><%= link_to "Archive",            devotionals_path,       class: "nav-mega-link" %></li>
+                <li><%= link_to "Podcast",            podcast_path,           class: "nav-mega-link" %></li>
+                <li><%= link_to "Resources",          resources_path,         class: "nav-mega-link" %></li>
+              </ul>
+            </div>
+            <div class="nav-mega-col">
+              <p class="meta">Connect</p>
+              <ul>
+                <li><%= link_to "Prayer wall",     pray_path,         class: "nav-mega-link" %></li>
+                <li><%= link_to "Stories",         testimonies_path,  class: "nav-mega-link" %></li>
+                <li><%= link_to "Events",          events_path,       class: "nav-mega-link" %></li>
+                <li><%= link_to "Share your story", new_testimony_path, class: "nav-mega-link" %></li>
+              </ul>
+            </div>
+            <div class="nav-mega-col">
+              <p class="meta">About</p>
+              <ul>
+                <li><%= link_to "Mission",            about_page_path,   class: "nav-mega-link" %></li>
+                <li><%= link_to "Statement of faith", beliefs_page_path, class: "nav-mega-link" %></li>
+                <li><%= link_to "Partner",            partner_path,      class: "nav-mega-link" %></li>
+                <li><%= link_to "Contact",            contact_page_path, class: "nav-mega-link" %></li>
+              </ul>
+            </div>
+            <div class="nav-mega-col">
+              <p class="meta">Account</p>
+              <ul>
+                <% if signed_in? %>
+                  <li><%= link_to "Your account",     account_path,             class: "nav-mega-link" %></li>
+                  <li><%= link_to "Saved highlights", account_highlights_path,  class: "nav-mega-link" %></li>
+                  <li><%= link_to "Settings",         account_settings_path,    class: "nav-mega-link" %></li>
+                  <li><%= button_to "Sign out", session_path, method: :delete, form: { style: "margin:0;" }, style: "background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; text-align: left;", class: "nav-mega-link" %></li>
+                <% else %>
+                  <li><%= link_to "Sign in",        new_session_path, class: "nav-mega-link" %></li>
+                  <li><%= link_to "Start reading",  new_user_path,    class: "nav-mega-link", style: "color: var(--color-crimson); font-weight: 500;" %></li>
+                  <li><%= link_to "Forgot password?", new_password_path, class: "nav-mega-link" %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# Search icon — overlay opens in Phase 2 search ticket %>
       <button type="button"
               class="nav-link inline-flex items-center justify-center"
               style="background: transparent; border: 0; padding: 6px; color: var(--color-navy);"
@@ -41,7 +100,7 @@
       <%= link_to "Give", give_path, class: "btn btn-primary nav-link", style: "padding: 10px 18px; font-size: 14px;" %>
     </div>
 
-    <%# ---- Hamburger (mobile, < 880px) — display controlled by .menu-btn rule ---- %>
+    <%# ---- Hamburger (mobile, < 880px) ---- %>
     <button type="button"
             class="menu-btn"
             style="background: transparent; border: 0; padding: 8px; color: var(--color-navy);"
@@ -71,11 +130,13 @@
       <%= link_to "Devotional",  devotionals_today_path, style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Archive",     devotionals_path,       style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Podcast",     podcast_path,           style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
+      <%= link_to "Resources",   resources_path,         style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Stories",     testimonies_path,       style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Prayer Wall", pray_path,              style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Events",      events_path,            style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "About",       about_page_path,        style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Partner",     partner_path,           style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
+      <%= link_to "Contact",     contact_page_path,      style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Give",        give_path,              class: "btn btn-primary self-start mt-3", style: "padding: 12px 22px;" %>
       <% if signed_in? %>
         <%= link_to "Your account", account_path, class: "ulink", style: "font-size: 14px; color: var(--color-olive); margin-top: 8px;" %>

@@ -296,7 +296,80 @@
   @media (max-width: 880px) {
     .nav-links { display: none !important; }
     .menu-btn  { display: inline-flex !important; }
+    .nav-more  { display: none !important; }
   }
+
+  /* ----- More mega-menu (desktop hover dropdown) -----
+     `.nav-more` is the trigger wrapper inside the nav strip.
+     `.nav-mega` is the wide horizontal panel that descends from the nav
+     and reveals every surface the strip can't fit. Pure CSS — opens on
+     hover OR keyboard focus-within (so tab navigation works). */
+  .nav-more {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    cursor: default;
+    outline: none;
+  }
+
+  .nav-mega {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    padding: 32px 0 36px;
+    background: rgba(250, 247, 242, 0.98);
+    border-top: 1px solid var(--color-olive-30);
+    border-bottom: 1px solid var(--color-olive-30);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition:
+      opacity 200ms var(--ease-impact),
+      visibility 0s linear 200ms,
+      transform 200ms var(--ease-impact);
+    z-index: 49;
+  }
+
+  .nav-more:hover .nav-mega,
+  .nav-more:focus-within .nav-mega,
+  .nav-mega:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition:
+      opacity 200ms var(--ease-impact),
+      visibility 0s linear 0s,
+      transform 200ms var(--ease-impact);
+  }
+
+  .nav-mega-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+
+  .nav-mega-col ul {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-mega-link {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    color: var(--color-navy);
+    line-height: 1.3;
+    display: inline-block;
+    transition: color 180ms var(--ease-impact);
+  }
+  .nav-mega-link:hover { color: var(--color-crimson); }
 
   /* Read-progress bar — top of devotional pages, crimson hairline */
   .progress {
