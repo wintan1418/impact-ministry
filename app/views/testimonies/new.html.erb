@@ -1,0 +1,20 @@
+<% content_for :title, "Share your story — IMPACT Ministry" %>
+<% content_for :description, "Tell us what God did. We read everything, and we'll write back if we have questions." %>
+
+<section class="pt-10 md:pt-16 pb-20 md:pb-24">
+  <div class="container-read">
+    <p class="meta m-0 mb-5">Share your story</p>
+    <h1 class="display m-0" style="font-size: clamp(36px, 4.6vw, 56px); line-height: 1.05;">
+      Tell us what God did.
+    </h1>
+    <p class="reading mt-6">
+      Your story could be the hope someone else needs today. We read everything.
+      We publish the ones that fit — quietly, after a careful pass for spelling and clarity.
+      Anonymous is fine. Specific is better.
+    </p>
+
+    <div class="mt-10">
+      <%= render "form", testimony: @testimony, error_message: @error_message %>
+    </div>
+  </div>
+</section>

@@ -206,15 +206,42 @@
   <div class="container-page">
     <p class="meta text-center" style="color: rgba(250,247,242,0.6); margin-bottom: 32px;">One story</p>
     <div class="grid gap-10 md:gap-14 md:grid-cols-[220px_1fr] lg:grid-cols-[260px_1fr] max-w-[920px] mx-auto items-center">
-      <%= image_tag photo_url("portrait-man", w: 520, h: 600), alt: "Portrait of Marcus, a subscriber from Jackson, Mississippi", class: "mx-auto md:mx-0 w-3/4 sm:w-1/2 md:w-full", style: "aspect-ratio: 1/1.15; border-radius: 16px; min-height: 180px; object-fit: cover;" %>
+      <% if @featured_testimony&.photo&.attached? %>
+        <%= image_tag @featured_testimony.photo,
+              alt: "Portrait of #{@featured_testimony.display_name}",
+              class: "mx-auto md:mx-0 w-3/4 sm:w-1/2 md:w-full",
+              style: "aspect-ratio: 1/1.15; border-radius: 16px; min-height: 180px; object-fit: cover;" %>
+      <% else %>
+        <%= image_tag photo_url("portrait-man", w: 520, h: 600),
+              alt: @featured_testimony ? "Portrait of #{@featured_testimony.display_name}" : "Portrait of Marcus, a subscriber from Jackson, Mississippi",
+              class: "mx-auto md:mx-0 w-3/4 sm:w-1/2 md:w-full",
+              style: "aspect-ratio: 1/1.15; border-radius: 16px; min-height: 180px; object-fit: cover;" %>
+      <% end %>
       <div>
         <blockquote class="m-0 text-center md:text-left" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(20px, 2.4vw, 32px); line-height: 1.35; color: var(--color-cream);">
-          "I hadn't opened a Bible in nine years. The morning email didn't ask me to. It just showed up, gentle, like a friend who knew I'd be back."
+          <% if @featured_testimony %>
+            "<%= @featured_testimony.pull_quote %>"
+          <% else %>
+            "I hadn't opened a Bible in nine years. The morning email didn't ask me to. It just showed up, gentle, like a friend who knew I'd be back."
+          <% end %>
         </blockquote>
         <div class="mt-6 md:mt-7 flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 text-[13px]" style="color: rgba(250,247,242,0.7);">
-          <span style="font-family: var(--font-serif); color: var(--color-cream); font-size: 16px;">Marcus L.</span>
-          <span>·</span>
-          <span>Jackson, MS · subscriber since Jan 2026</span>
+          <% if @featured_testimony %>
+            <span style="font-family: var(--font-serif); color: var(--color-cream); font-size: 16px;"><%= @featured_testimony.display_name %></span>
+            <% if @featured_testimony.location.present? %>
+              <span>·</span>
+              <span><%= @featured_testimony.location %></span>
+            <% end %>
+          <% else %>
+            <span style="font-family: var(--font-serif); color: var(--color-cream); font-size: 16px;">Marcus L.</span>
+            <span>·</span>
+            <span>Jackson, MS · subscriber since Jan 2026</span>
+          <% end %>
+        </div>
+        <div class="mt-7 md:mt-8 flex justify-center md:justify-start">
+          <%= link_to testimonies_path, class: "ulink", style: "color: rgba(250,247,242,0.85); font-size: 14px;" do %>
+            Read more stories <span aria-hidden="true">→</span>
+          <% end %>
         </div>
       </div>
     </div>

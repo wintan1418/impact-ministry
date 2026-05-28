@@ -1,0 +1,130 @@
+<% content_for :title, "Events — IMPACT Ministry" %>
+<% content_for :description, "Community gatherings, workshops, podcast tapings, and launch celebrations. Save your seat." %>
+
+<%# ============================================================
+     HERO
+     ============================================================ %>
+<section class="pt-10 md:pt-16 pb-12 md:pb-16">
+  <div class="container-page">
+    <p class="meta">Events</p>
+    <h1 class="display m-0 mt-3" style="font-size: clamp(40px, 6vw, 76px); line-height: 1.0; letter-spacing: -0.02em;">
+      Come find us<br><span class="italic font-normal">in person.</span>
+    </h1>
+    <p class="reading mt-6 max-w-[560px]" style="font-size: 18px;">
+      Workshops, podcast tapings, devotional gatherings, and the occasional Mississippi backroad walk. RSVP below — most of our gatherings are small on purpose.
+    </p>
+  </div>
+</section>
+
+<%# ============================================================
+     UPCOMING
+     ============================================================ %>
+<section class="pb-16 md:pb-24">
+  <div class="container-page">
+    <div class="flex items-baseline justify-between flex-wrap gap-3 mb-6 md:mb-8">
+      <p class="meta">Coming up</p>
+      <% if @upcoming.any? %>
+        <p class="meta" style="color: var(--color-olive);">
+          <%= pluralize(@upcoming.size, "gathering") %> on the calendar
+        </p>
+      <% end %>
+    </div>
+
+    <% if @upcoming.any? %>
+      <div class="grid gap-6 md:gap-8 lg:grid-cols-2">
+        <% @upcoming.each do |event| %>
+          <%= link_to event_path(event.slug), class: "card card-hover overflow-hidden p-0" do %>
+            <div class="relative" style="height: 240px;">
+              <%= image_tag photo_url(event.cover_photo_slug.presence || "doorway-light", w: 900, h: 540),
+                            alt: "Cover image for #{event.title}",
+                            class: "w-full h-full",
+                            style: "object-fit: cover;" %>
+              <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 45%, rgba(27,42,78,0.65));"></div>
+              <div class="absolute left-5 bottom-4" style="color: var(--color-cream);">
+                <p class="meta m-0" style="color: rgba(250,247,242,0.78);">
+                  <%= event.starts_at.in_time_zone.strftime("%a · %b %-d · %-l:%M %p") %>
+                </p>
+              </div>
+            </div>
+            <div class="p-6 md:p-7">
+              <h3 class="display m-0" style="font-size: clamp(22px, 2.6vw, 28px); line-height: 1.15; letter-spacing: -0.01em;">
+                <%= event.title %>
+              </h3>
+              <div class="flex flex-wrap items-center gap-2 mt-3">
+                <% if event.virtual? %>
+                  <span class="chip" style="font-size: 12px;">Online</span>
+                <% elsif event.location.present? %>
+                  <span class="chip" style="font-size: 12px;"><%= event.location %></span>
+                <% end %>
+                <% if event.capacity %>
+                  <% remaining = event.seats_remaining %>
+                  <% if remaining&.zero? %>
+                    <span class="chip" style="font-size: 12px; color: var(--color-crimson); border-color: var(--color-crimson);">At capacity</span>
+                  <% elsif remaining && remaining <= 10 %>
+                    <span class="chip" style="font-size: 12px; color: var(--color-crimson); border-color: var(--color-crimson);">
+                      <%= pluralize(remaining, "seat") %> left
+                    </span>
+                  <% end %>
+                <% end %>
+              </div>
+              <% if event.description.present? %>
+                <p class="mt-4 m-0" style="font-family: var(--font-reading); font-size: 15px; line-height: 1.6; color: var(--color-ink);">
+                  <%= truncate(event.description.to_s, length: 170) %>
+                </p>
+              <% end %>
+              <p class="mt-5 m-0" style="font-size: 13px; color: var(--color-crimson); font-weight: 500;">
+                Save your seat →
+              </p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="card p-10 md:p-12 text-center">
+        <p class="meta mb-3">No gathering scheduled</p>
+        <h2 class="display m-0" style="font-size: clamp(28px, 4vw, 40px);">
+          Our next gathering is being planned.
+        </h2>
+        <p class="reading mt-4 max-w-[480px] mx-auto">
+          Leave your email and we'll write when it's set — usually a few weeks out, sometimes less.
+        </p>
+        <div class="mt-6 max-w-[420px] mx-auto">
+          <%= render "shared/email_capture", source: "inline" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%# ============================================================
+     PAST
+     ============================================================ %>
+<% if @past.any? %>
+  <section class="pb-20 md:pb-28">
+    <div class="container-page">
+      <p class="meta mb-5">Already happened</p>
+      <ul class="m-0 p-0" style="list-style: none; border-top: 1px solid var(--color-olive-30);">
+        <% @past.each do |event| %>
+          <li style="border-bottom: 1px solid var(--color-olive-30);">
+            <div class="py-5 md:py-6 flex items-baseline justify-between gap-4 flex-wrap">
+              <div>
+                <p class="meta m-0" style="color: var(--color-olive);">
+                  <%= event.starts_at.in_time_zone.strftime("%b %-d, %Y") %>
+                  <% if event.location.present? %> · <%= event.location %><% end %>
+                </p>
+                <p class="display m-0 mt-1" style="font-size: 20px; color: var(--color-olive); letter-spacing: -0.01em;">
+                  <%= event.title %>
+                </p>
+              </div>
+              <% if event.capacity && event.rsvp_seat_count.positive? %>
+                <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
+                  <%= pluralize(event.rsvp_seat_count, "guest") %>
+                </p>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+<% end %>

@@ -1,0 +1,25 @@
+<%#
+  "I prayed for this" button. Posts to /pray/:id/prayed; the response is a
+  Turbo Stream that replaces the inner `prayed_<id>` frame with the updated
+  counter. After tapping, the button is disabled and the flame fills crimson.
+
+  Locals:
+    req:    PrayerRequest
+    prayed: Boolean — whether this session has already prayed for `req`
+%>
+<%= button_to prayed_prayer_request_path(req),
+              method: :post,
+              form: { data: { turbo_frame: "prayed_#{req.id}" } },
+              disabled: prayed,
+              class: "inline-flex items-center",
+              style: ("gap: 10px; padding: 8px 14px; border-radius: 999px; font-size: 13px; " \
+                      "background: #{prayed ? 'rgba(200,16,46,0.08)' : 'transparent'}; " \
+                      "border: 1px solid #{prayed ? 'rgba(200,16,46,0.3)' : 'var(--color-olive-30)'}; " \
+                      "color: #{prayed ? 'var(--color-crimson)' : 'var(--color-navy)'}; " \
+                      "cursor: #{prayed ? 'default' : 'pointer'}; transition: all 240ms var(--ease-impact);") do %>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="<%= prayed ? 'var(--color-crimson)' : 'none' %>" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 2C12 6 8 8 8 12C8 15 10 17 12 17C14 17 16 15 16 12C16 8 12 6 12 2Z"/>
+    <path d="M12 17C9 17 7 19 7 21C7 21.5 7.5 22 8 22H16C16.5 22 17 21.5 17 21C17 19 15 17 12 17Z"/>
+  </svg>
+  <span><%= prayed ? "You prayed" : "I prayed for this" %></span>
+<% end %>

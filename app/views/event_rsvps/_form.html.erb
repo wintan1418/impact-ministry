@@ -1,0 +1,96 @@
+<%#
+  RSVP form. Wrapped in a turbo-frame so the controller can replace it with the
+  confirmation partial in-place. Errors render inline (CLAUDE.md §3).
+
+  Locals:
+    event:      the Event we're RSVPing to
+    event_rsvp: an EventRsvp instance (new or with errors)
+%>
+<turbo-frame id="rsvp-form">
+  <%= form_with model: event_rsvp,
+                url: event_rsvp_path(event_slug: event.slug),
+                method: :post,
+                data: { turbo_frame: "rsvp-form" },
+                class: "w-full" do |f| %>
+
+    <% if event_rsvp.errors.any? %>
+      <div class="mb-4 p-4" style="border: 1px solid var(--color-crimson); border-radius: 12px; background: rgba(200, 16, 46, 0.05);">
+        <p class="m-0" style="font-family: var(--font-sans); font-size: 13px; color: var(--color-crimson); font-weight: 500;">
+          We couldn't save your seat:
+        </p>
+        <ul class="m-0 mt-2 pl-5" style="font-family: var(--font-sans); font-size: 13px; color: var(--color-crimson);">
+          <% event_rsvp.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="flex flex-col gap-4">
+      <div>
+        <%= f.label :name, "Your name", class: "meta", style: "display: block; margin-bottom: 6px;" %>
+        <%= f.text_field :name,
+              required: true,
+              autocomplete: "name",
+              maxlength: 80,
+              class: "input #{'error' if event_rsvp.errors[:name].any?}",
+              placeholder: "First and last name" %>
+        <% if event_rsvp.errors[:name].any? %>
+          <p class="input-help input-help-error">
+            <%= event_rsvp.errors[:name].first %>
+          </p>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :email, "Email", class: "meta", style: "display: block; margin-bottom: 6px;" %>
+        <%= f.email_field :email,
+              required: true,
+              autocomplete: "email",
+              class: "input #{'error' if event_rsvp.errors[:email].any?}",
+              placeholder: "your@email.com" %>
+        <% if event_rsvp.errors[:email].any? %>
+          <p class="input-help input-help-error">
+            <%= event_rsvp.errors[:email].first %>
+          </p>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :party_size, "How many seats?", class: "meta", style: "display: block; margin-bottom: 6px;" %>
+        <%= f.number_field :party_size,
+              required: true,
+              min: 1,
+              max: 10,
+              value: (event_rsvp.party_size || 1),
+              class: "input #{'error' if event_rsvp.errors[:party_size].any?}" %>
+        <% if event_rsvp.errors[:party_size].any? %>
+          <p class="input-help input-help-error">
+            <%= event_rsvp.errors[:party_size].first %>
+          </p>
+        <% else %>
+          <p class="input-help">Up to 10 — bring a friend.</p>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :notes, "Anything we should know? (optional)", class: "meta", style: "display: block; margin-bottom: 6px;" %>
+        <%= f.text_area :notes,
+              rows: 3,
+              class: "input #{'error' if event_rsvp.errors[:notes].any?}",
+              style: "border-radius: 16px; padding: 12px 16px;",
+              placeholder: "Allergies, accessibility, kids, anything." %>
+      </div>
+
+      <div>
+        <%= render "shared/turnstile", action: "event-rsvp" %>
+      </div>
+
+      <%= f.submit "Save my seat", class: "btn btn-primary mt-1", style: "width: 100%;" %>
+
+      <p class="m-0 text-center" style="font-family: var(--font-serif); font-style: italic; font-size: 13px; color: var(--color-olive);">
+        We'll email you a reminder the day before.
+      </p>
+    </div>
+  <% end %>
+</turbo-frame>

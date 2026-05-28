@@ -1,0 +1,99 @@
+<% content_for :title, "Stories — IMPACT Ministry" %>
+<% content_for :description, "Real change, in their own words. Testimonies from readers across Mississippi and beyond." %>
+
+<%# ============================================================
+     HERO — meta + display title + subhead + CTA
+     ============================================================ %>
+<section class="pt-10 md:pt-16 pb-10 md:pb-16">
+  <div class="container-page">
+    <div class="max-w-[860px]">
+      <p class="meta m-0 mb-5">Stories</p>
+      <h1 class="display m-0" style="font-size: clamp(40px, 5.5vw, 72px); line-height: 1.02;">
+        Real change,<br>
+        <span class="italic font-normal">in their own words.</span>
+      </h1>
+      <p class="reading mt-7 max-w-[560px]">
+        These are unedited — we tidy spelling, never the heart. If God has done something
+        in you, write it down. It might be the line a stranger needs tomorrow morning.
+      </p>
+      <div class="mt-9 flex flex-wrap items-center gap-7">
+        <%= link_to new_testimony_path, class: "btn btn-primary", style: "padding: 16px 28px; font-size: 15px;" do %>
+          Share your story <span aria-hidden="true">→</span>
+        <% end %>
+        <% if @testimonies.any? %>
+          <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
+            <%= pluralize(@testimonies.size, "story") %> on the wall so far.
+          </p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hairline" style="max-width: 1200px; margin: 0 auto;">
+
+<%# ============================================================
+     FEATURED — 3 large editorial cards (portrait + pull quote)
+     ============================================================ %>
+<% if @featured.any? %>
+  <section class="py-16 md:py-20 lg:py-24">
+    <div class="container-page">
+      <p class="meta mb-8">Featured</p>
+      <div class="grid gap-10 md:gap-12 lg:grid-cols-3">
+        <% @featured.each_with_index do |t, i| %>
+          <%= render "featured_testimony", testimony: t, index: i %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hairline" style="max-width: 1200px; margin: 0 auto;">
+<% end %>
+
+<%# ============================================================
+     WALL — full list of approved testimonies
+     ============================================================ %>
+<section class="py-16 md:py-20 lg:py-24">
+  <div class="container-page">
+    <div class="flex items-baseline justify-between gap-4 mb-8 flex-wrap">
+      <h2 class="display m-0" style="font-size: clamp(28px, 3vw, 40px);">The wall</h2>
+      <p class="meta m-0">Recent first</p>
+    </div>
+
+    <% if @testimonies.any? %>
+      <div class="grid gap-6 md:gap-8 lg:grid-cols-2">
+        <% @testimonies.each do |t| %>
+          <%= render "testimony_card", testimony: t %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="card p-8 md:p-10 text-center" style="background: rgba(255,255,255,0.55);">
+        <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: clamp(20px, 2.4vw, 26px); color: var(--color-navy);">
+          The wall is quiet — for now.
+        </p>
+        <p class="reading mt-4 max-w-[480px] mx-auto" style="font-size: 16px;">
+          Be the first to tell us what God did. We'll read it carefully.
+        </p>
+        <div class="mt-7">
+          <%= link_to "Share your story", new_testimony_path, class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%# ============================================================
+     CTA TAIL — quiet repeat invitation
+     ============================================================ %>
+<section class="py-16 md:py-20" style="background: var(--color-linen);">
+  <div class="mx-auto text-center px-5 md:px-8" style="max-width: 720px;">
+    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: clamp(20px, 2vw, 26px); color: var(--color-navy); line-height: 1.5;">
+      Your story could be the hope someone else needs today.
+    </p>
+    <div class="mt-6">
+      <%= link_to new_testimony_path, class: "btn btn-primary" do %>
+        Share your story <span aria-hidden="true">→</span>
+      <% end %>
+    </div>
+  </div>
+</section>

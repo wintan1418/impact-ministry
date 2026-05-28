@@ -1,55 +1,88 @@
 <% content_for :title, "Prayer wall — IMPACT Ministry" %>
-<% content_for :description, "A quiet place where strangers carry each other's weight for a few minutes a day." %>
+<% content_for :description, "A quiet place to name what's heavy and let strangers carry it with you." %>
 
-<section class="pt-10 md:pt-16 pb-16 md:pb-24">
-  <div class="container-page">
-    <div class="grid gap-10 md:gap-14 lg:grid-cols-[1fr_1.05fr] items-center">
-      <div>
-        <p class="meta mb-5">Prayer wall</p>
-        <h1 class="display m-0" style="font-size: clamp(36px, 5.5vw, 72px); line-height: 1.0; letter-spacing: -0.02em;">
-          We're praying<br>
-          <span class="italic font-normal">with you.</span>
-        </h1>
-        <p class="reading mt-6 max-w-[520px]" style="font-size: 19px;">
-          A small, quiet place where you can name what's heavy — anonymously if you'd
-          like — and where strangers will agree to carry it with you for a few minutes
-          a day. The wall opens in the next release.
-        </p>
+<% prayed_for_ids = (session[:prayed_for] || []).map(&:to_i) %>
 
-        <div class="mt-9 max-w-[480px]">
-          <p class="meta mb-3">Tell me when it opens</p>
-          <%= render "shared/email_capture", source: "prayer" %>
-        </div>
+<%# ============================================================
+     Hero — heading + intro + photo
+     ============================================================ %>
+<section style="padding: 60px 0 30px;">
+  <div class="container-page" style="max-width: 880px;">
+    <p class="meta" style="margin-bottom: 14px;">The Prayer Wall</p>
+    <h1 class="display m-0" style="font-size: clamp(44px, 5.5vw, 72px); line-height: 1.02; margin-bottom: 24px;">
+      Tell us what to <span class="italic font-normal">pray for.</span>
+    </h1>
+    <p class="reading" style="font-size: 19px; max-width: 620px; margin: 0;">
+      Submit a request — anonymously if you want. Our team reads every one.
+      Others on this page can pray with you, quietly, by tapping the flame.
+    </p>
+  </div>
+</section>
 
-        <p class="mt-9 text-sm" style="color: var(--color-olive); font-style: italic; font-family: var(--font-serif); max-width: 480px;">
-          "Bear one another's burdens, and so fulfill the law of Christ." — Galatians 6:2
-        </p>
-      </div>
+<%# Decorative hero photo, kept narrow so the form remains the focal point. %>
+<section style="padding: 12px 0 20px;">
+  <div class="container-page" style="max-width: 880px;">
+    <%= image_tag photo_url("praying-hands", w: 1400, h: 560),
+                  alt: "Folded hands in warm light",
+                  class: "w-full h-auto",
+                  style: "border-radius: var(--radius-image); aspect-ratio: 5 / 2; object-fit: cover;" %>
+  </div>
+</section>
 
-      <div class="relative">
-        <%= image_tag photo_url("praying-hands", w: 720, h: 860), alt: "Folded hands in warm light", class: "w-full h-auto", style: "border-radius: var(--radius-image); aspect-ratio: 4 / 5; object-fit: cover;" %>
-      </div>
+<%# ============================================================
+     Submission form — the hero centerpiece
+     ============================================================ %>
+<section style="padding: 28px 0 64px;">
+  <div class="container-page" style="max-width: 880px;">
+    <%= render "form", prayer_request: @prayer_request %>
+  </div>
+</section>
+
+<%# ============================================================
+     Wall meta — total prayers count
+     ============================================================ %>
+<section style="padding: 0 0 24px;">
+  <div class="container-page flex flex-wrap items-center justify-between"
+       style="max-width: 880px; gap: 16px;">
+    <p class="meta" style="margin: 0;">
+      Recent requests · <%= @public_requests.size %>
+      <% if @total_prayed.to_i > 0 %>
+        · <%= number_with_delimiter(@total_prayed) %> prayers offered
+      <% end %>
+    </p>
+
+    <div class="flex" style="gap: 8px;">
+      <%= link_to "All",
+                  pray_path,
+                  class: "chip #{'chip-active' if @filter == 'all'}" %>
+      <%= link_to "Answered ✓",
+                  pray_path(filter: "answered"),
+                  class: "chip #{'chip-active' if @filter == 'answered'}" %>
     </div>
   </div>
 </section>
 
 <%# ============================================================
-     What we'll do — three cards
+     The wall
      ============================================================ %>
-<section class="pb-20 md:pb-28">
-  <div class="container-page">
-    <p class="meta mb-8 text-center">When the wall opens</p>
-    <div class="grid gap-6 md:gap-8 md:grid-cols-3">
-      <% [
-        { title: "Submit in two minutes", body: "A short, calm form. Anonymous is a toggle, not a chore. No sign-up required." },
-        { title: "Strangers will pray",   body: "Members tap a small flame next to your request when they've prayed for you. We'll let you know how many." },
-        { title: "Mark it answered",      body: "When God moves, you can come back and tell the wall. Answered prayers carry a quiet badge." }
-      ].each do |card| %>
-        <div class="card p-7 md:p-8">
-          <p class="display m-0" style="font-size: 24px; line-height: 1.15;"><%= card[:title] %></p>
-          <p class="reading mt-3 m-0" style="font-size: 16px;"><%= card[:body] %></p>
-        </div>
-      <% end %>
-    </div>
+<section style="padding-bottom: 80px;">
+  <div class="container-page" style="max-width: 880px;">
+    <% if @public_requests.any? %>
+      <div class="grid gap-4 lg:grid-cols-2">
+        <% @public_requests.each do |req| %>
+          <%= render "prayer_card", req: req, prayed: prayed_for_ids.include?(req.id) %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="card" style="padding: 36px; text-align: center; background: rgba(255,255,255,0.5);">
+        <p class="reading" style="font-family: var(--font-serif); font-style: italic; color: var(--color-olive); margin: 0;">
+          The wall is quiet right now. Add the first request above and we'll begin.
+        </p>
+      </div>
+    <% end %>
+
+    <p class="scripture" style="margin-top: 48px; text-align: center; font-size: 17px;">
+      "Bear one another's burdens, and so fulfill the law of Christ." — Galatians 6:2
+    </p>
   </div>
 </section>

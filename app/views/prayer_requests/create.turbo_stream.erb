@@ -1,0 +1,12 @@
+<%# Turbo Stream response to POST /pray.
+    On success → quiet confirmation card.
+    On error   → re-renders the form with inline errors. No toast. (CLAUDE.md §3) %>
+<% if @prayer_request.persisted? %>
+  <%= turbo_stream.replace "prayer-form" do %>
+    <%= render "submitted" %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace "prayer-form" do %>
+    <%= render "form", prayer_request: @prayer_request %>
+  <% end %>
+<% end %>

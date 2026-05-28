@@ -1,0 +1,91 @@
+<%#
+  Testimony submission form. Wrapped in a turbo-frame so the controller
+  can replace the frame in place on success (with `_submitted`) or on
+  failure (with this same form, error_message present). No toasts.
+
+  Locals:
+    testimony:     Testimony — the form's object
+    error_message: String (optional) — inline error rendered above the form
+%>
+<% error_message = local_assigns[:error_message] %>
+
+<turbo-frame id="testimony-form">
+  <%= form_with model: testimony,
+                url: testimonies_path,
+                method: :post,
+                multipart: true,
+                data: { turbo_frame: "testimony-form" },
+                class: "w-full" do |f| %>
+
+    <% if error_message.present? %>
+      <p class="m-0 mb-6" role="alert"
+         style="font-family: var(--font-sans); font-size: 14px; color: var(--color-crimson); padding: 12px 16px; border: 1px solid var(--color-crimson); border-radius: 12px; background: rgba(200,16,46,0.04);">
+        <%= error_message %>
+      </p>
+    <% end %>
+
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <%= f.label :name, "Your name (optional)", class: "meta block mb-2" %>
+        <%= f.text_field :name,
+              autocomplete: "name",
+              maxlength: 80,
+              placeholder: "First name or initials are fine",
+              class: "input #{'error' if testimony.errors[:name].any?}",
+              "aria-invalid": testimony.errors[:name].any? %>
+        <% if testimony.errors[:name].any? %>
+          <p class="input-help input-help-error"><%= testimony.errors[:name].first %></p>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :location, "Where you're writing from (optional)", class: "meta block mb-2" %>
+        <%= f.text_field :location,
+              maxlength: 100,
+              placeholder: "City, ST",
+              class: "input #{'error' if testimony.errors[:location].any?}",
+              "aria-invalid": testimony.errors[:location].any? %>
+        <% if testimony.errors[:location].any? %>
+          <p class="input-help input-help-error"><%= testimony.errors[:location].first %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <%= f.label :body, "Your story", class: "meta block mb-2" %>
+      <%= f.text_area :body,
+            rows: 8,
+            maxlength: 4000,
+            required: true,
+            placeholder: "Start anywhere. The morning email landed on a hard week, and…",
+            class: "w-full",
+            style: "padding: 16px 18px; font-family: var(--font-reading); font-size: 17px; line-height: 1.6; color: var(--color-ink); background: rgba(255,255,255,0.6); border: 1px solid #{testimony.errors[:body].any? ? 'var(--color-crimson)' : 'var(--color-olive-30)'}; border-radius: 18px; transition: border-color 200ms var(--ease-impact);",
+            "aria-invalid": testimony.errors[:body].any? %>
+      <% if testimony.errors[:body].any? %>
+        <p class="input-help input-help-error"><%= testimony.errors[:body].first %></p>
+      <% else %>
+        <p class="input-help">A short paragraph is plenty. Up to ~4,000 characters.</p>
+      <% end %>
+    </div>
+
+    <div class="mt-6">
+      <%= f.label :photo, "Photo (optional)", class: "meta block mb-2" %>
+      <%= f.file_field :photo,
+            accept: "image/jpeg,image/png,image/webp",
+            class: "block",
+            style: "font-family: var(--font-sans); font-size: 14px; color: var(--color-ink);" %>
+      <p class="input-help">JPG or PNG. We'll resize.</p>
+    </div>
+
+    <div class="mt-6">
+      <%= render "shared/turnstile", action: "testify" %>
+    </div>
+
+    <div class="mt-8 flex flex-wrap items-center gap-5">
+      <%= f.submit "Share your story", class: "btn btn-primary", style: "padding: 16px 28px; font-size: 15px;" %>
+      <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
+        We'll read it carefully.
+      </p>
+    </div>
+  <% end %>
+</turbo-frame>

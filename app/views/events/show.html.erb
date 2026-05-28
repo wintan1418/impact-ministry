@@ -1,0 +1,109 @@
+<% content_for :title, "#{@event.title} — IMPACT Ministry" %>
+<% content_for :description, truncate(@event.description.to_s, length: 160).presence || "A gathering with IMPACT Ministry." %>
+
+<section class="pt-10 md:pt-16 pb-16 md:pb-24">
+  <div class="container-page">
+    <p class="meta">
+      <%= link_to "Events", events_path, class: "ulink" %>
+    </p>
+
+    <div class="grid gap-10 md:gap-14 lg:grid-cols-[1.4fr_1fr] mt-4">
+      <%# -------- Left column — event details -------- %>
+      <article>
+        <h1 class="display mt-3" style="font-size: clamp(36px, 5.5vw, 64px); line-height: 1.02; letter-spacing: -0.02em;">
+          <%= @event.title %>
+        </h1>
+
+        <p class="meta mt-5">
+          <%= @event.starts_at.in_time_zone.strftime("%A, %B %-d, %Y") %>
+          ·
+          <%= @event.starts_at.in_time_zone.strftime("%-l:%M %p") %>
+          <% if @event.ends_at? %> – <%= @event.ends_at.in_time_zone.strftime("%-l:%M %p") %><% end %>
+        </p>
+
+        <% if @event.cover_photo_slug.present? || true %>
+          <%= image_tag photo_url(@event.cover_photo_slug.presence || "doorway-light", w: 1200, h: 700),
+                        alt: "Cover image for #{@event.title}",
+                        class: "w-full mt-7",
+                        style: "border-radius: var(--radius-image); aspect-ratio: 16 / 9; object-fit: cover;" %>
+        <% end %>
+
+        <div class="mt-7 flex flex-wrap gap-2">
+          <% if @event.virtual? %>
+            <span class="chip">Online gathering</span>
+            <% safe_link = @event.virtual_link.to_s
+               safe_link = nil unless safe_link.match?(%r{\Ahttps?://}i) %>
+            <% if safe_link %>
+              <%= link_to "Join link", safe_link, class: "chip", target: "_blank", rel: "noopener" %>
+            <% end %>
+          <% elsif @event.location.present? %>
+            <span class="chip"><%= @event.location %></span>
+          <% end %>
+          <% if @event.capacity %>
+            <span class="chip">Capacity <%= @event.capacity %></span>
+          <% else %>
+            <span class="chip">Open invitation</span>
+          <% end %>
+        </div>
+
+        <% if @event.description.present? %>
+          <div class="reading mt-8" style="font-size: 18px;">
+            <% @event.description.to_s.split(/\n+/).each do |p| %>
+              <p><%= p %></p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @event.location.present? && !@event.virtual? %>
+          <div class="mt-10">
+            <p class="meta mb-3">Getting there</p>
+            <div class="ph" style="aspect-ratio: 16 / 7;">
+              MAP · <%= @event.location.upcase %>
+            </div>
+          </div>
+        <% end %>
+      </article>
+
+      <%# -------- Right column — RSVP card -------- %>
+      <aside class="lg:sticky lg:top-24 self-start">
+        <div class="card p-6 md:p-7">
+          <p class="meta">RSVP</p>
+
+          <% if @event.over? %>
+            <h2 class="display mt-2 m-0" style="font-size: 24px;">This gathering has passed.</h2>
+            <p class="reading mt-3" style="font-size: 16px;">
+              We're sorry you missed it. <%= link_to "See what's next", events_path, class: "ulink", style: "color: var(--color-crimson);" %>.
+            </p>
+          <% elsif @event.full? %>
+            <h2 class="display mt-2 m-0" style="font-size: 24px;">We're at capacity.</h2>
+            <p class="reading mt-3" style="font-size: 15px;">
+              Leave your email and we'll let you know if a seat opens — or when the next gathering is announced.
+            </p>
+            <div class="mt-4">
+              <%= render "shared/email_capture", source: "inline" %>
+            </div>
+          <% else %>
+            <% if @event.capacity %>
+              <% taken = @event.rsvp_seat_count %>
+              <% pct = ((taken.to_f / @event.capacity) * 100).clamp(0, 100).round %>
+              <p class="m-0 mt-2" style="font-family: var(--font-serif); font-size: 18px; color: var(--color-navy);">
+                <%= taken %> of <%= @event.capacity %> seats taken
+              </p>
+              <div class="mt-3" style="height: 6px; background: var(--color-olive-15); border-radius: 9999px; overflow: hidden;">
+                <div style="width: <%= pct %>%; height: 100%; background: var(--color-crimson); transition: width 320ms var(--ease-impact);"></div>
+              </div>
+            <% else %>
+              <p class="m-0 mt-2" style="font-family: var(--font-serif); font-style: italic; font-size: 18px; color: var(--color-navy);">
+                Open invitation — bring a friend.
+              </p>
+            <% end %>
+
+            <hr class="hairline my-5">
+
+            <%= render "event_rsvps/form", event: @event, event_rsvp: @event_rsvp %>
+          <% end %>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+<%#
+  Post-submit confirmation. Quiet. No celebration. (CLAUDE.md §11.)
+  Replaces the testimony-form frame in place after a successful POST.
+%>
+<turbo-frame id="testimony-form">
+  <div class="py-2"
+       style="opacity: 0; animation: fadeUp 500ms var(--ease-impact) forwards;">
+    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: clamp(20px, 2.2vw, 26px); color: var(--color-navy); line-height: 1.5;">
+      Thank you. We'll read this carefully and write back if we have questions.
+    </p>
+    <p class="reading mt-5" style="font-size: 16px; color: var(--color-olive);">
+      Your story is in the queue. Approved testimonies appear on the wall within a few days.
+    </p>
+    <div class="mt-7">
+      <%= link_to testimonies_path, class: "btn btn-ghost" do %>
+        See the wall <span aria-hidden="true">→</span>
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>

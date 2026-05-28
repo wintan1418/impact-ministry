@@ -8,6 +8,13 @@ class HomeController < ApplicationController
     @latest_episode = (defined?(PodcastEpisode) && PodcastEpisode.table_exists?) ?
                       PodcastEpisode.published.recent_first.first : nil
 
+    # Rotate one approved+featured testimony into the homepage navy band.
+    # Safe-guarded against an empty/missing table so the homepage never blanks.
+    @featured_testimony =
+      if defined?(Testimony) && Testimony.table_exists?
+        Testimony.approved.where(featured: true).order(Arel.sql("RANDOM()")).first
+      end
+
     # Live-ish social proof. Real number on the email-capture section.
     @readers_this_morning = readers_this_morning_count
     @readers_this_week    = readers_this_week_count

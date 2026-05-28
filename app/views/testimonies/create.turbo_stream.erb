@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "testimony-form" do %>
+  <% if @error_message.present? %>
+    <%= render "form", testimony: @testimony, error_message: @error_message %>
+  <% else %>
+    <%= render "submitted" %>
+  <% end %>
+<% end %>

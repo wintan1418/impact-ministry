@@ -1,0 +1,37 @@
+<%#
+  Compact testimony card — pull quote + byline. Used in the /testimonies wall.
+  No photo by design; the wall reads as a quilt of voices, not a gallery.
+
+  Locals:
+    testimony: Testimony
+%>
+<article class="card p-7 md:p-8" style="background: rgba(255,255,255,0.55);">
+  <blockquote class="m-0" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.45; color: var(--color-navy);">
+    <%= testimony.pull_quote %>
+  </blockquote>
+
+  <div class="mt-5 flex flex-wrap items-center gap-2 sm:gap-3 text-[13px]" style="color: var(--color-olive);">
+    <span style="font-family: var(--font-serif); color: var(--color-navy); font-size: 15px;">
+      <%= testimony.display_name %>
+    </span>
+    <% if testimony.location.present? %>
+      <span aria-hidden="true">·</span>
+      <span><%= testimony.location %></span>
+    <% end %>
+    <% if testimony.approved_at %>
+      <span aria-hidden="true">·</span>
+      <span><%= testimony.approved_at.strftime("%b %Y") %></span>
+    <% end %>
+  </div>
+
+  <% if testimony.body.to_s.strip.length > testimony.pull_quote.length %>
+    <details class="mt-4">
+      <summary class="meta" style="cursor: pointer; color: var(--color-crimson); list-style: none;">
+        Read the rest <span aria-hidden="true">→</span>
+      </summary>
+      <p class="reading mt-3" style="font-size: 16px;">
+        <%= simple_format(testimony.body, {}, sanitize: true, wrapper_tag: "span") %>
+      </p>
+    </details>
+  <% end %>
+</article>

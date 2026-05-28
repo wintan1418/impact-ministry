@@ -167,10 +167,10 @@ if Rails.env.development?
     { offset: -7, title: "Manna in the Morning",                       scripture: "Exodus 16:21",        tags: %w[provision morning] },
     { offset: -8, title: "The Yoke is Easy",                           scripture: "Matthew 11:28–30",    tags: %w[rest invitation] },
     { offset: -9, title: "Streams in the Wasteland",                   scripture: "Isaiah 43:19",        tags: %w[renewal] },
-    { offset:-10, title: "All Things Hold Together",                   scripture: "Colossians 1:17",     tags: %w[providence christ] },
-    { offset:-11, title: "If These Were Silent, the Stones Would Cry", scripture: "Luke 19:40",          tags: %w[praise] },
-    { offset:-12, title: "He Restores My Soul",                        scripture: "Psalm 23:3",          tags: %w[restoration] },
-    { offset:-13, title: "Be Still, and Know",                         scripture: "Psalm 46:10",         tags: %w[stillness] }
+    { offset: -10, title: "All Things Hold Together",                   scripture: "Colossians 1:17",     tags: %w[providence christ] },
+    { offset: -11, title: "If These Were Silent, the Stones Would Cry", scripture: "Luke 19:40",          tags: %w[praise] },
+    { offset: -12, title: "He Restores My Soul",                        scripture: "Psalm 23:3",          tags: %w[restoration] },
+    { offset: -13, title: "Be Still, and Know",                         scripture: "Psalm 46:10",         tags: %w[stillness] }
   ]
 
   devotional_excerpts = {
@@ -333,5 +333,204 @@ if Rails.env.development?
     puts "Seeded #{created} delivery rows (open ~58%, click ~12%)."
   else
     puts "Delivery history already populated."
+  end
+
+  # --- Prayer wall (sample requests across statuses) ----------------
+  TARGET_PRAYERS = 12
+  if PrayerRequest.count < TARGET_PRAYERS
+    # Mix of named + anonymous, status spread across new/praying/answered,
+    # is_public mostly true so the wall looks alive in development.
+    prayer_seeds = [
+      { status: "praying",  is_public: true,  is_anonymous: true,  name: nil,          prayed: 47, age: 12.minutes },
+      { status: "praying",  is_public: true,  is_anonymous: false, name: "Daniel R.",  prayed: 23, age: 38.minutes },
+      { status: "praying",  is_public: true,  is_anonymous: true,  name: nil,          prayed: 112, age: 1.hour },
+      { status: "answered", is_public: true,  is_anonymous: false, name: "Marie K.",   prayed: 284, age: 3.hours },
+      { status: "praying",  is_public: true,  is_anonymous: true,  name: nil,          prayed: 91, age: 5.hours },
+      { status: "praying",  is_public: true,  is_anonymous: false, name: "Pastor T.",  prayed: 156, age: 1.day },
+      { status: "answered", is_public: true,  is_anonymous: true,  name: nil,          prayed: 76, age: 2.days },
+      { status: "praying",  is_public: true,  is_anonymous: false, name: "Lena W.",    prayed: 18, age: 2.days },
+      { status: "praying",  is_public: true,  is_anonymous: true,  name: nil,          prayed: 8,  age: 4.days },
+      { status: "answered", is_public: true,  is_anonymous: false, name: "Marcus J.",  prayed: 41, age: 6.days },
+      # New (awaiting moderation) — won't show on the wall but seed admin queue.
+      { status: "new",      is_public: false, is_anonymous: true,  name: nil,          prayed: 0,  age: 20.minutes },
+      { status: "new",      is_public: false, is_anonymous: false, name: "Esther B.",  prayed: 0,  age: 2.hours }
+    ]
+
+    prayer_bodies = [
+      "For my mother, after the diagnosis. Pray that she would feel held. Pray that I would know what to say.",
+      "I start a new job Monday after a year of looking. Grateful, terrified. Pray I would do good work without making it an idol.",
+      "For my marriage. We are not okay but we are still talking. That feels like grace.",
+      "Praising the Lord — the scan came back clear after eighteen months of waiting. He is faithful.",
+      "For a son who has stopped coming home. The Father in the parable kept watching the road. Help me keep watching.",
+      "Our small church in Greenwood lost its building this week. Pray for our people and that we'd remember the building was never the church.",
+      "Pray we'd remember how to be quiet together in the evenings without screens. The kids need it. So do we.",
+      "Asking for clarity on a hard conversation I have to have tomorrow. Words that are honest and kind.",
+      "Pray for my friend who is grieving. I don't have anything to say. I'm just sitting with her.",
+      "He answered our prayer for housing — we move in next week. Thanking him for the long wait that made the answer holy."
+    ]
+
+    created = 0
+    prayer_seeds.take(TARGET_PRAYERS).each_with_index do |spec, i|
+      body = prayer_bodies[i] ||
+             Faker::Lorem.sentences(number: rand(1..3)).join(" ").truncate(280)
+      pr = PrayerRequest.new(
+        name:         spec[:name],
+        body:         body,
+        status:       spec[:status],
+        is_public:    spec[:is_public],
+        is_anonymous: spec[:is_anonymous],
+        prayed_count: spec[:prayed]
+      )
+      pr.save!
+      # Backdate created_at so the wall looks aged-in.
+      ts = spec[:age].ago
+      PrayerRequest.where(id: pr.id).update_all(created_at: ts, updated_at: ts)
+      created += 1
+    end
+    puts "Seeded #{created} prayer requests — now #{PrayerRequest.count} total."
+  else
+    puts "Prayer requests already populated (#{PrayerRequest.count})."
+  end
+
+  # --- Events + RSVPs ---------------------------------------------
+  # 4 upcoming gatherings + 1 past one so /events is populated.
+  event_seeds = [
+    { title: "First Light Devotional Brunch",
+      offset_weeks: 3,
+      duration_hours: 2,
+      location: "Jackson, MS",
+      capacity: 60,
+      cover: "morning-desk",
+      description:
+        "A slow Saturday morning together — coffee, scripture, and a single short reading. " \
+        "We meet downtown and walk to the coffee bar after. Kids welcome." },
+    { title: "Podcast Live: Season One Wrap",
+      offset_weeks: 5,
+      duration_hours: 1,
+      virtual_link: "https://zoom.us/j/impact-podcast-live",
+      cover: "microphone",
+      description:
+        "Reuben and Sarah-Beth host a live recording wrapping our first season. " \
+        "Bring your questions. We'll take them in real time and edit the best into the episode." },
+    { title: "Partners Roundtable",
+      offset_weeks: 7,
+      duration_hours: 3,
+      location: "Greenville, MS",
+      capacity: 24,
+      cover: "handshake",
+      description:
+        "Lunch and a long conversation with leaders from partner churches and nonprofits across the Delta. " \
+        "By invitation; reach out if you'd like to be invited next time." },
+    { title: "Holy Week Walk",
+      offset_weeks: 8,
+      duration_hours: 4,
+      location: "Natchez Trace, MS",
+      capacity: 200,
+      cover: "path-pines",
+      description:
+        "A four-hour walk through a quiet stretch of the Trace, with stops to read the Passion narrative aloud. " \
+        "Bring water, sturdy shoes, and a friend who needs the quiet." }
+  ]
+
+  event_seeds.each do |spec|
+    event = Event.find_or_initialize_by(title: spec[:title])
+    starts = Time.current + spec[:offset_weeks].weeks
+    event.assign_attributes(
+      description:      spec[:description],
+      starts_at:        starts,
+      ends_at:          starts + spec[:duration_hours].hours,
+      location:         spec[:location],
+      virtual_link:     spec[:virtual_link],
+      capacity:         spec[:capacity],
+      cover_photo_slug: spec[:cover],
+      published:        true
+    )
+    if event.changed? || event.new_record?
+      event.save!
+      puts "Seeded event: #{event.starts_at.strftime('%Y-%m-%d')} · #{event.title}"
+    else
+      puts "Event already present: #{event.title}"
+    end
+
+    # Sample RSVPs — 4 to 10 attendees per event.
+    target_rsvps = rand(4..10)
+    existing_rsvps = event.event_rsvps.count
+    needed = [ target_rsvps - existing_rsvps, 0 ].max
+    needed.times do
+      email = Faker::Internet.email(domain: %w[example.com example.org test.local].sample)
+      next if event.event_rsvps.exists?(email: email.downcase)
+
+      party = [ 1, 1, 1, 2 ].sample
+      next if event.capacity && (event.rsvp_seat_count + party) > event.capacity
+
+      event.event_rsvps.create!(
+        name:       Faker::Name.name,
+        email:      email,
+        party_size: party,
+        notes:      [ nil, nil, "Excited!", "Bringing a friend.", "First time." ].sample
+      )
+    end
+  end
+
+  # One past event so the past-list is populated.
+  past_event = Event.find_or_initialize_by(title: "Lenten Retreat 2026")
+  past_starts = 6.weeks.ago
+  past_event.assign_attributes(
+    description:
+      "A two-day retreat in the pines — silence, scripture, and a few long conversations around a fire. " \
+      "We left rested and we wrote about it for weeks afterward.",
+    starts_at:        past_starts,
+    ends_at:          past_starts + 36.hours,
+    location:         "Tishomingo, MS",
+    capacity:         40,
+    cover_photo_slug: "path-pines",
+    published:        true
+  )
+  if past_event.changed? || past_event.new_record?
+    past_event.save!
+    puts "Seeded past event: #{past_event.starts_at.strftime('%Y-%m-%d')} · #{past_event.title}"
+  end
+
+  # --- Testimonies (sample wall — 3 featured, 3 approved, 1 unapproved) ---
+  TARGET_TESTIMONIES = 7
+  if Testimony.count < TARGET_TESTIMONIES
+    testimony_seeds = [
+      { featured: true,  approved: true,  name: "Marcus L.",   location: "Jackson, MS",      age: 2.months,
+        body: "I hadn't opened a Bible in nine years. The morning email didn't ask me to. It just showed up, gentle, like a friend who knew I'd be back. Three weeks in I started reading the actual passages. Six weeks in I was praying again. Nothing dramatic — just a slow, daily mercy I didn't know how to thank Him for." },
+      { featured: true,  approved: true,  name: "Lena W.",     location: "Tupelo, MS",       age: 3.weeks,
+        body: "The Habakkuk piece broke me wide open. We had been waiting on a diagnosis for almost a year. I read it on the porch at five-thirty and cried, then prayed, then drank cold coffee and got the kids to school. The answer didn't come that day. But something else did, and it has held me since." },
+      { featured: true,  approved: true,  name: nil,           location: "Birmingham, AL",   age: 5.weeks,
+        body: "I started reading anonymously. I am a pastor in a small town and I needed someone to feed me without knowing my name. IMPACT did that for almost two months before I told anyone. It is the kind of writing that does not flatter or scare. It just tells the truth." },
+      { featured: false, approved: true,  name: "Daniel R.",   location: "Hattiesburg, MS",  age: 6.weeks,
+        body: "My wife signed me up without asking. I was annoyed for about a day. Now I read it before I check the news. That switch alone has changed the shape of my mornings. Thank you for keeping it short and serious." },
+      { featured: false, approved: true,  name: "Esther B.",   location: "Atlanta, GA",      age: 9.weeks,
+        body: "I came out of a hard church season last fall. I was not sure I wanted devotionals from anyone. But your voice never tried to sell me anything. It just reminded me, quietly, that the Bible is still good and so is God. I am slowly believing both things again." },
+      { featured: false, approved: true,  name: nil,           location: "Mobile, AL",       age: 4.months,
+        body: "I print the Sunday devotional and read it to my grandmother at the nursing home. She does not say much these days but she always squeezes my hand at the scripture. Thank you for writing something an eighty-nine-year-old can still receive." },
+      # Awaiting moderation — seeds the admin queue.
+      { featured: false, approved: false, name: "Pastor T.",   location: "Greenwood, MS",   age: 6.hours,
+        body: "Just wanted to write and say thank you. Our small church has been using your devotionals in our prayer meetings on Wednesday nights. Several folks have started showing up earlier just to read it together before we begin." }
+    ]
+
+    created = 0
+    testimony_seeds.take(TARGET_TESTIMONIES).each do |spec|
+      t = Testimony.new(
+        name:     spec[:name],
+        location: spec[:location],
+        body:     spec[:body],
+        featured: spec[:featured],
+        approved: spec[:approved]
+      )
+      t.submitted_at = spec[:age].ago
+      t.approved_at  = spec[:age].ago + 1.day if spec[:approved]
+      t.save!
+      # Backdate created_at so the wall looks aged-in.
+      ts = spec[:age].ago
+      Testimony.where(id: t.id).update_all(created_at: ts, updated_at: ts)
+      created += 1
+    end
+    puts "Seeded #{created} testimonies — now #{Testimony.count} total."
+  else
+    puts "Testimonies already populated (#{Testimony.count})."
   end
 end

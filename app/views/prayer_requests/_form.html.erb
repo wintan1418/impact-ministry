@@ -1,0 +1,92 @@
+<%#
+  Prayer Wall — submission form.
+  Hero card on /pray. Wrapped in a turbo-frame so Turbo Stream can swap it
+  with the quiet confirmation partial on success or re-render with inline
+  errors (no toast — CLAUDE.md §3).
+
+  Locals:
+    prayer_request: PrayerRequest instance (new or with errors)
+%>
+<turbo-frame id="prayer-form">
+  <%= form_with model: prayer_request,
+                url: prayer_requests_path,
+                method: :post,
+                data: { turbo_frame: "prayer-form" },
+                html: { class: "card", style: "padding: 36px; background: rgba(255,255,255,0.6);" } do |f| %>
+
+    <% if prayer_request.errors[:base].any? %>
+      <p class="input-help input-help-error" style="margin: 0 0 18px; padding-left: 0;">
+        <%= prayer_request.errors[:base].first %>
+      </p>
+    <% end %>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">Your request</p>
+      <%= f.text_area :body,
+            rows: 5,
+            required: true,
+            minlength: 6,
+            maxlength: 2000,
+            placeholder: "Take your time. There is no wrong way to say this.",
+            "aria-label": "Your prayer request",
+            "aria-invalid": prayer_request.errors[:body].any? ? "true" : nil,
+            class: ("input #{'error' if prayer_request.errors[:body].any?}"),
+            style: "border-radius: 14px; padding: 18px; font-family: var(--font-reading); font-size: 17px; line-height: 1.6; resize: vertical; height: auto; min-height: 140px;" %>
+      <% if prayer_request.errors[:body].any? %>
+        <p class="input-help input-help-error">
+          <%= prayer_request.errors[:body].first %>
+        </p>
+      <% end %>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">Your first name (optional)</p>
+      <%= f.text_field :name,
+            placeholder: "So we can write you back",
+            "aria-label": "First name",
+            class: "input",
+            style: "border-radius: 14px;" %>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">Your email (optional)</p>
+      <%= f.email_field :email,
+            placeholder: "your@email.com",
+            autocomplete: "email",
+            "aria-label": "Email address",
+            "aria-invalid": prayer_request.errors[:email].any? ? "true" : nil,
+            class: ("input #{'error' if prayer_request.errors[:email].any?}"),
+            style: "border-radius: 14px;" %>
+      <% if prayer_request.errors[:email].any? %>
+        <p class="input-help input-help-error">
+          <%= prayer_request.errors[:email].first %>
+        </p>
+      <% end %>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-4" style="margin-top: 10px;">
+      <label class="flex items-center" style="gap: 10px; cursor: pointer;">
+        <%= f.check_box :is_anonymous, class: "sr-only peer", data: { prayer_form_target: "anon" } %>
+        <span aria-hidden="true"
+              style="width: 42px; height: 24px; border-radius: 999px; border: 1px solid var(--color-olive-30); background: var(--color-cream); position: relative; display: inline-block; transition: background 200ms var(--ease-impact);"
+              class="peer-checked:[background:var(--color-navy)]">
+          <span style="position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--color-olive); transition: all 240ms var(--ease-impact);"
+                class="peer-checked:!left-[20px] peer-checked:!bg-cream"></span>
+        </span>
+        <span style="font-size: 14px; color: var(--color-navy);">Send anonymously</span>
+      </label>
+
+      <%= f.submit "Send the request", class: "btn btn-primary" %>
+    </div>
+
+    <%# Cloudflare Turnstile — invisible in dev/test. %>
+    <div style="margin-top: 18px;">
+      <%= render "shared/turnstile", action: "prayer-request" %>
+    </div>
+
+    <p class="input-help" style="padding-left: 0; margin-top: 14px; font-family: var(--font-serif); font-style: italic; color: var(--color-olive); font-size: 13px;">
+      Our team reads every request. Submit anonymously if you'd like —
+      either way, we'll pray with you.
+    </p>
+  <% end %>
+</turbo-frame>

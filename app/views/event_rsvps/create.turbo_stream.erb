@@ -1,0 +1,12 @@
+<%= turbo_stream.replace "rsvp-form" do %>
+  <% if @event_rsvp.persisted? && @error_message.blank? %>
+    <%= render "confirmation", event: @event, event_rsvp: @event_rsvp %>
+  <% else %>
+    <%# Re-render the form with errors. If a turnstile failure populated
+        @error_message but didn't touch validations, surface it as a base error. %>
+    <% if @error_message.present? && @event_rsvp.errors.empty? %>
+      <% @event_rsvp.errors.add(:base, @error_message) %>
+    <% end %>
+    <%= render "form", event: @event, event_rsvp: @event_rsvp %>
+  <% end %>
+<% end %>

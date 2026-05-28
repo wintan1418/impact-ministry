@@ -1,0 +1,13 @@
+<%#
+  Per-card prayed_count counter. Lives inside its own turbo-frame so the
+  prayed action can swap just this fragment, not the whole card.
+
+  Locals:
+    req: PrayerRequest
+%>
+<turbo-frame id="prayed_<%= req.id %>" style="display: inline;">
+  <span style="font-family: var(--font-serif); font-style: italic; font-size: 13px; color: var(--color-olive);">
+    <%= number_with_delimiter(req.prayed_count) %>
+    <%= req.prayed_count == 1 ? "person" : "people" %> praying
+  </span>
+</turbo-frame>

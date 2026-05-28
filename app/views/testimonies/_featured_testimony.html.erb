@@ -1,0 +1,54 @@
+<%#
+  Featured testimony card — portrait + pull quote + byline. Used in the
+  /testimonies featured grid. Photo falls back to a portrait stock if the
+  testimony has no attached photo.
+
+  Locals:
+    testimony: Testimony
+    index:     Integer — rotates the fallback portrait
+%>
+<% photo_choices = %w[portrait-man portrait-woman morning-desk path-pines] %>
+<% fallback_slug = photo_choices[index % photo_choices.size] %>
+
+<article class="card overflow-hidden flex flex-col" style="background: var(--color-cream); border-radius: var(--radius-card);">
+  <div class="relative" style="aspect-ratio: 4/3; background: var(--color-linen);">
+    <% if testimony.photo.attached? %>
+      <%= image_tag testimony.photo,
+                    alt: "Portrait of #{testimony.display_name}",
+                    class: "w-full h-full object-cover",
+                    style: "display: block;" %>
+    <% else %>
+      <%= image_tag photo_url(fallback_slug, w: 800, h: 600),
+                    alt: "Editorial portrait",
+                    class: "w-full h-full object-cover",
+                    style: "display: block;" %>
+    <% end %>
+  </div>
+
+  <div class="p-6 md:p-7 lg:p-8 flex flex-col grow">
+    <blockquote class="m-0" style="font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.4; color: var(--color-navy);">
+      <%= testimony.pull_quote %>
+    </blockquote>
+
+    <div class="mt-5 flex flex-wrap items-center gap-2 sm:gap-3 text-[13px]" style="color: var(--color-olive);">
+      <span style="font-family: var(--font-serif); color: var(--color-navy); font-size: 15px;">
+        <%= testimony.display_name %>
+      </span>
+      <% if testimony.location.present? %>
+        <span aria-hidden="true">·</span>
+        <span><%= testimony.location %></span>
+      <% end %>
+    </div>
+
+    <% if testimony.body.to_s.strip.length > testimony.pull_quote.length %>
+      <details class="mt-5">
+        <summary class="meta" style="cursor: pointer; color: var(--color-crimson); list-style: none;">
+          Read the rest <span aria-hidden="true">→</span>
+        </summary>
+        <p class="reading mt-4" style="font-size: 17px;">
+          <%= simple_format(testimony.body, {}, sanitize: true, wrapper_tag: "span") %>
+        </p>
+      </details>
+    <% end %>
+  </div>
+</article>

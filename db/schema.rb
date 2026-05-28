@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_204222) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_121457) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -119,6 +119,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_204222) do
     t.index ["unsubscribed_at"], name: "index_email_subscribers_on_unsubscribed_at"
   end
 
+  create_table "event_rsvps", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.bigint "event_id", null: false
+    t.string "name", null: false
+    t.text "notes"
+    t.integer "party_size", default: 1, null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id", "email"], name: "index_event_rsvps_on_event_id_and_email", unique: true
+    t.index ["event_id"], name: "index_event_rsvps_on_event_id"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.integer "capacity"
+    t.string "cover_photo_slug"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.datetime "ends_at"
+    t.string "location"
+    t.boolean "published", default: false, null: false
+    t.string "slug", null: false
+    t.datetime "starts_at", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.string "virtual_link"
+    t.index ["published", "starts_at"], name: "index_events_on_published_and_starts_at"
+    t.index ["slug"], name: "index_events_on_slug", unique: true
+    t.index ["starts_at"], name: "index_events_on_starts_at"
+  end
+
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.datetime "created_at"
     t.string "scope"
@@ -161,6 +191,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_204222) do
     t.index ["slug"], name: "index_podcast_episodes_on_slug", unique: true
   end
 
+  create_table "prayer_requests", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.boolean "is_anonymous", default: false, null: false
+    t.boolean "is_public", default: false, null: false
+    t.string "name"
+    t.integer "prayed_count", default: 0, null: false
+    t.string "status", default: "new", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_prayer_requests_on_created_at"
+    t.index ["status", "is_public", "created_at"], name: "index_prayer_requests_on_status_public_created", order: { created_at: :desc }
+    t.index ["status"], name: "index_prayer_requests_on_status"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -180,6 +225,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_204222) do
     t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
+  create_table "testimonies", force: :cascade do |t|
+    t.boolean "approved", default: false, null: false
+    t.datetime "approved_at"
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.boolean "featured", default: false, null: false
+    t.string "location"
+    t.string "name"
+    t.datetime "submitted_at"
+    t.datetime "updated_at", null: false
+    t.index ["approved", "featured", "submitted_at"], name: "index_testimonies_on_approved_featured_submitted", order: { submitted_at: :desc }
+    t.index ["approved"], name: "index_testimonies_on_approved"
+    t.index ["submitted_at"], name: "index_testimonies_on_submitted_at"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "confirmed_at"
     t.datetime "created_at", null: false
@@ -197,5 +257,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_204222) do
   add_foreign_key "devotional_deliveries", "devotionals"
   add_foreign_key "devotional_deliveries", "email_subscribers"
   add_foreign_key "devotionals", "users", column: "author_id"
+  add_foreign_key "event_rsvps", "events"
   add_foreign_key "sessions", "users"
 end

@@ -1,0 +1,29 @@
+<%#
+  Quiet RSVP confirmation. Replaces the rsvp-form frame in place.
+  No confetti. CLAUDE.md §11 — warm, second-person, specific.
+
+  Locals:
+    event:      the Event we just RSVPed to
+    event_rsvp: the saved EventRsvp
+%>
+<turbo-frame id="rsvp-form">
+  <div class="opacity-0 animate-[fadeIn_500ms_ease-out_forwards]">
+    <p class="meta" style="color: var(--color-crimson);">Your seat is saved</p>
+    <h3 class="display mt-2 m-0" style="font-size: 26px; letter-spacing: -0.01em;">
+      We'll see you, <%= event_rsvp.name.split.first %>.
+    </h3>
+    <p class="reading mt-3 m-0" style="font-size: 16px;">
+      We'll email you a reminder the day before, with directions and what to bring.
+    </p>
+
+    <hr class="hairline my-5">
+
+    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
+      <% if event.capacity %>
+        <%= event.rsvp_seat_count %> of <%= event.capacity %> seats taken so far.
+      <% else %>
+        Thanks for the RSVP — we like knowing who's coming.
+      <% end %>
+    </p>
+  </div>
+</turbo-frame>

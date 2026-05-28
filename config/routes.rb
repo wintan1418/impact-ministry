@@ -35,9 +35,36 @@ Rails.application.routes.draw do
   # Each links from the nav and renders a real designed page with email capture.
   get "podcast"        => "podcast_episodes#index", as: :podcast
   get "podcast/:slug"  => "podcast_episodes#show",  as: :podcast_episode
-  get "pray"    => "prayer_requests#index",  as: :pray
+  # --- Prayer Wall (Phase 2.7–2.10) ---
+  # /pray         GET   index (form + visible wall)
+  # /pray         POST  create (Turbo Stream form submission)
+  # /pray/:id/prayed POST  prayed (Turbo Stream counter increment)
+  resources :prayer_requests, only: [ :index, :create ], path: "pray" do
+    member do
+      post :prayed
+    end
+  end
+  # Keep the legacy `pray_path` helper working (was `get "pray"` before).
+  get "pray", to: "prayer_requests#index", as: :pray
+
   get "partner" => "partnerships#new",       as: :partner
   get "give"    => "giving#show",            as: :give
+
+  # --- Events + RSVPs (Phase 4.3) ---
+  # /events             → events#index
+  # /events/:slug       → events#show
+  # POST /events/:slug/rsvp → event_rsvps#create
+  resources :events, only: [ :index, :show ], param: :slug do
+    resource :rsvp, only: [ :create ], controller: "event_rsvps", as: :rsvp
+  end
+
+  # --- Testimonies (Phase 2.13–2.15) ---
+  # /testimonies  GET  index (public wall — approved only)
+  # /testify      GET  new   (submission form)
+  # /testimonies  POST create (Turbo Stream submission; always approved: false)
+  get  "testimonies" => "testimonies#index",  as: :testimonies
+  get  "testify"     => "testimonies#new",    as: :new_testimony
+  post "testimonies" => "testimonies#create"
 
   # --- Email capture (Phase 1.B) ---
   post   "subscribe"          => "email_subscribers#create",              as: :subscribe

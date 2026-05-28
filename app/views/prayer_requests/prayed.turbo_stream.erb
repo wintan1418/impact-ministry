@@ -1,0 +1,4 @@
+<%# Replaces just the per-card counter frame with the updated count. %>
+<%= turbo_stream.replace "prayed_#{@prayer_request.id}" do %>
+  <%= render "prayed_counter", req: @prayer_request %>
+<% end %>
