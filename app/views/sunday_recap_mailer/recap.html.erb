@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light only">
+    <title>IMPACT Ministry — Sunday recap</title>
+  </head>
+  <body style="margin:0; padding:0; background-color:#FAF7F2; color:#1F1B16; font-family:Georgia,'Times New Roman',serif; font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;">
+
+    <!-- Preheader — hidden inbox preview text -->
+    <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#FAF7F2;">
+      Five things to carry into the week.
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FAF7F2;">
+      <tr>
+        <td align="center" style="padding:40px 16px;">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:600px; background-color:#FAF7F2;">
+
+            <!-- Masthead -->
+            <tr>
+              <td style="padding:0 8px 8px 8px;">
+                <p style="margin:0; font-family:Georgia,'Times New Roman',serif; font-size:13px; letter-spacing:0.32em; text-transform:uppercase; color:#1B2A4E; font-weight:500;">
+                  IMPACT Ministry
+                </p>
+                <p style="margin:6px 0 0 0; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:14px; color:#8B7355;">
+                  Sunday recap &mdash; <%= @week_ending.strftime("%B %-d, %Y") %>
+                </p>
+              </td>
+            </tr>
+
+            <!-- Heavy rule -->
+            <tr>
+              <td style="padding:16px 8px 24px 8px;">
+                <div style="height:2px; background-color:#1B2A4E; line-height:2px; font-size:0;">&nbsp;</div>
+              </td>
+            </tr>
+
+            <!-- Intro -->
+            <tr>
+              <td style="padding:0 8px 28px 8px; font-family:Georgia,'Times New Roman',serif; font-size:17px; line-height:1.7; color:#1F1B16;">
+                A quiet collection of this week&rsquo;s words. Tap any title to revisit it. We&rsquo;ll be back tomorrow with a new one.
+              </td>
+            </tr>
+
+            <!-- Items -->
+            <% @devotionals.each_with_index do |devotional, index| %>
+              <%
+                excerpt_source =
+                  if devotional.excerpt.present?
+                    devotional.excerpt
+                  elsif devotional.body.present?
+                    devotional.body.to_plain_text
+                  else
+                    ""
+                  end
+                excerpt = excerpt_source.to_s.strip
+                excerpt = "#{excerpt[0, 109]}…" if excerpt.length > 110
+                date_label = devotional.scheduled_for.strftime("%a · %b %-d").upcase
+                url = devotional_url(devotional.slug, host: @host)
+              %>
+              <tr>
+                <td style="padding:0 8px 4px 8px;">
+                  <p style="margin:0 0 6px 0; font-family:Helvetica,Arial,sans-serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:#8B7355;">
+                    <%= date_label %>
+                  </p>
+                  <h2 style="margin:0 0 6px 0; font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:500; line-height:1.25; letter-spacing:-0.01em; color:#1B2A4E;">
+                    <a href="<%= url %>" style="color:#1B2A4E; text-decoration:none;"><%= devotional.title %></a>
+                  </h2>
+                  <p style="margin:0 0 10px 0; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:14px; color:#1B2A4E;">
+                    <%= devotional.scripture_reference %>
+                  </p>
+                  <% if excerpt.present? %>
+                    <p style="margin:0 0 18px 0; font-family:Georgia,'Times New Roman',serif; font-size:15px; line-height:1.65; color:#1F1B16;">
+                      <%= excerpt %>
+                    </p>
+                  <% end %>
+                </td>
+              </tr>
+              <% unless index == @devotionals.size - 1 %>
+                <tr>
+                  <td style="padding:0 8px 24px 8px;">
+                    <div style="height:1px; background-color:rgba(139,115,85,0.30); line-height:1px; font-size:0;">&nbsp;</div>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+
+            <!-- Tomorrow's word -->
+            <% if @tomorrow %>
+              <tr>
+                <td style="padding:32px 8px 0 8px;">
+                  <div style="height:1px; background-color:rgba(139,115,85,0.30); line-height:1px; font-size:0;">&nbsp;</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px 8px 0 8px;">
+                  <p style="margin:0 0 6px 0; font-family:Helvetica,Arial,sans-serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:#8B7355;">
+                    Tomorrow&rsquo;s word
+                  </p>
+                  <p style="margin:0 0 4px 0; font-family:Georgia,'Times New Roman',serif; font-size:18px; color:#1B2A4E;">
+                    <%= @tomorrow.title %>
+                  </p>
+                  <p style="margin:0; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:14px; color:#1B2A4E;">
+                    <%= @tomorrow.scripture_reference %>
+                  </p>
+                </td>
+              </tr>
+            <% end %>
+
+            <!-- Footer -->
+            <tr>
+              <td style="padding:40px 8px 8px 8px;">
+                <div style="height:1px; background-color:rgba(139,115,85,0.30); line-height:1px; font-size:0;">&nbsp;</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:18px 8px 8px 8px; font-family:Helvetica,Arial,sans-serif; font-size:12px; line-height:1.7; color:#8B7355;">
+                <p style="margin:0 0 8px 0; color:#8B7355;">
+                  Reply with feedback &mdash; we read everything.
+                </p>
+                <p style="margin:0 0 14px 0; color:#8B7355;">
+                  <a href="<%= @unsubscribe_url %>" style="color:#8B7355; text-decoration:underline;">Unsubscribe</a>
+                </p>
+                <p style="margin:0; font-family:Georgia,'Times New Roman',serif; font-size:13px; letter-spacing:0.32em; text-transform:uppercase; color:#1B2A4E;">
+                  IMPACT Ministry
+                </p>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

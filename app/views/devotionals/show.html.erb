@@ -59,8 +59,10 @@
       </figure>
     <% end %>
 
-    <%# Long-form body — ActionText. Drop-cap via CSS first-letter. %>
-    <div class="devotional-body" style="margin-top: 36px;">
+    <%# Long-form body — ActionText. Drop-cap via CSS first-letter.
+        When signed in, the body becomes the Stimulus highlight target so
+        drag-selections can be saved via POST /highlights (CLAUDE.md §5). %>
+    <div class="devotional-body" style="margin-top: 36px;"<%= signed_in? ? %( data-controller="highlight" data-highlight-target="body" data-highlight-devotional-id-value="#{@devotional.id}").html_safe : "".html_safe %>>
       <%= @devotional.body %>
     </div>
 

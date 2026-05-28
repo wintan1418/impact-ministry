@@ -1,0 +1,41 @@
+IMPACT MINISTRY
+Sunday recap -- <%= @week_ending.strftime("%B %-d, %Y") %>
+==================================================
+
+A quiet collection of this week's words. Tap any title to
+revisit it. We'll be back tomorrow with a new one.
+
+<% @devotionals.each do |devotional| %>
+<%= devotional.scheduled_for.strftime("%a · %b %-d").upcase %>
+<%= devotional.title %>
+<%= devotional.scripture_reference %>
+<%
+  excerpt_source =
+    if devotional.excerpt.present?
+      devotional.excerpt
+    elsif devotional.body.present?
+      devotional.body.to_plain_text
+    else
+      ""
+    end
+  excerpt = excerpt_source.to_s.strip
+  excerpt = "#{excerpt[0, 109]}…" if excerpt.length > 110
+%>
+<% if excerpt.present? %><%= excerpt %>
+<% end %>
+<%= devotional_url(devotional.slug, host: @host) %>
+
+<% end %>
+<% if @tomorrow %>
+--------------------------------------------------
+Tomorrow's word:
+<%= @tomorrow.title %>
+<%= @tomorrow.scripture_reference %>
+
+<% end %>
+--------------------------------------------------
+Reply with feedback -- we read everything.
+
+Unsubscribe: <%= @unsubscribe_url %>
+
+IMPACT MINISTRY

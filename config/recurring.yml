@@ -37,3 +37,13 @@ production:
     class: FailedDispatchAlertJob
     queue: default
     schedule: "every day at <%= alert_hour %>:00"
+
+  streak_recalculation:
+    class: StreakRecalculationJob
+    queue: default
+    schedule: "every day at 2:00am America/Chicago"
+
+  sunday_recap_dispatch:
+    class: SundayRecapDispatchJob
+    queue: devotionals
+    schedule: "every sunday at 6:00am America/Chicago"

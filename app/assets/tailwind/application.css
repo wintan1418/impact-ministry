@@ -416,6 +416,36 @@
     transition: top 180ms var(--ease-impact);
   }
   .skip-link:focus { top: 16px; }
+
+  /* Drag-select "Save highlight" floating action — appended to <body> so it
+     sits above scroll-clipped containers. Positioned absolutely; the
+     controller writes top/left and translates back by -50% to center it
+     above the user's selection. */
+  .highlight-save {
+    position: absolute;
+    z-index: 70;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    background: var(--color-navy);
+    color: var(--color-cream);
+    border: 0;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    transform: translate(-50%, 0);
+    transition: transform 180ms var(--ease-impact), opacity 180ms var(--ease-impact);
+    white-space: nowrap;
+  }
+  .highlight-save:hover { transform: translate(-50%, -2px); }
+  .highlight-save.is-saved {
+    background: var(--color-crimson);
+  }
 }
 
 /* =========================================================
