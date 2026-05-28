@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_121457) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_143809) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -149,6 +149,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_121457) do
     t.index ["starts_at"], name: "index_events_on_starts_at"
   end
 
+  create_table "feedback_messages", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "kind", default: "general", null: false
+    t.string "name", null: false
+    t.boolean "replied", default: false, null: false
+    t.datetime "replied_at"
+    t.string "subject"
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_feedback_messages_on_created_at", order: :desc
+    t.index ["kind"], name: "index_feedback_messages_on_kind"
+    t.index ["replied"], name: "index_feedback_messages_on_replied"
+  end
+
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.datetime "created_at"
     t.string "scope"
@@ -204,6 +219,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_121457) do
     t.index ["created_at"], name: "index_prayer_requests_on_created_at"
     t.index ["status", "is_public", "created_at"], name: "index_prayer_requests_on_status_public_created", order: { created_at: :desc }
     t.index ["status"], name: "index_prayer_requests_on_status"
+  end
+
+  create_table "resources", force: :cascade do |t|
+    t.string "category", default: "guide", null: false
+    t.string "cover_photo_slug"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "downloads_count", default: 0, null: false
+    t.boolean "featured", default: false, null: false
+    t.datetime "published_at"
+    t.boolean "requires_email", default: true, null: false
+    t.string "slug", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category", "published_at"], name: "index_resources_on_category_and_published_at", order: { published_at: :desc }
+    t.index ["featured"], name: "index_resources_on_featured"
+    t.index ["published_at"], name: "index_resources_on_published_at"
+    t.index ["slug"], name: "index_resources_on_slug", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|

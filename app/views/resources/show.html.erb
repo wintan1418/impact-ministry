@@ -1,0 +1,64 @@
+<% content_for :title, "#{@resource.title} — IMPACT Ministry" %>
+<% content_for :description, truncate(@resource.description.to_s, length: 160).presence || "A resource from IMPACT Ministry." %>
+
+<section class="pt-10 md:pt-16 pb-16 md:pb-24">
+  <div class="container-page">
+    <p class="meta">
+      <%= link_to "Resources", resources_path, class: "ulink" %>
+    </p>
+
+    <div class="grid gap-10 md:gap-14 lg:grid-cols-[1.4fr_1fr] mt-4">
+      <%# -------- Left column — resource detail -------- %>
+      <article>
+        <p class="meta mt-5"><%= @resource.category_label %></p>
+        <h1 class="display mt-2" style="font-size: clamp(36px, 5.5vw, 60px); line-height: 1.02; letter-spacing: -0.02em;">
+          <%= @resource.title %>
+        </h1>
+
+        <%= image_tag photo_url(@resource.cover_photo_slug.presence || "open-bible", w: 1200, h: 700),
+                      alt: "Cover image for #{@resource.title}",
+                      class: "w-full mt-7",
+                      style: "border-radius: var(--radius-image); aspect-ratio: 16 / 9; object-fit: cover;" %>
+
+        <% if @resource.description.present? %>
+          <div class="reading mt-8" style="font-size: 18px;">
+            <% @resource.description.to_s.split(/\n+/).each do |p| %>
+              <p><%= p %></p>
+            <% end %>
+          </div>
+        <% end %>
+      </article>
+
+      <%# -------- Right column — download card -------- %>
+      <aside class="lg:sticky lg:top-24 self-start">
+        <div class="card p-6 md:p-7">
+          <p class="meta">Download</p>
+          <h2 class="display mt-2 m-0" style="font-size: 22px; letter-spacing: -0.01em;">
+            <% if @resource.requires_email? %>
+              Send it to your inbox.
+            <% else %>
+              Yours to keep.
+            <% end %>
+          </h2>
+
+          <hr class="hairline my-5">
+
+          <% if @resource.requires_email? %>
+            <%= render "download_gate", resource: @resource, subscriber: @subscriber %>
+          <% else %>
+            <%= button_to "Download now",
+                  download_resource_path(@resource.slug),
+                  method: :post,
+                  class: "btn btn-primary w-full",
+                  style: "padding: 16px 28px; font-size: 15px;" %>
+            <p class="input-help mt-3">No email required.</p>
+          <% end %>
+
+          <p class="m-0 mt-5" style="font-family: var(--font-serif); font-style: italic; font-size: 13px; color: var(--color-olive);">
+            <%= pluralize(@resource.downloads_count, "download") %> so far.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

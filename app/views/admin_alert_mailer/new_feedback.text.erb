@@ -1,0 +1,22 @@
+NEW CONTACT FORM SUBMISSION
+===========================
+
+Kind:    <%= @feedback.kind %>
+From:    <%= @feedback.name %> <<%= @feedback.email %>>
+Subject: <%= @feedback.subject.presence || "(no subject)" %>
+
+----------------------------------------
+
+<%= @feedback.body %>
+
+----------------------------------------
+
+Reply directly to <%= @feedback.email %>, or open the admin record to mark
+it replied once you've answered.
+
+Admin record:
+<%= @admin_url %>
+
+--
+This alert is automated by FeedbackNotificationJob. It runs once per
+contact-form submission.

@@ -1,0 +1,10 @@
+<%= turbo_stream.replace "resource-download-#{@resource.id}" do %>
+  <% if @error_message.present? %>
+    <%= render "download_gate",
+               resource: @resource,
+               subscriber: @subscriber,
+               error_message: @error_message %>
+  <% else %>
+    <%= render "download_ready", resource: @resource %>
+  <% end %>
+<% end %>

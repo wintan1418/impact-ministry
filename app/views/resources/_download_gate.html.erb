@@ -1,0 +1,60 @@
+<%#
+  Email-gated download form. Wrapped in a turbo-frame so the controller can
+  replace it in place on success (with `_download_ready`) or on failure
+  (with this same form, error_message present). No toasts — CLAUDE.md §3.
+
+  Locals:
+    resource:      Resource — the resource being downloaded
+    subscriber:    EmailSubscriber — the form's object (new record OK)
+    error_message: String (optional) — inline error rendered above the form
+%>
+<% error_message = local_assigns[:error_message] %>
+
+<turbo-frame id="resource-download-<%= resource.id %>">
+  <%= form_with url: download_resource_path(resource.slug),
+                method: :post,
+                data: { turbo_frame: "resource-download-#{resource.id}" },
+                class: "w-full" do |f| %>
+
+    <% if error_message.present? %>
+      <p class="m-0 mb-5" role="alert"
+         style="font-family: var(--font-sans); font-size: 14px; color: var(--color-crimson); padding: 10px 14px; border: 1px solid var(--color-crimson); border-radius: 12px; background: rgba(200,16,46,0.04);">
+        <%= error_message %>
+      </p>
+    <% end %>
+
+    <div>
+      <%= f.label :name, "Your name (optional)", class: "meta block mb-2" %>
+      <%= f.text_field :name,
+            value: subscriber.name,
+            autocomplete: "name",
+            maxlength: 80,
+            placeholder: "First name is fine",
+            class: "input w-full" %>
+    </div>
+
+    <div class="mt-4">
+      <%= f.label :email, "Email", class: "meta block mb-2" %>
+      <%= f.email_field :email,
+            value: subscriber.email,
+            required: true,
+            autocomplete: "email",
+            placeholder: "your@email.com",
+            class: "input w-full",
+            "aria-invalid": error_message.present? %>
+    </div>
+
+    <div class="mt-4">
+      <%= render "shared/turnstile", action: "resource-download-#{resource.id}" %>
+    </div>
+
+    <div class="mt-5">
+      <%= f.submit "Send it to me", class: "btn btn-primary w-full",
+            style: "padding: 14px 24px; font-size: 15px;" %>
+    </div>
+
+    <p class="input-help mt-3" style="font-family: var(--font-serif); font-style: italic;">
+      We'll add you to the morning devotional too — unsubscribe in one click.
+    </p>
+  <% end %>
+</turbo-frame>

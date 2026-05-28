@@ -1,0 +1,36 @@
+<% content_for :preheader, "#{@feedback.name} sent a #{@feedback.kind} note via /contact." %>
+
+<h1 style="margin:0 0 16px 0; font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:500; color:#1B2A4E;">
+  New contact: <%= @feedback.kind %>
+</h1>
+
+<table style="margin:0 0 20px 0; font-size:14px; color:#1F1B16; border-collapse:collapse;">
+  <tr>
+    <td style="padding:4px 12px 4px 0; color:#8B7355;">From</td>
+    <td style="padding:4px 0;"><strong><%= @feedback.name %></strong> &lt;<a href="mailto:<%= @feedback.email %>" style="color:#1B2A4E;"><%= @feedback.email %></a>&gt;</td>
+  </tr>
+  <tr>
+    <td style="padding:4px 12px 4px 0; color:#8B7355;">Subject</td>
+    <td style="padding:4px 0;"><%= @feedback.subject.presence || "(no subject)" %></td>
+  </tr>
+  <tr>
+    <td style="padding:4px 12px 4px 0; color:#8B7355;">Kind</td>
+    <td style="padding:4px 0;"><%= @feedback.kind %></td>
+  </tr>
+</table>
+
+<div style="margin:0 0 24px 0; padding:18px 22px; background:#FAF7F2; border-left:3px solid #1B2A4E; font-family:Georgia,'Times New Roman',serif; font-size:16px; line-height:1.55; white-space:pre-wrap;">
+<%= @feedback.body %>
+</div>
+
+<p style="margin:0 0 24px 0;">
+  <a href="<%= @admin_url %>"
+     style="display:inline-block; background-color:#1B2A4E; color:#FAF7F2; padding:12px 20px; border-radius:4px; text-decoration:none; font-weight:500;">
+    Open the admin record
+  </a>
+</p>
+
+<p style="margin:0; font-size:13px; color:#8B7355;">
+  Reply directly to <a href="mailto:<%= @feedback.email %>" style="color:#8B7355;"><%= @feedback.email %></a>,
+  or open the admin record to mark it replied once you've answered.
+</p>

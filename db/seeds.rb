@@ -472,6 +472,50 @@ if Rails.env.development?
     end
   end
 
+  # --- Feedback messages (sample contact-form queue) --------------
+  TARGET_FEEDBACK = 5
+  if FeedbackMessage.count < TARGET_FEEDBACK
+    feedback_seeds = [
+      { kind: "general",     name: "Esther B.",  subject: "Thank you for what you write",
+        age: 4.hours,  replied: false,
+        body: "Just wanted to say thank you. The Habakkuk piece met me on a hard morning. I read it on the porch and cried, then drank cold coffee and got the kids to school." },
+      { kind: "prayer",      name: "Daniel R.",  subject: nil,
+        age: 1.day,    replied: false,
+        body: "Could you all pray for my mother? We are waiting on a diagnosis and the silence is loud. I don't need the answer to come quickly — I just need to remember God is in the waiting." },
+      { kind: "partnership", name: "Marcus L.",  subject: "Lenten series collaboration",
+        age: 2.days,   replied: true,  reply_age: 1.day,
+        body: "Our small church in Greenwood would love to talk about partnering on a Lenten series. We have about sixty people who would read the devotional together on Wednesday nights." },
+      { kind: "press",       name: "Renée Bowman", subject: "Quick question for a story",
+        age: 3.days,   replied: false,
+        body: "I'm writing a piece on small Christian publishers in the South. Would one of you have ten minutes for a phone call this week? Happy to send questions in advance." },
+      { kind: "bug",         name: "Pastor T.",  subject: "Unsubscribe link broken on mobile",
+        age: 6.hours,  replied: false,
+        body: "A friend just told me she couldn't unsubscribe from her phone — the link in the footer of the email didn't load. I tried it from my Android and got a blank page. Wanted to flag." }
+    ]
+
+    created = 0
+    feedback_seeds.take(TARGET_FEEDBACK).each_with_index do |spec, i|
+      email = "writer#{i + 1}@example.com"
+      next if FeedbackMessage.exists?(email: email, subject: spec[:subject])
+
+      msg = FeedbackMessage.create!(
+        name:    spec[:name],
+        email:   email,
+        subject: spec[:subject],
+        body:    spec[:body],
+        kind:    spec[:kind],
+        replied: spec[:replied] || false,
+        replied_at: (spec[:replied] ? (spec[:reply_age] || 1.day).ago : nil)
+      )
+      ts = spec[:age].ago
+      FeedbackMessage.where(id: msg.id).update_all(created_at: ts, updated_at: ts)
+      created += 1
+    end
+    puts "Seeded #{created} feedback messages — now #{FeedbackMessage.count} total."
+  else
+    puts "Feedback messages already populated (#{FeedbackMessage.count})."
+  end
+
   # One past event so the past-list is populated.
   past_event = Event.find_or_initialize_by(title: "Lenten Retreat 2026")
   past_starts = 6.weeks.ago
@@ -532,5 +576,90 @@ if Rails.env.development?
     puts "Seeded #{created} testimonies — now #{Testimony.count} total."
   else
     puts "Testimonies already populated (#{Testimony.count})."
+  end
+
+  # --- Resource library (sample shelves) -------------------------------
+  # Six resources across categories — a mix of email-gated and open downloads.
+  # Files are NOT attached in seeds (ActiveStorage in seeds is flaky); the team
+  # uploads the real PDF/MP3 via /admin/resources after seeding.
+  resource_seeds = [
+    {
+      title: "30 Days of Habakkuk — a printable devotional companion",
+      category: "devotional_collection",
+      featured: true,
+      requires_email: true,
+      cover: "open-bible",
+      description:
+        "Thirty short readings drawn from the book of Habakkuk — one for each morning of the month, paired with the scripture, a paragraph of commentary, and a single prayer.\n\nPrint it, bind it with two staples, leave it next to the coffee maker. By the end of the month you will have read the whole book, slowly, and you will know why it has held the church for two thousand years."
+    },
+    {
+      title: "Reading the Psalms slowly — a 4-week guide",
+      category: "study",
+      featured: true,
+      requires_email: true,
+      cover: "morning-desk",
+      description:
+        "A four-week reading plan that moves through the Psalms at the pace they were meant to be read — one or two per morning, with notes on form, history, and how to pray each one back.\n\nDesigned for individuals or small groups. Includes a single-page introduction, four weekly check-ins, and a final reflection."
+    },
+    {
+      title: "Three sermons on waiting",
+      category: "sermon",
+      featured: false,
+      requires_email: false,
+      cover: "doorway-light",
+      description:
+        "A short trilogy preached at a small Mississippi church in the long winter of 2025 — Habakkuk, Lamentations, and the closing chapters of Revelation. Audio plus transcript.\n\nFree to use in your own congregation. We only ask that you credit the preacher and don't sell it."
+    },
+    {
+      title: "A small group curriculum on James",
+      category: "curriculum",
+      featured: false,
+      requires_email: true,
+      cover: "handshake",
+      description:
+        "Eight sessions on the book of James, written for living-room small groups. Each session: a passage, two paragraphs of orientation, four discussion questions, and a closing practice.\n\nField-tested across a handful of churches across the South. Leader notes included."
+    },
+    {
+      title: "Notes on praying when you don't feel it",
+      category: "guide",
+      featured: true,
+      requires_email: true,
+      cover: "praying-hands",
+      description:
+        "A short, honest guide to keeping the daily office when the well runs dry — written for the season every believer eventually meets and rarely talks about.\n\nFive practices, four prayers, and one paragraph of encouragement from a Catholic monk turned street pastor. Read in twenty minutes; useful for years."
+    },
+    {
+      title: "The Mississippi morning playlist",
+      category: "media",
+      featured: false,
+      requires_email: false,
+      cover: "delta-sunrise",
+      description:
+        "A two-hour playlist of music to read scripture by — hymns, instrumentals, and a few old recordings we couldn't bear to leave off. Curated by the IMPACT editorial team for the long mornings on the porch.\n\nStream from any service. The links are inside."
+    }
+  ]
+
+  resource_seeds.each do |spec|
+    resource = Resource.find_or_initialize_by(title: spec[:title])
+    resource.assign_attributes(
+      description:      spec[:description],
+      category:         spec[:category],
+      featured:         spec[:featured],
+      requires_email:   spec[:requires_email],
+      cover_photo_slug: spec[:cover]
+    )
+    # Only set published_at on first seed so subsequent re-seeds don't churn.
+    resource.published_at ||= rand(2..40).days.ago
+
+    if resource.new_record?
+      resource.downloads_count = rand(5..400)
+      resource.save!
+      puts "Seeded resource: #{resource.category_label} · #{resource.title} (#{resource.downloads_count} downloads)"
+    elsif resource.changed?
+      resource.save!
+      puts "Updated resource: #{resource.title}"
+    else
+      puts "Resource already present: #{resource.title}"
+    end
   end
 end

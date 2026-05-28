@@ -21,4 +21,24 @@ class AdminAlertMailer < ApplicationMailer
       message_stream: message_stream_for(:transactional)
     )
   end
+
+  # Sent by FeedbackNotificationJob when a new contact-form submission
+  # lands. Editors get a plaintext-friendly alert with the writer's note +
+  # a deep link to the admin record so they can reply from their own inbox.
+  #
+  # Usage:
+  #   AdminAlertMailer.with(feedback_id: message.id).new_feedback.deliver_now
+  def new_feedback
+    @feedback  = FeedbackMessage.find(params[:feedback_id])
+    @host      = ENV["APP_HOST"].presence || default_url_options[:host] || "localhost"
+    @admin_url = "#{ENV.fetch('APP_PROTOCOL', 'https')}://#{@host}/admin/feedback_messages/#{@feedback.id}"
+
+    recipient = ENV.fetch("ADMIN_NOTIFICATION_EMAIL", "team@impactministry.org")
+
+    mail(
+      to: recipient,
+      subject: "New contact: #{@feedback.kind} — #{@feedback.name}",
+      message_stream: message_stream_for(:transactional)
+    )
+  end
 end

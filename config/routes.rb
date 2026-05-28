@@ -20,7 +20,8 @@ Rails.application.routes.draw do
   # See docs/ROUTES.md and CLAUDE.md §10.
   get "about",   to: "pages#show", defaults: { slug: "about" },   as: :about_page
   get "beliefs", to: "pages#show", defaults: { slug: "beliefs" }, as: :beliefs_page
-  get "contact", to: "pages#show", defaults: { slug: "contact" }, as: :contact_page
+  get  "contact", to: "pages#show",                 defaults: { slug: "contact" }, as: :contact_page
+  post "contact", to: "feedback_messages#create",                                  as: :contact_create
   get "privacy", to: "pages#show", defaults: { slug: "privacy" }, as: :privacy_page
   get "terms",   to: "pages#show", defaults: { slug: "terms" },   as: :terms_page
 
@@ -56,6 +57,16 @@ Rails.application.routes.draw do
   # POST /events/:slug/rsvp → event_rsvps#create
   resources :events, only: [ :index, :show ], param: :slug do
     resource :rsvp, only: [ :create ], controller: "event_rsvps", as: :rsvp
+  end
+
+  # --- Resources (Phase 3.3–3.6) ---
+  # /resources                 GET   index   (featured + per-category)
+  # /resources/:slug           GET   show    (with download gate)
+  # /resources/:slug/download  POST  download (Turbo Stream)
+  resources :resources, only: [ :index, :show ], param: :slug do
+    member do
+      post :download
+    end
   end
 
   # --- Testimonies (Phase 2.13–2.15) ---

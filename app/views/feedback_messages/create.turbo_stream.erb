@@ -1,0 +1,12 @@
+<%# Turbo Stream response to POST /contact.
+    On success → quiet confirmation card.
+    On error   → re-renders the form with inline errors. No toast. (CLAUDE.md §3) %>
+<% if @feedback_message.persisted? %>
+  <%= turbo_stream.replace "feedback-form" do %>
+    <%= render "submitted" %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace "feedback-form" do %>
+    <%= render "form", feedback_message: @feedback_message %>
+  <% end %>
+<% end %>

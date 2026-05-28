@@ -1,0 +1,117 @@
+<%#
+  Public contact form. Posts to /contact (POST → feedback_messages#create).
+  Wrapped in a turbo-frame so Turbo Stream can swap it with the quiet
+  confirmation partial on success, or re-render with inline errors on
+  failure (no toast — CLAUDE.md §3).
+
+  Locals:
+    feedback_message: FeedbackMessage instance (new or with errors)
+%>
+<% kind_options = [
+  [ "General question",   "general" ],
+  [ "Prayer request",     "prayer" ],
+  [ "Partnership inquiry", "partnership" ],
+  [ "Press",              "press" ],
+  [ "Bug report",         "bug" ]
+] %>
+
+<turbo-frame id="feedback-form">
+  <%= form_with model: feedback_message,
+                url: contact_create_path,
+                method: :post,
+                data: { turbo_frame: "feedback-form" },
+                html: { class: "card", style: "padding: 36px; background: rgba(255,255,255,0.6);" } do |f| %>
+
+    <% if feedback_message.errors[:base].any? %>
+      <p class="input-help input-help-error" style="margin: 0 0 18px; padding-left: 0;">
+        <%= feedback_message.errors[:base].first %>
+      </p>
+    <% end %>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">What kind of note is this?</p>
+      <%= f.select :kind, kind_options, {},
+            class: "input",
+            "aria-label": "Kind of message",
+            style: "border-radius: 14px;" %>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">Your name</p>
+        <%= f.text_field :name,
+              required: true,
+              maxlength: 120,
+              placeholder: "First + last is plenty",
+              autocomplete: "name",
+              "aria-label": "Your name",
+              "aria-invalid": feedback_message.errors[:name].any? ? "true" : nil,
+              class: ("input #{'error' if feedback_message.errors[:name].any?}"),
+              style: "border-radius: 14px;" %>
+        <% if feedback_message.errors[:name].any? %>
+          <p class="input-help input-help-error">
+            <%= feedback_message.errors[:name].first %>
+          </p>
+        <% end %>
+      </div>
+
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">Your email</p>
+        <%= f.email_field :email,
+              required: true,
+              maxlength: 160,
+              placeholder: "your@email.com",
+              autocomplete: "email",
+              "aria-label": "Email address",
+              "aria-invalid": feedback_message.errors[:email].any? ? "true" : nil,
+              class: ("input #{'error' if feedback_message.errors[:email].any?}"),
+              style: "border-radius: 14px;" %>
+        <% if feedback_message.errors[:email].any? %>
+          <p class="input-help input-help-error">
+            <%= feedback_message.errors[:email].first %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">Subject <span style="color: var(--color-olive); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span></p>
+      <%= f.text_field :subject,
+            placeholder: "A short line, if it helps",
+            "aria-label": "Subject (optional)",
+            class: "input",
+            style: "border-radius: 14px;" %>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">Your note</p>
+      <%= f.text_area :body,
+            rows: 6,
+            required: true,
+            minlength: 6,
+            maxlength: 6000,
+            placeholder: "Take your time. We read every one.",
+            "aria-label": "Your note",
+            "aria-invalid": feedback_message.errors[:body].any? ? "true" : nil,
+            class: ("input #{'error' if feedback_message.errors[:body].any?}"),
+            style: "border-radius: 14px; padding: 18px; font-family: var(--font-reading); font-size: 17px; line-height: 1.6; resize: vertical; height: auto; min-height: 160px;" %>
+      <% if feedback_message.errors[:body].any? %>
+        <p class="input-help input-help-error">
+          <%= feedback_message.errors[:body].first %>
+        </p>
+      <% end %>
+    </div>
+
+    <%# Cloudflare Turnstile — invisible in dev/test. %>
+    <div style="margin-top: 6px; margin-bottom: 18px;">
+      <%= render "shared/turnstile", action: "contact" %>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-4" style="margin-top: 10px;">
+      <p class="input-help" style="padding-left: 0; margin: 0; font-family: var(--font-serif); font-style: italic; color: var(--color-olive); font-size: 13px; max-width: 360px;">
+        We read everything. We reply to most of it within a few days.
+      </p>
+      <%= f.submit "Send", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</turbo-frame>

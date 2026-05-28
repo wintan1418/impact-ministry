@@ -1,0 +1,28 @@
+<%#
+  Post-submit confirmation for an email-gated download. Replaces the gate
+  form's turbo-frame on success. Quiet — no celebration, no toast.
+
+  Locals:
+    resource: Resource — the resource that was just unlocked
+%>
+<turbo-frame id="resource-download-<%= resource.id %>">
+  <div class="opacity-0 animate-[fadeIn_500ms_ease-out_forwards]">
+    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 18px; color: var(--color-navy); line-height: 1.4;">
+      Here it is. The download should start in a moment — if not, tap below.
+    </p>
+
+    <% if resource.file.attached? %>
+      <div class="mt-5">
+        <%= link_to "Download #{resource.file.filename}",
+              rails_blob_url(resource.file, disposition: "attachment"),
+              class: "btn btn-primary w-full",
+              style: "padding: 14px 24px; font-size: 15px;",
+              data: { turbo: false } %>
+      </div>
+    <% else %>
+      <p class="m-0 mt-4" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
+        We'll send the file to your inbox the moment it's ready.
+      </p>
+    <% end %>
+  </div>
+</turbo-frame>
