@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
   resources :users, only: %i[ new create ]
+  # Friendly alias so /signup works and the path helper reads naturally.
+  get  "signup", to: "users#new",    as: :signup
+  post "signup", to: "users#create"
 
   # --- Authenticated user account (Phase 3.7–3.11) ---
   get   "account"            => "account/dashboards#show",  as: :account

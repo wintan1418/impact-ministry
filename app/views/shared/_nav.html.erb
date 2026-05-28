@@ -96,6 +96,14 @@
         </svg>
       </button>
 
+      <%# Account affordance — Sign in / account-link when authed, Sign up + Sign in pair when not %>
+      <% if signed_in? %>
+        <%= link_to "Your account", account_path, class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy);" %>
+      <% else %>
+        <%= link_to "Sign in", new_session_path, class: "ulink nav-link", style: "font-size: 14px; color: var(--color-olive);" %>
+        <%= link_to "Sign up", signup_path,      class: "ulink nav-link", style: "font-size: 14px; color: var(--color-navy); font-weight: 500;" %>
+      <% end %>
+
       <%# Primary CTA — Give %>
       <%= link_to "Give", give_path, class: "btn btn-primary nav-link", style: "padding: 10px 18px; font-size: 14px;" %>
     </div>
