@@ -1,0 +1,127 @@
+<% content_for :title, "Account — IMPACT Ministry" %>
+
+<section class="container-page" style="padding-top: 60px; padding-bottom: 32px;">
+  <p class="meta">Your morning</p>
+  <h1 class="display mt-4" style="font-size: clamp(40px, 5.5vw, 68px); line-height: 1.0;">
+    Good morning,<br>
+    <span class="italic font-normal"><%= (current_user.name.presence || "friend") %>.</span>
+  </h1>
+</section>
+
+<section class="container-page" style="padding-bottom: 80px;">
+  <div class="grid gap-6 md:gap-8 lg:grid-cols-3 items-stretch">
+
+    <%# === Streak card === %>
+    <div class="card lg:col-span-1 p-7 md:p-8" style="background: rgba(255,255,255,0.7);">
+      <p class="meta" style="color: var(--color-crimson);">Reading streak</p>
+      <div class="flex items-baseline gap-4 mt-3">
+        <span class="display" style="font-size: clamp(64px, 9vw, 88px); line-height: 0.9; color: var(--color-navy);">
+          <%= @streak %>
+        </span>
+        <span style="font-family: var(--font-serif); font-style: italic; font-size: 22px; color: var(--color-olive);">
+          <%= "day".pluralize(@streak) %>
+        </span>
+        <% if @streak.positive? %>
+          <span aria-hidden="true" class="ml-1" style="font-size: 28px;">🔥</span>
+        <% end %>
+      </div>
+      <p class="m-0 mt-4" style="font-size: 13px; color: var(--color-olive);">
+        Longest streak: <span style="color: var(--color-navy);"><%= @longest %> <%= "day".pluralize(@longest) %></span>
+      </p>
+      <% if @last_read %>
+        <p class="m-0 mt-1" style="font-size: 13px; color: var(--color-olive);">
+          Last read: <span style="color: var(--color-navy);"><%= @last_read.strftime("%A, %B %-d") %></span>
+        </p>
+      <% else %>
+        <p class="m-0 mt-1" style="font-size: 13px; color: var(--color-olive); font-style: italic;">
+          Open today's word to begin.
+        </p>
+      <% end %>
+    </div>
+
+    <%# === Today's word card === %>
+    <div class="card lg:col-span-2 p-7 md:p-9 flex flex-col" style="background: var(--color-cream);">
+      <p class="meta">Today's word</p>
+      <% if @today %>
+        <h2 class="display mt-3 m-0" style="font-size: clamp(28px, 3.5vw, 42px); line-height: 1.05; letter-spacing: -0.01em;">
+          <%= @today.title %>
+        </h2>
+        <p class="scripture mt-3 m-0" style="font-size: 16px;"><%= @today.scripture_reference %></p>
+        <p class="reading mt-4 m-0" style="font-size: 17px; max-width: 540px;">
+          <%= truncate(@today.excerpt.to_s, length: 220) %>
+        </p>
+        <div class="mt-6 flex flex-wrap items-center gap-4">
+          <%= link_to "Read it now", devotional_path(@today.slug), class: "btn btn-primary", style: "padding: 13px 22px; font-size: 14px;" %>
+          <%= link_to "Skip to archive", devotionals_path, class: "ulink", style: "font-size: 14px; color: var(--color-olive);" %>
+        </div>
+      <% else %>
+        <p class="reading mt-4 m-0">
+          Today's word is being prepared. Check back at sunrise — or browse the archive.
+        </p>
+        <div class="mt-6">
+          <%= link_to "Visit the archive", devotionals_path, class: "btn btn-ghost", style: "padding: 13px 22px; font-size: 14px;" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# === Recent reads === %>
+<section class="container-page" style="padding-bottom: 80px;">
+  <div class="flex justify-between items-baseline mb-6 flex-wrap gap-4">
+    <p class="meta">The last week</p>
+    <%= link_to "All devotionals →", devotionals_path, class: "ulink", style: "font-size: 14px; color: var(--color-navy);" %>
+  </div>
+  <ul class="m-0" style="list-style: none; padding: 0;">
+    <% @recent_devotionals.each do |d| %>
+      <li style="border-bottom: 1px solid var(--color-olive-15);">
+        <%= link_to devotional_path(d.slug), style: "display: flex; gap: 20px; padding: 18px 0; align-items: baseline;" do %>
+          <span class="meta shrink-0" style="min-width: 120px;"><%= d.scheduled_for.strftime("%a · %b %-d") %></span>
+          <span class="display flex-1" style="font-size: 19px; color: var(--color-navy); letter-spacing: -0.005em;">
+            <%= d.title %>
+          </span>
+          <span class="meta shrink-0 hidden md:inline" style="color: var(--color-olive);"><%= d.scripture_reference %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</section>
+
+<%# === Saved highlights === %>
+<section class="container-page" style="padding-bottom: 120px;">
+  <div class="flex justify-between items-baseline mb-6 flex-wrap gap-4">
+    <p class="meta">Your saved highlights</p>
+    <% if @total_highlights.positive? %>
+      <%= link_to "See all (#{@total_highlights}) →", account_highlights_path, class: "ulink", style: "font-size: 14px; color: var(--color-navy);" %>
+    <% end %>
+  </div>
+
+  <% if @recent_highlights.any? %>
+    <div class="grid gap-5 md:grid-cols-3">
+      <% @recent_highlights.each do |h| %>
+        <div class="card p-6" style="background: rgba(255,255,255,0.6);">
+          <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 17px; line-height: 1.4; color: var(--color-navy);">
+            "<%= h.excerpt %>"
+          </p>
+          <p class="meta mt-4 m-0">
+            from <%= link_to h.devotional.title, devotional_path(h.devotional.slug), class: "ulink", style: "color: var(--color-olive);" %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="card p-8 text-center" style="background: rgba(255,255,255,0.5);">
+      <p class="reading m-0" style="font-family: var(--font-serif); font-style: italic; color: var(--color-olive);">
+        Drag-select any sentence in a devotional to save it here. Your collection lives in this space.
+      </p>
+    </div>
+  <% end %>
+</section>
+
+<%# === Quiet footer of the dashboard === %>
+<section class="container-page" style="padding-bottom: 96px;">
+  <div class="flex justify-between items-center flex-wrap gap-4">
+    <%= link_to "Account settings →", account_settings_path, class: "ulink", style: "font-size: 14px; color: var(--color-olive);" %>
+    <%= button_to "Sign out", session_path, method: :delete, class: "btn btn-ghost", style: "padding: 10px 18px; font-size: 14px;" %>
+  </div>
+</section>

@@ -662,4 +662,52 @@ if Rails.env.development?
       puts "Resource already present: #{resource.title}"
     end
   end
+
+  # -----------------------------------------------------------
+  # Demo subscriber + saved highlights so /account looks alive.
+  # Sign in:  subscriber@impactministry.local  /  read-along
+  # -----------------------------------------------------------
+  demo_email = "subscriber@impactministry.local"
+  demo = User.find_or_initialize_by(email_address: demo_email)
+  if demo.new_record?
+    demo.password       = "read-along"
+    demo.name           = "Demo Subscriber"
+    demo.role           = "subscriber"
+    demo.confirmed_at   = Time.current
+    demo.current_streak = 7
+    demo.longest_streak = 12
+    demo.last_read_on   = Date.current
+    demo.save!
+    puts "Seeded demo subscriber: #{demo.email_address} (password: read-along)"
+  else
+    changed = false
+    if demo.current_streak.to_i < 1
+      demo.current_streak = 7
+      demo.longest_streak = [ demo.longest_streak.to_i, 12 ].max
+      changed = true
+    end
+    if demo.last_read_on.nil? || demo.last_read_on < Date.current - 2.days
+      demo.last_read_on = Date.current
+      changed = true
+    end
+    demo.save! if changed
+    puts "Demo subscriber already present: #{demo.email_address}"
+  end
+
+  highlight_snippets = [
+    "Waiting is not the absence of God's word.",
+    "There is a kind of quiet you cannot manufacture.",
+    "Faith is rarely a single decision.",
+    "Today, your job is small. Stand the watch."
+  ]
+  Devotional.published.recent_first.limit(4).to_a.each_with_index do |devo, i|
+    next if demo.devotional_highlights.exists?(devotional_id: devo.id)
+    text = highlight_snippets[i] || "A line worth saving."
+    demo.devotional_highlights.create!(
+      devotional: devo,
+      text_range: { start: 40, end: 40 + text.length, text: text }.to_json,
+      saved_at:   (i + 1).hours.ago
+    )
+  end
+  puts "Demo highlights present: #{demo.devotional_highlights.count}"
 end

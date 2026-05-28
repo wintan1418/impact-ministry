@@ -1,0 +1,63 @@
+<% content_for :title, "Your highlights — IMPACT Ministry" %>
+
+<section class="container-read" style="padding-top: 60px; padding-bottom: 24px;">
+  <%= link_to "← Back to your account", account_path, class: "ulink", style: "font-size: 13px; color: var(--color-olive);" %>
+  <p class="meta mt-6">A commonplace book</p>
+  <h1 class="display mt-3" style="font-size: clamp(36px, 5vw, 60px); line-height: 1.0;">
+    Your highlights.
+  </h1>
+  <p class="reading mt-4" style="font-size: 17px;">
+    The lines that stopped you. Kept in one quiet place. Grouped by the devotional they came from.
+  </p>
+</section>
+
+<% if @grouped_highlights.any? %>
+  <% @grouped_highlights.each do |devotional, highlights| %>
+    <section class="container-read" style="padding-bottom: 56px;">
+      <div style="border-top: 1px solid var(--color-olive-30); padding-top: 28px;">
+        <p class="meta" style="margin-bottom: 6px;">
+          <%= devotional.scheduled_for.strftime("%A, %B %-d") %> · <%= devotional.scripture_reference %>
+        </p>
+        <h2 class="display" style="font-size: 26px; letter-spacing: -0.01em; margin: 0 0 18px;">
+          <%= link_to devotional.title, devotional_path(devotional.slug), class: "ulink" %>
+        </h2>
+
+        <ul class="m-0 space-y-4" style="list-style: none; padding: 0;">
+          <% highlights.each do |h| %>
+            <li class="card p-5" style="background: rgba(255,255,255,0.55); display: flex; gap: 16px; align-items: flex-start;">
+              <span aria-hidden="true" style="font-family: var(--font-serif); font-size: 32px; color: var(--color-crimson); line-height: 1; margin-top: -4px;">"</span>
+              <div class="flex-1">
+                <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 18px; line-height: 1.5; color: var(--color-navy);">
+                  <%= h.excerpt %>
+                </p>
+                <p class="meta m-0 mt-2" style="color: var(--color-olive);">
+                  saved <%= time_ago_in_words(h.saved_at) %> ago
+                </p>
+              </div>
+              <%= button_to highlight_path(h),
+                            method: :delete,
+                            class: "ulink",
+                            form: { style: "margin: 0;" },
+                            style: "background: transparent; border: 0; color: var(--color-olive); font-size: 13px; cursor: pointer;",
+                            "aria-label": "Remove highlight",
+                            data: { turbo_confirm: "Remove this highlight?" } do %>
+                Remove
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </section>
+  <% end %>
+<% else %>
+  <section class="container-read" style="padding-bottom: 96px;">
+    <div class="card p-10 text-center" style="background: rgba(255,255,255,0.55);">
+      <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 19px; color: var(--color-olive);">
+        Nothing saved yet. Drag-select any sentence in a devotional and your collection begins.
+      </p>
+      <div class="mt-7">
+        <%= link_to "Read today's word", devotionals_today_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </section>
+<% end %>

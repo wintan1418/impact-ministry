@@ -11,6 +11,15 @@ Rails.application.routes.draw do
   # --- Auth (Rails 8 native) ---
   resource :session
   resources :passwords, param: :token
+  resources :users, only: %i[ new create ]
+
+  # --- Authenticated user account (Phase 3.7–3.11) ---
+  get   "account"            => "account/dashboards#show",  as: :account
+  get   "account/highlights" => "account/highlights#index", as: :account_highlights
+  get   "account/settings"   => "account/settings#show",    as: :account_settings
+  patch "account/settings"   => "account/settings#update"
+
+  resources :highlights, only: %i[ create destroy ]
 
   # --- Public ---
   root "home#show"

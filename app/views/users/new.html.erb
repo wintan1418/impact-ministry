@@ -1,0 +1,54 @@
+<% content_for :title, "Start reading — IMPACT Ministry" %>
+
+<section class="container-read" style="padding-top: 80px; padding-bottom: 120px;">
+  <p class="meta">Become a subscriber</p>
+  <h1 class="display mt-4" style="font-size: clamp(40px, 5.5vw, 64px); line-height: 1.0;">
+    Start your<br><span class="italic font-normal">reading streak.</span>
+  </h1>
+  <p class="reading mt-5" style="font-size: 17px; max-width: 540px;">
+    A short, true word every morning. Save the lines that stop you. Track your streak.
+    Unsubscribe in one click if it ever stops being useful.
+  </p>
+
+  <%= form_with model: @user, class: "mt-10" do |form| %>
+    <% if @user.errors.any? %>
+      <div class="card" style="background: rgba(200, 16, 46, 0.06); border-color: var(--color-crimson); padding: 14px 18px; margin-bottom: 24px;">
+        <ul class="m-0" style="color: var(--color-crimson); font-size: 14px; padding-left: 20px;">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="space-y-6">
+      <div>
+        <%= form.label :name, "Name", class: "meta block mb-2" %>
+        <%= form.text_field :name, autocomplete: "name", placeholder: "What should we call you?", class: "input", "aria-label": "Name" %>
+        <p class="input-help">Optional. Used to greet you in the daily email.</p>
+      </div>
+
+      <div>
+        <%= form.label :email_address, "Email address", class: "meta block mb-2" %>
+        <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "email", placeholder: "you@example.com", class: "input", "aria-label": "Email address" %>
+      </div>
+
+      <div>
+        <%= form.label :password, "Password", class: "meta block mb-2" %>
+        <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "at least 8 characters", maxlength: 72, class: "input", "aria-label": "Password" %>
+      </div>
+
+      <div>
+        <%= form.label :password_confirmation, "Confirm password", class: "meta block mb-2" %>
+        <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "repeat it", maxlength: 72, class: "input", "aria-label": "Confirm password" %>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+        <%= form.submit "Create my account", class: "btn btn-primary" %>
+        <p class="m-0" style="font-size: 14px; color: var(--color-olive);">
+          Already reading? <%= link_to "Sign in", new_session_path, class: "ulink", style: "color: var(--color-navy);" %>
+        </p>
+      </div>
+    </div>
+  <% end %>
+</section>

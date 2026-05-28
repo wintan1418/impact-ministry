@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_143809) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_145033) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -83,6 +83,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_143809) do
     t.index ["opened_at"], name: "index_devotional_deliveries_on_opened_at"
     t.index ["postmark_message_id"], name: "index_devotional_deliveries_on_postmark_message_id", unique: true, where: "(postmark_message_id IS NOT NULL)"
     t.index ["sent_at"], name: "index_devotional_deliveries_on_sent_at"
+  end
+
+  create_table "devotional_highlights", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "devotional_id", null: false
+    t.text "note"
+    t.datetime "saved_at", null: false
+    t.text "text_range", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["devotional_id"], name: "index_devotional_highlights_on_devotional_id"
+    t.index ["user_id", "saved_at"], name: "index_devotional_highlights_on_user_id_and_saved_at"
+    t.index ["user_id"], name: "index_devotional_highlights_on_user_id"
   end
 
   create_table "devotionals", force: :cascade do |t|
@@ -276,11 +289,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_143809) do
   create_table "users", force: :cascade do |t|
     t.datetime "confirmed_at"
     t.datetime "created_at", null: false
+    t.integer "current_streak", default: 0, null: false
     t.string "email_address", null: false
+    t.date "last_read_on"
+    t.integer "longest_streak", default: 0, null: false
     t.string "name"
     t.string "password_digest", null: false
     t.string "role", default: "subscriber", null: false
     t.datetime "updated_at", null: false
+    t.index ["current_streak"], name: "index_users_on_current_streak"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["role"], name: "index_users_on_role"
   end
@@ -289,6 +306,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_143809) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "devotional_deliveries", "devotionals"
   add_foreign_key "devotional_deliveries", "email_subscribers"
+  add_foreign_key "devotional_highlights", "devotionals"
+  add_foreign_key "devotional_highlights", "users"
   add_foreign_key "devotionals", "users", column: "author_id"
   add_foreign_key "event_rsvps", "events"
   add_foreign_key "sessions", "users"

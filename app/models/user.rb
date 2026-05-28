@@ -2,6 +2,8 @@ class User < ApplicationRecord
   has_secure_password
 
   has_many :sessions, dependent: :destroy
+  has_many :devotional_highlights, dependent: :destroy
+  has_many :highlighted_devotionals, through: :devotional_highlights, source: :devotional
 
   ROLES = %w[visitor subscriber editor admin].freeze
   enum :role, ROLES.zip(ROLES).to_h, default: "subscriber", validate: true

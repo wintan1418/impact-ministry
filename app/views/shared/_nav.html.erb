@@ -78,9 +78,12 @@
       <%= link_to "Partner",     partner_path,           style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Give",        give_path,              class: "btn btn-primary self-start mt-3", style: "padding: 12px 22px;" %>
       <% if signed_in? %>
-        <%= link_to "Account", "#", class: "ulink", style: "font-size: 14px; color: var(--color-olive); margin-top: 8px;" %>
+        <%= link_to "Your account", account_path, class: "ulink", style: "font-size: 14px; color: var(--color-olive); margin-top: 8px;" %>
       <% else %>
-        <%= link_to "Sign in", new_session_path, class: "ulink", style: "font-size: 14px; color: var(--color-olive); margin-top: 8px;" %>
+        <div class="flex flex-wrap gap-4 mt-3">
+          <%= link_to "Sign in",  new_session_path, class: "ulink", style: "font-size: 14px; color: var(--color-olive);" %>
+          <%= link_to "Start reading", new_user_path,  class: "ulink", style: "font-size: 14px; color: var(--color-navy); font-weight: 500;" %>
+        </div>
       <% end %>
     </div>
   </div>
