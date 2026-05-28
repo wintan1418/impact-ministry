@@ -1,0 +1,28 @@
+<%# Replace the inline "Saved from this devotional" frame with the
+    refreshed list including the newly-saved excerpt. The Stimulus
+    highlight controller pipes the response through
+    Turbo.renderStreamMessage so this works without a full reload. %>
+<% highlights = current_user.devotional_highlights
+                             .where(devotional_id: @devotional.id)
+                             .order(saved_at: :desc) %>
+
+<%= turbo_stream.replace "recent-highlights" do %>
+  <turbo-frame id="recent-highlights" class="block" style="margin-top: 56px;">
+    <div class="card" style="padding: 28px; background: rgba(255,255,255,0.55);">
+      <div class="flex items-baseline justify-between flex-wrap gap-3">
+        <p class="meta m-0">Saved from this devotional</p>
+        <%= link_to "All highlights →", account_highlights_path, class: "ulink", style: "font-size: 13px; color: var(--color-olive);" %>
+      </div>
+      <ul class="m-0 mt-4 space-y-3" style="list-style: none; padding: 0;">
+        <% highlights.each do |h| %>
+          <li class="flex items-start gap-3">
+            <span aria-hidden="true" style="font-family: var(--font-serif); color: var(--color-crimson); font-size: 24px; line-height: 1; margin-top: -3px;">"</span>
+            <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 17px; line-height: 1.5; color: var(--color-navy);">
+              <%= h.excerpt %>
+            </p>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </turbo-frame>
+<% end %>

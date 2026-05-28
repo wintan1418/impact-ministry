@@ -1,0 +1,175 @@
+<%#
+  Partnership intake form. Posts to /partner (POST → partnerships#create).
+  Wrapped in a turbo-frame so Turbo Stream can swap it with the quiet
+  confirmation partial on success, or re-render with inline errors on
+  failure (no toast — CLAUDE.md §3).
+
+  Locals:
+    partnership:   Partnership instance (new or with errors)
+    error_message: String (optional) — inline error rendered above the form
+%>
+<% error_message = local_assigns[:error_message] %>
+<% type_options = Partnership::ORGANIZATION_TYPES.map { |t| [ Partnership::ORGANIZATION_LABELS[t], t ] } %>
+
+<turbo-frame id="partnership-form">
+  <%= form_with model: partnership,
+                url: partner_path,
+                method: :post,
+                data: { turbo_frame: "partnership-form" },
+                html: { class: "card", style: "padding: 36px; background: rgba(255,255,255,0.6);" } do |f| %>
+
+    <% if error_message.present? %>
+      <p class="m-0 mb-6" role="alert"
+         style="font-family: var(--font-sans); font-size: 14px; color: var(--color-crimson); padding: 12px 16px; border: 1px solid var(--color-crimson); border-radius: 12px; background: rgba(200,16,46,0.04);">
+        <%= error_message %>
+      </p>
+    <% end %>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">Organization name</p>
+        <%= f.text_field :organization_name,
+              required: true,
+              maxlength: 160,
+              placeholder: "e.g. Cedar Grove Church",
+              autocomplete: "organization",
+              "aria-label": "Organization name",
+              "aria-invalid": partnership.errors[:organization_name].any? ? "true" : nil,
+              class: ("input #{'error' if partnership.errors[:organization_name].any?}"),
+              style: "border-radius: 14px;" %>
+        <% if partnership.errors[:organization_name].any? %>
+          <p class="input-help input-help-error">
+            <%= partnership.errors[:organization_name].first %>
+          </p>
+        <% end %>
+      </div>
+
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">Type of organization</p>
+        <%= f.select :organization_type, type_options, {},
+              class: "input",
+              "aria-label": "Type of organization",
+              style: "border-radius: 14px;" %>
+        <% if partnership.errors[:organization_type].any? %>
+          <p class="input-help input-help-error">
+            <%= partnership.errors[:organization_type].first %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">Your name</p>
+        <%= f.text_field :contact_name,
+              required: true,
+              maxlength: 120,
+              placeholder: "First + last",
+              autocomplete: "name",
+              "aria-label": "Your name",
+              "aria-invalid": partnership.errors[:contact_name].any? ? "true" : nil,
+              class: ("input #{'error' if partnership.errors[:contact_name].any?}"),
+              style: "border-radius: 14px;" %>
+        <% if partnership.errors[:contact_name].any? %>
+          <p class="input-help input-help-error">
+            <%= partnership.errors[:contact_name].first %>
+          </p>
+        <% end %>
+      </div>
+
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">Email</p>
+        <%= f.email_field :contact_email,
+              required: true,
+              maxlength: 160,
+              placeholder: "you@example.org",
+              autocomplete: "email",
+              "aria-label": "Email address",
+              "aria-invalid": partnership.errors[:contact_email].any? ? "true" : nil,
+              class: ("input #{'error' if partnership.errors[:contact_email].any?}"),
+              style: "border-radius: 14px;" %>
+        <% if partnership.errors[:contact_email].any? %>
+          <p class="input-help input-help-error">
+            <%= partnership.errors[:contact_email].first %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">
+        Phone <span style="color: var(--color-olive); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span>
+      </p>
+      <%= f.telephone_field :contact_phone,
+            maxlength: 40,
+            placeholder: "Best number to reach you",
+            autocomplete: "tel",
+            "aria-label": "Phone (optional)",
+            "aria-invalid": partnership.errors[:contact_phone].any? ? "true" : nil,
+            class: ("input #{'error' if partnership.errors[:contact_phone].any?}"),
+            style: "border-radius: 14px;" %>
+      <% if partnership.errors[:contact_phone].any? %>
+        <p class="input-help input-help-error">
+          <%= partnership.errors[:contact_phone].first %>
+        </p>
+      <% end %>
+    </div>
+
+    <div style="margin-bottom: 22px;">
+      <p class="meta" style="margin-bottom: 10px;">
+        What are you interested in? <span style="color: var(--color-olive); font-weight: 400; text-transform: none; letter-spacing: 0;">(pick any)</span>
+      </p>
+      <%# Send an empty string so the param is always present and Rails
+          clears the array even when the user deselects everything. %>
+      <%= hidden_field_tag "partnership[interest_areas][]", "" %>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px 18px;">
+        <% Partnership::INTEREST_AREAS.each do |area| %>
+          <label class="flex items-center gap-2" style="font-family: var(--font-sans); font-size: 15px; color: var(--color-ink); cursor: pointer;">
+            <%= check_box_tag "partnership[interest_areas][]",
+                  area,
+                  Array(partnership.interest_areas).include?(area),
+                  id: "partnership_interest_#{area}",
+                  style: "accent-color: var(--color-navy);" %>
+            <span><%= Partnership::INTEREST_LABELS[area] %></span>
+          </label>
+        <% end %>
+      </div>
+      <% if partnership.errors[:interest_areas].any? %>
+        <p class="input-help input-help-error">
+          <%= partnership.errors[:interest_areas].first %>
+        </p>
+      <% end %>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">Tell us about your work</p>
+      <%= f.text_area :message,
+            rows: 6,
+            required: true,
+            minlength: 10,
+            maxlength: 6000,
+            placeholder: "Anything you'd like us to know — who you are, what you're doing, what you're hoping for.",
+            "aria-label": "Tell us about your work",
+            "aria-invalid": partnership.errors[:message].any? ? "true" : nil,
+            class: ("input #{'error' if partnership.errors[:message].any?}"),
+            style: "border-radius: 14px; padding: 18px; font-family: var(--font-reading); font-size: 17px; line-height: 1.6; resize: vertical; height: auto; min-height: 160px;" %>
+      <% if partnership.errors[:message].any? %>
+        <p class="input-help input-help-error">
+          <%= partnership.errors[:message].first %>
+        </p>
+      <% end %>
+    </div>
+
+    <%# Cloudflare Turnstile — invisible in dev/test. %>
+    <div style="margin-top: 6px; margin-bottom: 18px;">
+      <%= render "shared/turnstile", action: "partner" %>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-4" style="margin-top: 10px;">
+      <p class="input-help" style="padding-left: 0; margin: 0; font-family: var(--font-serif); font-style: italic; color: var(--color-olive); font-size: 13px; max-width: 360px;">
+        We read everything ourselves. Real reply within a few days.
+      </p>
+      <%= f.submit "Send", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</turbo-frame>

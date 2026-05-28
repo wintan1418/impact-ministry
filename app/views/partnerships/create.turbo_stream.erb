@@ -1,0 +1,10 @@
+<%# Turbo Stream response to POST /partner.
+    On success → quiet confirmation card.
+    On error   → re-renders the form with inline errors. No toast. (CLAUDE.md §3) %>
+<%= turbo_stream.replace "partnership-form" do %>
+  <% if @partnership.persisted? && @error_message.blank? %>
+    <%= render "submitted" %>
+  <% else %>
+    <%= render "form", partnership: @partnership, error_message: @error_message %>
+  <% end %>
+<% end %>

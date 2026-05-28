@@ -41,4 +41,24 @@ class AdminAlertMailer < ApplicationMailer
       message_stream: message_stream_for(:transactional)
     )
   end
+
+  # Sent by PartnershipNotificationJob when a new /partner intake lands.
+  # Editors get a plaintext-friendly alert with the org's note + a deep
+  # link to the admin record so they can triage from their own inbox.
+  #
+  # Usage:
+  #   AdminAlertMailer.with(partnership_id: p.id).new_partnership.deliver_now
+  def new_partnership
+    @partnership = Partnership.find(params[:partnership_id])
+    @host        = ENV["APP_HOST"].presence || default_url_options[:host] || "localhost"
+    @admin_url   = "#{ENV.fetch('APP_PROTOCOL', 'https')}://#{@host}/admin/partnerships/#{@partnership.id}"
+
+    recipient = ENV.fetch("ADMIN_NOTIFICATION_EMAIL", "team@impactministry.org")
+
+    mail(
+      to: recipient,
+      subject: "New partnership: #{@partnership.kind_label} — #{@partnership.organization_name}",
+      message_stream: message_stream_for(:transactional)
+    )
+  end
 end

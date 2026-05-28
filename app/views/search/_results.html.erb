@@ -1,0 +1,76 @@
+<%# Grouped results panel for /search. Devotionals → Podcast → Resources → Stories.
+    Empty groups are skipped. If everything is empty, a quiet empty state. %>
+<% total = @devotionals.size + @podcasts.size + @resources.size + @testimonies.size %>
+
+<% if total.zero? %>
+  <div class="meta" style="margin-bottom: 8px;">No matches</div>
+  <p style="font-family: var(--font-serif); font-size: 22px; color: var(--color-navy); margin: 0;">
+    <% if @query.present? %>
+      No matches for &ldquo;<%= @query %>.&rdquo; Try a shorter search.
+    <% else %>
+      Try a shorter search.
+    <% end %>
+  </p>
+<% else %>
+
+  <% unless @devotionals.empty? %>
+    <section class="search-result-group">
+      <h4><%= @query.blank? ? "Recent devotionals" : "Devotionals" %></h4>
+      <% @devotionals.each do |devotional| %>
+        <%= link_to devotional_path(devotional), class: "search-result" do %>
+          <div class="search-result-title"><%= devotional.title %></div>
+          <div class="search-result-meta">
+            <% if devotional.scheduled_for.present? %>
+              <%= devotional.scheduled_for.strftime("%b %-d, %Y") %> ·
+            <% end %>
+            <%= devotional.scripture_reference %>
+          </div>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% unless @podcasts.empty? %>
+    <section class="search-result-group">
+      <h4><%= @query.blank? ? "Recent podcast" : "Podcast" %></h4>
+      <% @podcasts.each do |episode| %>
+        <%= link_to podcast_episode_path(episode.slug), class: "search-result" do %>
+          <div class="search-result-title"><%= episode.title %></div>
+          <div class="search-result-meta">
+            S<%= episode.season %> · E<%= episode.episode_number %>
+            <% if episode.guest_names.present? %>
+              · with <%= Array(episode.guest_names).join(", ") %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% unless @resources.empty? %>
+    <section class="search-result-group">
+      <h4><%= @query.blank? ? "Featured resources" : "Resources" %></h4>
+      <% @resources.each do |resource| %>
+        <%= link_to resource_path(resource), class: "search-result" do %>
+          <div class="search-result-title"><%= resource.title %></div>
+          <div class="search-result-meta"><%= resource.category_label %></div>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% unless @testimonies.empty? %>
+    <section class="search-result-group">
+      <h4>Stories</h4>
+      <% @testimonies.each do |testimony| %>
+        <%= link_to testimonies_path(anchor: "testimony-#{testimony.id}"), class: "search-result" do %>
+          <div class="search-result-title">&ldquo;<%= testimony.pull_quote %>&rdquo;</div>
+          <div class="search-result-meta">
+            <%= testimony.display_name %><%= " · #{testimony.location}" if testimony.location.present? %>
+          </div>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+
+<% end %>

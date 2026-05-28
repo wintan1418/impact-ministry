@@ -25,14 +25,34 @@
 
   <article data-read-progress-target="article" class="container-read reading" style="padding: 72px 0 80px;">
 
-    <%# Pre-header: date + streak placeholder %>
-    <div class="flex items-center gap-3 mb-10">
-      <div class="card" style="padding: 10px 16px; display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.6);">
-        <span aria-hidden="true" style="color: var(--color-crimson); font-size: 16px;">◆</span>
-        <span style="font-family: var(--font-serif); font-weight: 500; color: var(--color-navy); font-size: 17px;">
-          <%= signed_in? ? "Day 1" : "Begin" %><span style="color: var(--color-olive); font-size: 12px; font-weight: 400; margin-left: 4px;">your morning</span>
+    <%# Pre-header: streak chip (signed in) or begin-CTA (signed out) %>
+    <div class="flex items-center gap-3 mb-10 flex-wrap">
+      <% if signed_in? %>
+        <% streak = current_user.current_streak.to_i %>
+        <%= link_to account_path, class: "card", style: "padding: 10px 16px; display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.7); text-decoration: none;" do %>
+          <span aria-hidden="true" style="font-size: 16px;">
+            <%= streak.positive? ? "🔥" : "✦" %>
+          </span>
+          <span style="font-family: var(--font-serif); font-weight: 500; color: var(--color-navy); font-size: 17px;">
+            <% if streak.positive? %>
+              Day <%= streak %><span style="color: var(--color-olive); font-size: 12px; font-weight: 400; margin-left: 6px;">of your streak</span>
+            <% else %>
+              <span style="color: var(--color-navy);">Begin</span><span style="color: var(--color-olive); font-size: 12px; font-weight: 400; margin-left: 6px;">your morning</span>
+            <% end %>
+          </span>
+        <% end %>
+        <span style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
+          Drag-select any line below to save it to your highlights.
         </span>
-      </div>
+      <% else %>
+        <div class="card" style="padding: 10px 16px; display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.6);">
+          <span aria-hidden="true" style="color: var(--color-crimson); font-size: 16px;">◆</span>
+          <span style="font-family: var(--font-serif); font-weight: 500; color: var(--color-navy); font-size: 17px;">
+            Begin<span style="color: var(--color-olive); font-size: 12px; font-weight: 400; margin-left: 4px;">your morning</span>
+          </span>
+        </div>
+        <%= link_to "Start your streak →", signup_path, class: "ulink", style: "font-size: 13px; color: var(--color-crimson); font-weight: 500;" %>
+      <% end %>
     </div>
 
     <div class="meta mb-5">The Morning Word · <%= @devotional.scheduled_for.strftime("%a, %b %-d") %></div>
@@ -75,6 +95,32 @@
           Your browser does not support audio playback.
         </audio>
       </div>
+    <% end %>
+
+    <%# Inline saved highlights from THIS devotional (signed-in only).
+        Stimulus highlight_controller appends to this frame when the
+        reader saves a new highlight via the floating button. %>
+    <% if signed_in? %>
+      <turbo-frame id="recent-highlights" class="block" style="margin-top: 56px;">
+        <% if @user_highlights&.any? %>
+          <div class="card" style="padding: 28px; background: rgba(255,255,255,0.55);">
+            <div class="flex items-baseline justify-between flex-wrap gap-3">
+              <p class="meta m-0">Saved from this devotional</p>
+              <%= link_to "All highlights →", account_highlights_path, class: "ulink", style: "font-size: 13px; color: var(--color-olive);" %>
+            </div>
+            <ul class="m-0 mt-4 space-y-3" style="list-style: none; padding: 0;">
+              <% @user_highlights.each do |h| %>
+                <li class="flex items-start gap-3">
+                  <span aria-hidden="true" style="font-family: var(--font-serif); color: var(--color-crimson); font-size: 24px; line-height: 1; margin-top: -3px;">"</span>
+                  <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 17px; line-height: 1.5; color: var(--color-navy);">
+                    <%= h.excerpt %>
+                  </p>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </turbo-frame>
     <% end %>
 
     <hr class="hairline" style="margin: 64px 0 40px;">

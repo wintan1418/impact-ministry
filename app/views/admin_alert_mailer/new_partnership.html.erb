@@ -1,0 +1,48 @@
+<% content_for :preheader, "#{@partnership.organization_name} (#{@partnership.kind_label}) just sent a partnership note via /partner." %>
+
+<h1 style="margin:0 0 16px 0; font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:500; color:#1B2A4E;">
+  New partnership: <%= @partnership.kind_label %>
+</h1>
+
+<table style="margin:0 0 20px 0; font-size:14px; color:#1F1B16; border-collapse:collapse;">
+  <tr>
+    <td style="padding:4px 12px 4px 0; color:#8B7355;">Organization</td>
+    <td style="padding:4px 0;"><strong><%= @partnership.organization_name %></strong></td>
+  </tr>
+  <tr>
+    <td style="padding:4px 12px 4px 0; color:#8B7355;">Type</td>
+    <td style="padding:4px 0;"><%= @partnership.kind_label %></td>
+  </tr>
+  <tr>
+    <td style="padding:4px 12px 4px 0; color:#8B7355;">Contact</td>
+    <td style="padding:4px 0;"><%= @partnership.contact_name %> &lt;<a href="mailto:<%= @partnership.contact_email %>" style="color:#1B2A4E;"><%= @partnership.contact_email %></a>&gt;</td>
+  </tr>
+  <% if @partnership.contact_phone.present? %>
+    <tr>
+      <td style="padding:4px 12px 4px 0; color:#8B7355;">Phone</td>
+      <td style="padding:4px 0;"><%= @partnership.contact_phone %></td>
+    </tr>
+  <% end %>
+  <% if @partnership.interest_areas.present? %>
+    <tr>
+      <td style="padding:4px 12px 4px 0; color:#8B7355;">Interests</td>
+      <td style="padding:4px 0;"><%= @partnership.interests_label %></td>
+    </tr>
+  <% end %>
+</table>
+
+<div style="margin:0 0 24px 0; padding:18px 22px; background:#FAF7F2; border-left:3px solid #1B2A4E; font-family:Georgia,'Times New Roman',serif; font-size:16px; line-height:1.55; white-space:pre-wrap;">
+<%= @partnership.message %>
+</div>
+
+<p style="margin:0 0 24px 0;">
+  <a href="<%= @admin_url %>"
+     style="display:inline-block; background-color:#1B2A4E; color:#FAF7F2; padding:12px 20px; border-radius:4px; text-decoration:none; font-weight:500;">
+    Open the admin record
+  </a>
+</p>
+
+<p style="margin:0; font-size:13px; color:#8B7355;">
+  Reply directly to <a href="mailto:<%= @partnership.contact_email %>" style="color:#8B7355;"><%= @partnership.contact_email %></a>,
+  or open the admin record to move this through your triage queue.
+</p>

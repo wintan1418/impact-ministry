@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_145033) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_153940) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -196,6 +196,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_145033) do
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_pages_on_slug", unique: true
+  end
+
+  create_table "partnerships", force: :cascade do |t|
+    t.string "contact_email", null: false
+    t.string "contact_name", null: false
+    t.string "contact_phone"
+    t.datetime "created_at", null: false
+    t.string "interest_areas", default: [], array: true
+    t.text "message", null: false
+    t.string "organization_name", null: false
+    t.string "organization_type", default: "other", null: false
+    t.string "status", default: "new", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_partnerships_on_created_at", order: :desc
+    t.index ["organization_type"], name: "index_partnerships_on_organization_type"
+    t.index ["status"], name: "index_partnerships_on_status"
   end
 
   create_table "podcast_episodes", force: :cascade do |t|

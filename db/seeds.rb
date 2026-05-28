@@ -710,4 +710,85 @@ if Rails.env.development?
     )
   end
   puts "Demo highlights present: #{demo.devotional_highlights.count}"
+
+  # --- Partnerships (sample inbox across types + statuses) ---------------
+  # Five intakes so /admin/partnerships looks alive in development.
+  TARGET_PARTNERSHIPS = 5
+  if Partnership.count < TARGET_PARTNERSHIPS
+    partnership_seeds = [
+      {
+        organization_type: "church",
+        organization_name: "Cedar Grove Baptist",
+        contact_name:      Faker::Name.name,
+        interests:         %w[devotionals content],
+        status:            "new",
+        age:               3.hours,
+        message:           "We'd love to co-publish a four-week Advent series for our Wednesday gatherings. " \
+                           "About sixty people read together; we'd provide the printable, you'd provide the words."
+      },
+      {
+        organization_type: "nonprofit",
+        organization_name: "Delta Hope Collective",
+        contact_name:      Faker::Name.name,
+        interests:         %w[grants volunteers],
+        status:            "in_review",
+        age:               1.day,
+        message:           "Exploring a small operational grant for our after-school literacy program in Greenville. " \
+                           "Happy to share our 990 and a one-page program summary if there's interest."
+      },
+      {
+        organization_type: "school",
+        organization_name: "Greenwood Christian Academy",
+        contact_name:      Faker::Name.name,
+        interests:         %w[content],
+        status:            "engaged",
+        age:               4.days,
+        message:           "Our chaplain has been using your devotionals in our middle-school chapel. " \
+                           "Could we talk about a custom series shaped for adolescents? Eight to ten readings would be plenty."
+      },
+      {
+        organization_type: "business",
+        organization_name: "Threshold Coffee Roasters",
+        contact_name:      Faker::Name.name,
+        interests:         %w[podcast],
+        status:            "new",
+        age:               6.hours,
+        message:           "Family-owned roastery in Hattiesburg. We'd like to underwrite a season of the podcast " \
+                           "and send beans to anyone who subscribes during the run. Tell us what you'd need from us."
+      },
+      {
+        organization_type: "other",
+        organization_name: "First Light Editorial",
+        contact_name:      Faker::Name.name,
+        interests:         %w[content other],
+        status:            "declined",
+        age:               2.weeks,
+        message:           "Pitching a guest essay swap with our small Christian publication. Open to any cadence. " \
+                           "We can share readership numbers privately if helpful."
+      }
+    ]
+
+    created = 0
+    partnership_seeds.each_with_index do |spec, i|
+      email = "partner#{i + 1}@example.com"
+      next if Partnership.exists?(contact_email: email)
+
+      p = Partnership.create!(
+        organization_name: spec[:organization_name],
+        organization_type: spec[:organization_type],
+        contact_name:      spec[:contact_name],
+        contact_email:     email,
+        contact_phone:     ([ nil, "601-555-0#{100 + i}" ].sample),
+        interest_areas:    spec[:interests],
+        message:           spec[:message],
+        status:            spec[:status]
+      )
+      ts = spec[:age].ago
+      Partnership.where(id: p.id).update_all(created_at: ts, updated_at: ts)
+      created += 1
+    end
+    puts "Seeded #{created} partnerships — now #{Partnership.count} total."
+  else
+    puts "Partnerships already populated (#{Partnership.count})."
+  end
 end

@@ -446,6 +446,69 @@
   .highlight-save.is-saved {
     background: var(--color-crimson);
   }
+
+  /* ----- Site-wide search overlay -----
+     Opened by the 🔍 nav button or Cmd/Ctrl+K. Full-screen, cream backdrop
+     with a soft blur. Visibility is animated through opacity + a delayed
+     visibility transition so focus management works (no focus into a hidden
+     input). z-index sits above .nav (50) and the highlight FAB (70) but
+     below the toast (100). */
+  .search-panel {
+    position: fixed;
+    inset: 0;
+    background: rgba(250, 247, 242, 0.96);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 80;
+    opacity: 0;
+    visibility: hidden;
+    overflow-y: auto;
+    transition:
+      opacity 200ms var(--ease-impact),
+      visibility 0s linear 200ms;
+  }
+  .search-panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 200ms var(--ease-impact),
+      visibility 0s linear 0s;
+  }
+  .search-card {
+    max-width: 760px;
+    margin: 80px auto 0;
+    padding: 0 1.25rem;
+  }
+  .search-result-group { margin-top: 28px; }
+  .search-result-group h4 {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    color: var(--color-olive);
+    margin: 0 0 10px;
+    font-weight: 500;
+  }
+  .search-result {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 12px;
+    transition: background 160ms var(--ease-impact);
+  }
+  .search-result:hover { background: rgba(232, 223, 208, 0.45); }
+  .search-result-title {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--color-navy);
+    line-height: 1.25;
+  }
+  .search-result-meta {
+    font-size: 12px;
+    color: var(--color-olive);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
 }
 
 /* =========================================================

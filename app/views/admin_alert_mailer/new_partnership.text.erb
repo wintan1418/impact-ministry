@@ -1,0 +1,28 @@
+NEW PARTNERSHIP INTAKE
+======================
+
+Organization: <%= @partnership.organization_name %>
+Type:         <%= @partnership.kind_label %>
+Contact:      <%= @partnership.contact_name %> <<%= @partnership.contact_email %>>
+<% if @partnership.contact_phone.present? -%>
+Phone:        <%= @partnership.contact_phone %>
+<% end -%>
+<% if @partnership.interest_areas.present? -%>
+Interests:    <%= @partnership.interests_label %>
+<% end -%>
+
+----------------------------------------
+
+<%= @partnership.message %>
+
+----------------------------------------
+
+Reply directly to <%= @partnership.contact_email %>, or open the admin
+record to move this through your triage queue.
+
+Admin record:
+<%= @admin_url %>
+
+--
+This alert is automated by PartnershipNotificationJob. It runs once per
+/partner submission.

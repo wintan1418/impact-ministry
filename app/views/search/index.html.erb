@@ -1,0 +1,6 @@
+<%# Full-page fallback when the request hits /search without JS — used both as
+    the no-JS entry point and as the response body that the Stimulus controller
+    drops into the overlay's `results` target. %>
+<% content_for :title, (@query.present? ? "Search · #{@query}" : "Search") + " — IMPACT Ministry" %>
+
+<%= render "results" %>

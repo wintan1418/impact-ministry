@@ -11,15 +11,10 @@
           <span class="italic font-normal">together.</span>
         </h1>
         <p class="reading mt-6 max-w-[540px]" style="font-size: 19px;">
-          We work alongside churches, schools, and small businesses across Mississippi
-          and beyond. The intake form opens with our Phase 3 release. Until then,
-          leave a note and we'll write you back ourselves.
+          We work alongside churches, schools, and small businesses across
+          Mississippi and beyond. Tell us a little about your work below — a
+          real person on our team will read it and write back within a few days.
         </p>
-
-        <div class="mt-9 max-w-[480px]">
-          <p class="meta mb-3">Hear from us first</p>
-          <%= render "shared/email_capture", source: "podcast" %>
-        </div>
       </div>
 
       <div>
@@ -32,14 +27,14 @@
 <%# ============================================================
      Three audiences — cards
      ============================================================ %>
-<section class="pb-20 md:pb-28">
+<section class="pb-16 md:pb-20">
   <div class="container-page">
     <p class="meta mb-8 text-center">Who we work with</p>
     <div class="grid gap-6 md:gap-8 md:grid-cols-3">
       <% [
-        { meta: "For churches",        title: "Pulpit & content partnerships",  body: "Co-published devotionals, guest writers, podcast crossovers, small-church design grants." },
-        { meta: "For nonprofits & schools", title: "Funding & ops support",     body: "Small operational grants, design and copy help, leadership coaching for executive directors." },
-        { meta: "For businesses",      title: "Mission-aligned sponsorship",    body: "Underwrite a season of the podcast, sponsor a devotional series, donate goods or services." }
+        { meta: "For churches",            title: "Pulpit & content partnerships", body: "Co-published devotionals, guest writers, podcast crossovers, small-church design grants." },
+        { meta: "For nonprofits & schools", title: "Funding & ops support",         body: "Small operational grants, design and copy help, leadership coaching for executive directors." },
+        { meta: "For businesses",          title: "Mission-aligned sponsorship",   body: "Underwrite a season of the podcast, sponsor a devotional series, donate goods or services." }
       ].each do |card| %>
         <div class="card p-7 md:p-8">
           <p class="meta m-0"><%= card[:meta] %></p>
@@ -47,6 +42,27 @@
           <p class="reading mt-3 m-0" style="font-size: 16px;"><%= card[:body] %></p>
         </div>
       <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ============================================================
+     Intake form
+     ============================================================ %>
+<section class="pb-24 md:pb-32">
+  <div class="container-read">
+    <p class="meta m-0 mb-5">Tell us about your work</p>
+    <h2 class="display m-0" style="font-size: clamp(32px, 4vw, 48px); line-height: 1.05;">
+      A few details, and we'll write back.
+    </h2>
+    <p class="reading mt-5" style="font-size: 17px;">
+      Short is fine. We're more interested in the shape of what you're doing
+      than a polished pitch. Anything you'd like us to know about your work,
+      your people, or what you're hoping for — write it below.
+    </p>
+
+    <div class="mt-10">
+      <%= render "form", partnership: @partnership, error_message: @error_message %>
     </div>
   </div>
 </section>

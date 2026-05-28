@@ -21,6 +21,12 @@ class DevotionalsController < ApplicationController
   # GET /devotionals/:slug
   def show
     raise ActiveRecord::RecordNotFound unless @devotional.published?
+
+    if signed_in?
+      @user_highlights = current_user.devotional_highlights
+                                      .where(devotional_id: @devotional.id)
+                                      .order(saved_at: :desc)
+    end
   end
 
   # GET /devotionals/today

@@ -1,3 +1,10 @@
+# Register the `:rss` MIME type before routes load so `/podcast.rss` can be
+# parsed and rendered as `application/rss+xml`. Rails 8 doesn't ship this MIME
+# type out of the box, and `Mime::Type.register` raises on re-register, so we
+# guard the lookup. Lives here (not in an initializer) because the podcast feed
+# is the only consumer.
+Mime::Type.register("application/rss+xml", :rss) unless Mime::Type.lookup_by_extension(:rss)
+
 Rails.application.routes.draw do
   ActiveAdmin.routes(self)
   # --- System ---
@@ -46,6 +53,10 @@ Rails.application.routes.draw do
 
   # --- Stub surfaces (placeholder pages until Phase 2/3 controllers land) ---
   # Each links from the nav and renders a real designed page with email capture.
+  # NOTE: `.rss` must come BEFORE `podcast` so the format-suffixed URL is not
+  # swallowed by the more permissive index route, which would otherwise match
+  # `/podcast.rss` as `index` with format=rss.
+  get "podcast.rss"    => "podcast_episodes#feed",  as: :podcast_feed, defaults: { format: :rss }
   get "podcast"        => "podcast_episodes#index", as: :podcast
   get "podcast/:slug"  => "podcast_episodes#show",  as: :podcast_episode
   # --- Prayer Wall (Phase 2.7–2.10) ---
@@ -60,7 +71,12 @@ Rails.application.routes.draw do
   # Keep the legacy `pray_path` helper working (was `get "pray"` before).
   get "pray", to: "prayer_requests#index", as: :pray
 
-  get "partner" => "partnerships#new",       as: :partner
+  # --- Partnerships (Phase 3.1–3.2) ---
+  # /partner  GET   new    (editorial hero + audience cards + intake form)
+  # /partner  POST  create (Turbo Stream submission)
+  get  "partner" => "partnerships#new",    as: :partner
+  post "partner" => "partnerships#create"
+
   get "give"    => "giving#show",            as: :give
 
   # --- Events + RSVPs (Phase 4.3) ---
@@ -100,6 +116,12 @@ Rails.application.routes.draw do
   namespace :postmark do
     resources :webhooks, only: [ :create ]
   end
+
+  # --- Site search (Phase 2) ---
+  # /search          GET  index   — runs the query, renders grouped results.
+  # /search/overlay  GET  overlay — bare overlay shell (no-JS entry point).
+  get "search"         => "search#index",   as: :search
+  get "search/overlay" => "search#overlay", as: :search_overlay
 
   # --- Sitemap + error pages (Phase 1.F) ---
   get "sitemap.xml" => "sitemaps#show", as: :sitemap, defaults: { format: :xml }
