@@ -1,0 +1,55 @@
+<% content_for :preheader, "Someone signed up to volunteer — read it on the admin." %>
+
+<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:500; color:#1B2A4E; margin:0 0 18px 0;">
+  New volunteer signup
+</h1>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; width:100%; font-size:14px;">
+  <tr>
+    <td style="padding:4px 0; color:#8B7355; width:120px;">Name</td>
+    <td style="padding:4px 0; color:#1F1B16;"><%= @volunteer.name %></td>
+  </tr>
+  <tr>
+    <td style="padding:4px 0; color:#8B7355;">Email</td>
+    <td style="padding:4px 0; color:#1F1B16;"><%= @volunteer.email %></td>
+  </tr>
+  <% if @volunteer.phone.present? %>
+    <tr>
+      <td style="padding:4px 0; color:#8B7355;">Phone</td>
+      <td style="padding:4px 0; color:#1F1B16;"><%= @volunteer.phone %></td>
+    </tr>
+  <% end %>
+  <tr>
+    <td style="padding:4px 0; color:#8B7355;">Availability</td>
+    <td style="padding:4px 0; color:#1F1B16;"><%= @volunteer.availability_label %></td>
+  </tr>
+  <% if @volunteer.interest_areas.present? %>
+    <tr>
+      <td style="padding:4px 0; color:#8B7355;">Interests</td>
+      <td style="padding:4px 0; color:#1F1B16;"><%= @volunteer.interests_label %></td>
+    </tr>
+  <% end %>
+</table>
+
+<% if @volunteer.gifts.present? %>
+  <div style="margin-top:20px;">
+    <p style="margin:0 0 6px 0; color:#8B7355; font-size:13px; text-transform:uppercase; letter-spacing:0.08em;">Gifts / background</p>
+    <div style="padding:14px 18px; background:#FAF7F2; border-radius:6px; font-size:14px; color:#1F1B16; line-height:1.5;">
+      <%= simple_format(@volunteer.gifts) %>
+    </div>
+  </div>
+<% end %>
+
+<div style="margin-top:20px; padding:18px 20px; background:#FAF7F2; border-left:3px solid #C8102E; font-family:Georgia,'Times New Roman',serif; font-style:italic; color:#1F1B16; font-size:15px; line-height:1.5;">
+  <%= simple_format(@volunteer.message) %>
+</div>
+
+<p style="margin:24px 0 16px 0;">
+  <a href="<%= @admin_url %>" style="display:inline-block; background-color:#1B2A4E; color:#FAF7F2; padding:12px 22px; border-radius:4px; text-decoration:none; font-weight:500;">
+    Open admin record
+  </a>
+</p>
+
+<p style="margin:0; font-size:12px; color:#8B7355;">
+  Automated by VolunteerNotificationJob — one per /volunteer submission.
+</p>

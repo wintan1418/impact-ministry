@@ -1,0 +1,33 @@
+NEW VOLUNTEER SIGNUP
+====================
+
+Name:         <%= @volunteer.name %>
+Email:        <%= @volunteer.email %>
+<% if @volunteer.phone.present? -%>
+Phone:        <%= @volunteer.phone %>
+<% end -%>
+Availability: <%= @volunteer.availability_label %>
+<% if @volunteer.interest_areas.present? -%>
+Interests:    <%= @volunteer.interests_label %>
+<% end -%>
+<% if @volunteer.gifts.present? -%>
+
+Gifts / background:
+<%= @volunteer.gifts %>
+<% end -%>
+
+----------------------------------------
+
+<%= @volunteer.message %>
+
+----------------------------------------
+
+Reply directly to <%= @volunteer.email %>, or open the admin record
+to triage this signup.
+
+Admin record:
+<%= @admin_url %>
+
+--
+This alert is automated by VolunteerNotificationJob. It runs once per
+/volunteer submission.

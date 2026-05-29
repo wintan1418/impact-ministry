@@ -1,0 +1,10 @@
+<%# Turbo Stream response to POST /volunteer.
+    On success → quiet confirmation card.
+    On error   → re-renders the form with inline errors. No toast. (CLAUDE.md §3) %>
+<%= turbo_stream.replace "volunteer-form" do %>
+  <% if @volunteer.persisted? && @error_message.blank? %>
+    <%= render "submitted" %>
+  <% else %>
+    <%= render "form", volunteer: @volunteer, error_message: @error_message %>
+  <% end %>
+<% end %>

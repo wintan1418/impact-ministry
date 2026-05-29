@@ -1,0 +1,22 @@
+NEW PRAYER REQUEST
+==================
+
+From:        <%= @prayer.is_anonymous? ? "(anonymous)" : @prayer.name.presence || "(no name)" %>
+<% unless @prayer.is_anonymous? -%>
+Email:       <%= @prayer.email.presence || "(not provided)" %>
+<% end -%>
+Public:      <%= @prayer.is_public? ? "yes — eligible for the wall" : "no — private" %>
+Submitted:   <%= @prayer.created_at.strftime("%B %-d, %Y at %l:%M %p") %>
+
+----------------------------------------
+
+<%= @prayer.body %>
+
+----------------------------------------
+
+Open the admin record to approve, archive, or mark answered:
+<%= @admin_url %>
+
+--
+This alert is automated by PrayerNotificationJob. It runs once per /pray
+submission.

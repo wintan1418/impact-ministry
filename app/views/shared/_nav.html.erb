@@ -63,6 +63,7 @@
                 <li><%= link_to "Mission",            about_page_path,   class: "nav-mega-link" %></li>
                 <li><%= link_to "Statement of faith", beliefs_page_path, class: "nav-mega-link" %></li>
                 <li><%= link_to "Partner",            partner_path,      class: "nav-mega-link" %></li>
+                <li><%= link_to "Volunteer",          volunteer_path,    class: "nav-mega-link" %></li>
                 <li><%= link_to "Contact",            contact_page_path, class: "nav-mega-link" %></li>
               </ul>
             </div>
@@ -146,6 +147,7 @@
       <%= link_to "Events",      events_path,            style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "About",       about_page_path,        style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Partner",     partner_path,           style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
+      <%= link_to "Volunteer",   volunteer_path,         style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Contact",     contact_page_path,      style: "font-family: var(--font-serif); font-size: 28px; color: var(--color-navy);" %>
       <%= link_to "Give",        give_path,              class: "btn btn-primary self-start mt-3", style: "padding: 12px 22px;" %>
       <% if signed_in? %>

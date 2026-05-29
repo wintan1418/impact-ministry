@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_29_102103) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_29_104542) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -362,6 +362,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_29_102103) do
     t.index ["current_streak"], name: "index_users_on_current_streak"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["role"], name: "index_users_on_role"
+  end
+
+  create_table "volunteers", force: :cascade do |t|
+    t.string "availability", default: "flexible", null: false
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.text "gifts"
+    t.string "interest_areas", default: [], null: false, array: true
+    t.text "message", null: false
+    t.string "name", null: false
+    t.string "phone"
+    t.string "status", default: "new", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_volunteers_on_created_at"
+    t.index ["email"], name: "index_volunteers_on_email"
+    t.index ["status"], name: "index_volunteers_on_status"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

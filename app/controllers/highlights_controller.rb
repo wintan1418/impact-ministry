@@ -7,6 +7,7 @@ class HighlightsController < ApplicationController
       devotional: @devotional,
       text_range: params[:text_range].to_s
     )
+    authorize @highlight, :create?
 
     if @highlight.save
       respond_to do |format|
@@ -23,7 +24,11 @@ class HighlightsController < ApplicationController
   end
 
   def destroy
+    # Scoping through current_user keeps the existing 404 contract for foreign
+    # ids; the `authorize` call is belt-and-suspenders so a future refactor
+    # (e.g. broadening the scope) can't accidentally remove the ownership check.
     @highlight = current_user.devotional_highlights.find(params[:id])
+    authorize @highlight, :destroy?
     @highlight.destroy
 
     respond_to do |format|

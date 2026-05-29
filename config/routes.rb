@@ -86,6 +86,10 @@ Rails.application.routes.draw do
   get  "partner" => "partnerships#new",    as: :partner
   post "partner" => "partnerships#create"
 
+  # --- Volunteers (Richard's plan §6) ---
+  get  "volunteer" => "volunteers#new",    as: :volunteer
+  post "volunteer" => "volunteers#create"
+
   get  "give"        => "giving#show",   as: :give
   post "give"        => "giving#create"
   get  "give/thanks" => "giving#thanks", as: :give_thanks

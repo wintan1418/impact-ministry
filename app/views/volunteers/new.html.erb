@@ -1,0 +1,68 @@
+<% content_for :title, "Volunteer — IMPACT Ministry" %>
+<% content_for :description, "Bring your time and your gifts — write devotionals, edit the podcast, hold the prayer wall, help at events." %>
+
+<section class="pt-10 md:pt-16 pb-16 md:pb-24">
+  <div class="container-page">
+    <div class="grid gap-10 md:gap-14 lg:grid-cols-[1.05fr_1fr] items-center">
+      <div>
+        <p class="meta mb-5">Volunteer</p>
+        <h1 class="display m-0" style="font-size: clamp(40px, 6vw, 80px); line-height: 0.98; letter-spacing: -0.02em;">
+          Bring your gifts.<br>
+          <span class="italic font-normal">We have room for them.</span>
+        </h1>
+        <p class="reading mt-6 max-w-[540px]" style="font-size: 19px;">
+          Writing. Podcast editing. Prayer-wall coverage. Helping at events.
+          Whatever you bring, there is a place for it here. Tell us a bit
+          about yourself below — a real person on our team will write back
+          within a few days.
+        </p>
+      </div>
+
+      <div>
+        <%= image_tag photo_url("hands-open", w: 720, h: 860), alt: "Open hands ready to serve", class: "w-full h-auto", style: "border-radius: var(--radius-image); aspect-ratio: 4 / 5; object-fit: cover;" %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ============================================================
+     Where you can plug in — cards
+     ============================================================ %>
+<section class="pb-16 md:pb-20">
+  <div class="container-page">
+    <p class="meta mb-8 text-center">Where you can plug in</p>
+    <div class="grid gap-6 md:gap-8 md:grid-cols-3">
+      <% [
+        { meta: "With words",     title: "Devotional + podcast craft", body: "Help write a devotional series, edit a podcast episode, design a Sunday recap, or proof what we ship." },
+        { meta: "With prayer",    title: "Hold the prayer wall",       body: "Pray over the requests that land each week, write quiet notes back, mark answered ones as the testimonies come in." },
+        { meta: "With your hands", title: "Events + outreach",          body: "Greet people at a launch event, drive supplies to a partner church, help organize a youth night, sit with someone after a service." }
+      ].each do |card| %>
+        <div class="card p-7 md:p-8">
+          <p class="meta m-0"><%= card[:meta] %></p>
+          <p class="display m-0 mt-2" style="font-size: 22px; line-height: 1.2;"><%= card[:title] %></p>
+          <p class="reading mt-3 m-0" style="font-size: 16px;"><%= card[:body] %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ============================================================
+     Intake form
+     ============================================================ %>
+<section class="pb-24 md:pb-32">
+  <div class="container-read">
+    <p class="meta m-0 mb-5">Tell us a bit about yourself</p>
+    <h2 class="display m-0" style="font-size: clamp(32px, 4vw, 48px); line-height: 1.05;">
+      A few details, and we'll write back.
+    </h2>
+    <p class="reading mt-5" style="font-size: 17px;">
+      You don't need credentials. Tell us what you'd like to give time to,
+      when you're free, and anything we should know.
+    </p>
+
+    <div class="mt-10">
+      <%= render "form", volunteer: @volunteer, error_message: @error_message %>
+    </div>
+  </div>
+</section>

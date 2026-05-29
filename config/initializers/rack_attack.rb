@@ -34,6 +34,7 @@ PUBLIC_FORM_PATHS = %w[
   /feedback_messages
   /partnerships
   /partner
+  /volunteer
   /give
 ].freeze
 

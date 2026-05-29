@@ -1,0 +1,44 @@
+<% content_for :preheader, "A new prayer request just landed — review it on the admin." %>
+
+<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:500; color:#1B2A4E; margin:0 0 18px 0;">
+  New prayer request
+</h1>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; width:100%; font-size:14px;">
+  <tr>
+    <td style="padding:4px 0; color:#8B7355; width:90px;">From</td>
+    <td style="padding:4px 0; color:#1F1B16;">
+      <%= @prayer.is_anonymous? ? "(anonymous)" : @prayer.name.presence || "(no name)" %>
+    </td>
+  </tr>
+  <% unless @prayer.is_anonymous? %>
+    <tr>
+      <td style="padding:4px 0; color:#8B7355;">Email</td>
+      <td style="padding:4px 0; color:#1F1B16;"><%= @prayer.email.presence || "(not provided)" %></td>
+    </tr>
+  <% end %>
+  <tr>
+    <td style="padding:4px 0; color:#8B7355;">Public?</td>
+    <td style="padding:4px 0; color:#1F1B16;">
+      <%= @prayer.is_public? ? "Yes — eligible for the wall" : "No — keep private" %>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:4px 0; color:#8B7355;">Submitted</td>
+    <td style="padding:4px 0; color:#1F1B16;"><%= @prayer.created_at.strftime("%B %-d, %Y · %l:%M %p") %></td>
+  </tr>
+</table>
+
+<div style="margin-top:20px; padding:18px 20px; background:#FAF7F2; border-left:3px solid #C8102E; font-family:Georgia,'Times New Roman',serif; font-style:italic; color:#1F1B16; font-size:15px; line-height:1.5;">
+  <%= simple_format(@prayer.body) %>
+</div>
+
+<p style="margin:24px 0 16px 0;">
+  <a href="<%= @admin_url %>" style="display:inline-block; background-color:#1B2A4E; color:#FAF7F2; padding:12px 22px; border-radius:4px; text-decoration:none; font-weight:500;">
+    Open admin record
+  </a>
+</p>
+
+<p style="margin:0; font-size:12px; color:#8B7355;">
+  This alert is automated by PrayerNotificationJob — one per /pray submission.
+</p>

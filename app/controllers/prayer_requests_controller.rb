@@ -34,6 +34,7 @@ class PrayerRequestsController < ApplicationController
     end
 
     if @prayer_request.save
+      PrayerNotificationJob.perform_later(@prayer_request.id)
       render_form_success
     else
       render_form_failure

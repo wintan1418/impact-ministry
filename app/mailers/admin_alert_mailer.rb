@@ -42,6 +42,27 @@ class AdminAlertMailer < ApplicationMailer
     )
   end
 
+  # Sent by PrayerNotificationJob when a new /pray submission lands so
+  # editors don't have to refresh /admin/prayer_requests to catch new ones.
+  # Anonymous requests omit the name; the body is always included so the
+  # editor can decide whether to approve for the public wall.
+  #
+  # Usage:
+  #   AdminAlertMailer.with(prayer_request_id: p.id).new_prayer.deliver_now
+  def new_prayer
+    @prayer    = PrayerRequest.find(params[:prayer_request_id])
+    @host      = ENV["APP_HOST"].presence || default_url_options[:host] || "localhost"
+    @admin_url = "#{ENV.fetch('APP_PROTOCOL', 'https')}://#{@host}/admin/prayer_requests/#{@prayer.id}"
+
+    recipient = ENV.fetch("ADMIN_NOTIFICATION_EMAIL", "team@impactministry.org")
+
+    mail(
+      to: recipient,
+      subject: "New prayer request — IMPACT",
+      message_stream: message_stream_for(:transactional)
+    )
+  end
+
   # Sent by PartnershipNotificationJob when a new /partner intake lands.
   # Editors get a plaintext-friendly alert with the org's note + a deep
   # link to the admin record so they can triage from their own inbox.
@@ -58,6 +79,24 @@ class AdminAlertMailer < ApplicationMailer
     mail(
       to: recipient,
       subject: "New partnership: #{@partnership.kind_label} — #{@partnership.organization_name}",
+      message_stream: message_stream_for(:transactional)
+    )
+  end
+
+  # Sent by VolunteerNotificationJob when a /volunteer intake lands.
+  #
+  # Usage:
+  #   AdminAlertMailer.with(volunteer_id: v.id).new_volunteer.deliver_now
+  def new_volunteer
+    @volunteer = Volunteer.find(params[:volunteer_id])
+    @host      = ENV["APP_HOST"].presence || default_url_options[:host] || "localhost"
+    @admin_url = "#{ENV.fetch('APP_PROTOCOL', 'https')}://#{@host}/admin/volunteers/#{@volunteer.id}"
+
+    recipient = ENV.fetch("ADMIN_NOTIFICATION_EMAIL", "team@impactministry.org")
+
+    mail(
+      to: recipient,
+      subject: "New volunteer: #{@volunteer.name}",
       message_stream: message_stream_for(:transactional)
     )
   end

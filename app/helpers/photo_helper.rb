@@ -15,7 +15,8 @@ module PhotoHelper
     "praying-hands"   => "1499728603263-13726abce5fd", # hands folded, intimate
     "path-pines"      => "1518837695005-2083093ee35b", # path through trees, Mississippi mood
     "doorway-light"   => "1507525428034-b723cf961d3e", # light through a doorway/window
-    "handshake"       => "1521791136064-7986c2920216"  # warm handshake/meeting
+    "handshake"       => "1521791136064-7986c2920216", # warm handshake/meeting
+    "hands-open"      => "1488521787991-ed7bbaae773c"  # open hands ready to serve
   }.freeze
 
   def photo_url(slug, w: 1200, h: 800, fit: "crop")

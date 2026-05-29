@@ -1,0 +1,148 @@
+<%#
+  Volunteer intake form. Posts to /volunteer (POST → volunteers#create).
+  Wrapped in a turbo-frame so Turbo Stream can swap it with the quiet
+  confirmation partial on success, or re-render with inline errors on
+  failure (no toast — CLAUDE.md §3).
+
+  Locals:
+    volunteer:     Volunteer instance (new or with errors)
+    error_message: String (optional) — inline error rendered above the form
+%>
+<% error_message = local_assigns[:error_message] %>
+<% availability_options = Volunteer::AVAILABILITIES.map { |a| [ Volunteer::AVAILABILITY_LABELS[a], a ] } %>
+
+<turbo-frame id="volunteer-form">
+  <%= form_with model: volunteer,
+                url: volunteer_path,
+                method: :post,
+                data: { turbo_frame: "volunteer-form" },
+                html: { class: "card", style: "padding: 36px; background: rgba(255,255,255,0.6);" } do |f| %>
+
+    <% if error_message.present? %>
+      <p class="m-0 mb-6" role="alert"
+         style="font-family: var(--font-sans); font-size: 14px; color: var(--color-crimson); padding: 12px 16px; border: 1px solid var(--color-crimson); border-radius: 12px; background: rgba(200,16,46,0.04);">
+        <%= error_message %>
+      </p>
+    <% end %>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">Your name</p>
+        <%= f.text_field :name,
+              required: true,
+              maxlength: 120,
+              placeholder: "First + last",
+              autocomplete: "name",
+              "aria-label": "Your name",
+              "aria-invalid": volunteer.errors[:name].any? ? "true" : nil,
+              class: ("input #{'error' if volunteer.errors[:name].any?}"),
+              style: "border-radius: 14px;" %>
+        <% if volunteer.errors[:name].any? %>
+          <p class="input-help input-help-error"><%= volunteer.errors[:name].first %></p>
+        <% end %>
+      </div>
+
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">Email</p>
+        <%= f.email_field :email,
+              required: true,
+              maxlength: 160,
+              placeholder: "you@example.com",
+              autocomplete: "email",
+              "aria-label": "Email address",
+              "aria-invalid": volunteer.errors[:email].any? ? "true" : nil,
+              class: ("input #{'error' if volunteer.errors[:email].any?}"),
+              style: "border-radius: 14px;" %>
+        <% if volunteer.errors[:email].any? %>
+          <p class="input-help input-help-error"><%= volunteer.errors[:email].first %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">
+          Phone <span style="color: var(--color-olive); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span>
+        </p>
+        <%= f.telephone_field :phone,
+              maxlength: 40,
+              placeholder: "Best number",
+              autocomplete: "tel",
+              "aria-label": "Phone (optional)",
+              class: "input",
+              style: "border-radius: 14px;" %>
+      </div>
+
+      <div>
+        <p class="meta" style="margin-bottom: 10px;">When are you free?</p>
+        <%= f.select :availability, availability_options, {},
+              class: "input",
+              "aria-label": "Availability",
+              style: "border-radius: 14px;" %>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 22px;">
+      <p class="meta" style="margin-bottom: 10px;">
+        Where would you like to help? <span style="color: var(--color-olive); font-weight: 400; text-transform: none; letter-spacing: 0;">(pick any)</span>
+      </p>
+      <%= hidden_field_tag "volunteer[interest_areas][]", "" %>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px 18px;">
+        <% Volunteer::INTEREST_AREAS.each do |area| %>
+          <label class="flex items-center gap-2" style="font-family: var(--font-sans); font-size: 15px; color: var(--color-ink); cursor: pointer;">
+            <%= check_box_tag "volunteer[interest_areas][]",
+                  area,
+                  Array(volunteer.interest_areas).include?(area),
+                  id: "volunteer_interest_#{area}",
+                  style: "accent-color: var(--color-navy);" %>
+            <span><%= Volunteer::INTEREST_LABELS[area] %></span>
+          </label>
+        <% end %>
+      </div>
+      <% if volunteer.errors[:interest_areas].any? %>
+        <p class="input-help input-help-error"><%= volunteer.errors[:interest_areas].first %></p>
+      <% end %>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">
+        Gifts or background <span style="color: var(--color-olive); font-weight: 400; text-transform: none; letter-spacing: 0;">(optional)</span>
+      </p>
+      <%= f.text_area :gifts,
+            rows: 3,
+            maxlength: 4000,
+            placeholder: "e.g. fifteen years on a worship team, a graphic-design background, comfortable around kids.",
+            "aria-label": "Gifts or background",
+            class: "input",
+            style: "border-radius: 14px; padding: 16px; font-family: var(--font-sans); font-size: 15px; resize: vertical; min-height: 100px;" %>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <p class="meta" style="margin-bottom: 10px;">Anything else we should know</p>
+      <%= f.text_area :message,
+            rows: 6,
+            required: true,
+            minlength: 10,
+            maxlength: 6000,
+            placeholder: "What drew you here, what you'd like to give time to, anything we should know.",
+            "aria-label": "Tell us a bit more",
+            "aria-invalid": volunteer.errors[:message].any? ? "true" : nil,
+            class: ("input #{'error' if volunteer.errors[:message].any?}"),
+            style: "border-radius: 14px; padding: 18px; font-family: var(--font-reading); font-size: 17px; line-height: 1.6; resize: vertical; min-height: 160px;" %>
+      <% if volunteer.errors[:message].any? %>
+        <p class="input-help input-help-error"><%= volunteer.errors[:message].first %></p>
+      <% end %>
+    </div>
+
+    <div style="margin-top: 6px; margin-bottom: 18px;">
+      <%= render "shared/turnstile", action: "volunteer" %>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-4" style="margin-top: 10px;">
+      <p class="input-help" style="padding-left: 0; margin: 0; font-family: var(--font-serif); font-style: italic; color: var(--color-olive); font-size: 13px; max-width: 360px;">
+        We read everything ourselves. Real reply within a few days.
+      </p>
+      <%= f.submit "Send", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</turbo-frame>
