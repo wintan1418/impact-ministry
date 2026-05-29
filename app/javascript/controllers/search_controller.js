@@ -16,7 +16,9 @@ export default class extends Controller {
 
   connect() {
     this.onKeyDown = this.onKeyDown.bind(this)
-    this.onTurboVisit = this.close.bind(this)
+    // Close on Turbo navigation, but DO NOT preventDefault — that would
+    // cancel the navigation itself (which is what broke every link before).
+    this.onTurboVisit = () => this.#closeIfOpen()
     document.addEventListener("keydown", this.onKeyDown)
     document.addEventListener("turbo:before-visit", this.onTurboVisit)
     this.loadedInitial = false
@@ -33,7 +35,7 @@ export default class extends Controller {
   // ---- Open / close --------------------------------------------------------
 
   open(event) {
-    if (event) event.preventDefault()
+    if (event && event.preventDefault) event.preventDefault()
     if (!this.hasPanelTarget) return
     this.panelTarget.classList.add("is-open")
     this.panelTarget.setAttribute("aria-hidden", "false")
@@ -51,8 +53,16 @@ export default class extends Controller {
     }
   }
 
+  // Called via data-action="click->search#close" (event-driven) — guards
+  // against cancelling a navigation by only preventing default when the
+  // panel was actually open.
   close(event) {
-    if (event && event.preventDefault) event.preventDefault()
+    const wasOpen = this.hasPanelTarget && this.panelTarget.classList.contains("is-open")
+    if (event && wasOpen && event.preventDefault) event.preventDefault()
+    this.#closeIfOpen()
+  }
+
+  #closeIfOpen() {
     if (!this.hasPanelTarget) return
     if (!this.panelTarget.classList.contains("is-open")) return
     this.panelTarget.classList.remove("is-open")
@@ -105,7 +115,7 @@ export default class extends Controller {
     if (isToggle) {
       event.preventDefault()
       if (this.panelTarget && this.panelTarget.classList.contains("is-open")) {
-        this.close()
+        this.#closeIfOpen()
       } else {
         this.open()
       }
@@ -115,7 +125,7 @@ export default class extends Controller {
     // Escape closes when open.
     if (event.key === "Escape" && this.panelTarget && this.panelTarget.classList.contains("is-open")) {
       event.preventDefault()
-      this.close()
+      this.#closeIfOpen()
     }
   }
 }
