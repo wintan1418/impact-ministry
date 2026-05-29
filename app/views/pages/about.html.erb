@@ -20,12 +20,14 @@
     </div>
   </section>
 
-  <%# Editorial photo — Yazoo river at dawn %>
+  <%# Editorial photo — broad landscape, warm horizon %>
   <section style="padding: 40px 0 80px;">
     <div class="container-read">
-      <div class="ph" style="height: 480px; border-radius: var(--radius-image);">
-        [ delta river bend at dawn ]
-      </div>
+      <%= image_tag photo_url("delta-sunrise", w: 1400, h: 700),
+            alt: "A delta river bend at dawn, the horizon warm and quiet.",
+            loading: "lazy",
+            class: "w-full",
+            style: "height: 480px; object-fit: cover; border-radius: var(--radius-image); display: block;" %>
       <div style="font-size: 12px; color: var(--color-olive); text-align: center; margin-top: 12px; font-style: italic;">
         The Yazoo River, photographed by a friend at 5:48am.
       </div>
@@ -63,18 +65,22 @@
 
       <%
         leadership = [
-          { name: "Reuben Hollis",   role: "Founder · Lead Pastor",         note: "Pastored in Greenwood for eleven years before starting IMPACT. Writes most of the morning words." },
-          { name: "Sarah-Beth Kim",  role: "Editor · Devotional",           note: "Former English teacher. Believes every sentence should earn its place. The reason the writing is good." },
-          { name: "Marcus Levine",   role: "Director · Partner Churches",   note: "Coordinates grants and design help for small congregations across Mississippi." },
-          { name: "Dr. Anita Keys",  role: "Board Chair",                   note: "Theologian, professor, the calm voice on every Sunday call. Keeps us honest." }
+          { name: "Reuben Hollis",   role: "Founder · Lead Pastor",       note: "Pastored in Greenwood for eleven years before starting IMPACT. Writes most of the morning words.",                photo: "portrait-man" },
+          { name: "Sarah-Beth Kim",  role: "Editor · Devotional",         note: "Former English teacher. Believes every sentence should earn its place. The reason the writing is good.",        photo: "portrait-woman" },
+          { name: "Marcus Levine",   role: "Director · Partner Churches", note: "Coordinates grants and design help for small congregations across Mississippi.",                                photo: "portrait-elder" },
+          { name: "Dr. Anita Keys",  role: "Board Chair",                 note: "Theologian, professor, the calm voice on every Sunday call. Keeps us honest.",                                  photo: "portrait-leader" }
         ]
       %>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <% leadership.each do |person| %>
           <div>
-            <div class="ph" style="aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; margin-bottom: 18px;">
-              [ <%= person[:name].split(" ").first.downcase %> ]
+            <div style="aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; margin-bottom: 18px;">
+              <%= image_tag photo_url(person[:photo], w: 600, h: 800),
+                    alt: "Portrait of #{person[:name]}.",
+                    loading: "lazy",
+                    class: "w-full h-full",
+                    style: "object-fit: cover; display: block; filter: saturate(0.9);" %>
             </div>
             <div style="font-family: var(--font-serif); font-size: 22px; color: var(--color-navy); margin-bottom: 4px;">
               <%= person[:name] %>

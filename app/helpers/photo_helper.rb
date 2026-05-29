@@ -12,6 +12,8 @@ module PhotoHelper
     "microphone"      => "1485808191679-5f86510681a2", # podcast mic close-up, navy mood
     "portrait-man"    => "1507003211169-0a1dd7228f2d", # warm male portrait, profile
     "portrait-woman"  => "1494790108377-be9c29b29330", # warm female portrait
+    "portrait-elder"  => "1500648767791-00dcc994a43e", # older bearded man, warm
+    "portrait-leader" => "1517841905240-472988babdf9", # woman with book, editorial
     "praying-hands"   => "1499728603263-13726abce5fd", # hands folded, intimate
     "path-pines"      => "1518837695005-2083093ee35b", # path through trees, Mississippi mood
     "doorway-light"   => "1507525428034-b723cf961d3e", # light through a doorway/window
