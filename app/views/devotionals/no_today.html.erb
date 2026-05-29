@@ -1,26 +1,104 @@
 <% content_for :title, "Tomorrow, before sunrise — IMPACT Ministry" %>
-<% content_for :description, "The morning word is being written. Subscribe to receive it." %>
+<% content_for :description, "Today's word is still being written. Subscribe and the next one will find you." %>
 
-<section class="container-read" style="padding: 120px 0 80px;">
-  <div class="fade-up">
-    <div class="meta mb-5">The Morning Word</div>
-    <h1 class="display m-0" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.02em; margin-bottom: 28px;">
-      Tomorrow, <span class="italic font-normal">before sunrise.</span>
-    </h1>
-    <p class="reading" style="font-size: 19px; color: var(--color-ink); max-width: 520px;">
-      Today's word is still being written. We send a short, true word every morning at 5:30am — two minutes to read, the rest of the day is yours. Leave your email and the next one will find you.
-    </p>
+<%# ============================================================
+     HERO — text left, single editorial photo right.
+     A magazine-spread cousin of the homepage hero, quieter because
+     the page intentionally has no devotional yet.
+     ============================================================ %>
+<section class="pt-10 md:pt-16 pb-16 md:pb-20 relative">
+  <%# Vertical scripture marginalia — editorial fingerprint, md+ only. %>
+  <span class="scripture-mark" aria-hidden="true">
+    The Morning Word · being written
+  </span>
 
-    <div class="mt-10" style="max-width: 480px;">
-      <%= render "shared/email_capture", source: "inline" %>
+  <div class="container-page">
+    <div class="grid gap-12 md:gap-16 lg:gap-20 lg:grid-cols-[1fr_1.05fr] items-center">
+      <div class="fade-up">
+        <div class="meta mb-5">The Morning Word · <%= Date.current.strftime("%A, %B %-d") %></div>
+
+        <h1 class="display m-0" style="font-size: clamp(44px, 5.6vw, 76px); line-height: 0.98; letter-spacing: -0.02em; margin-bottom: 28px;">
+          Tomorrow,<br><span class="italic font-normal">before sunrise.</span>
+        </h1>
+
+        <p class="reading m-0" style="font-size: 19px; color: var(--color-ink); max-width: 540px;">
+          Today's word is still being written. We send a short, true word every morning at
+          <strong style="color: var(--color-navy); font-weight: 500;"><%= @send_time_label %></strong>
+          — two minutes to read, the rest of the day is yours. Leave your email and the
+          next one will find you.
+        </p>
+
+        <%# Tomorrow teaser + countdown chip row %>
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          <% if @tomorrow_book.present? %>
+            <span class="tomorrow-chip" title="A look at tomorrow's word">
+              <span>Tomorrow ·</span>
+              <strong><%= @tomorrow_book %></strong>
+            </span>
+          <% end %>
+          <% if @tomorrow_send_at %>
+            <span class="tomorrow-chip" style="background: rgba(232,223,208,0.45);">
+              <span>Lands in</span>
+              <strong><%= (time_ago_in_words(@tomorrow_send_at) rescue "a few hours") %></strong>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="mt-10" style="max-width: 480px;">
+          <%= render "shared/email_capture", source: "inline" %>
+        </div>
+      </div>
+
+      <%# Right — a single editorial still. Doorway/dawn light — the
+          mood of waiting before the word arrives. %>
+      <div>
+        <%= image_tag photo_url("doorway-light", w: 900, h: 1100),
+              alt: "Light spilling through a doorway at dawn — the morning before the word arrives.",
+              loading: "eager",
+              class: "w-full",
+              style: "aspect-ratio: 4/5; max-height: 620px; object-fit: cover; border-radius: var(--radius-image); box-shadow: var(--shadow-soft); filter: saturate(0.92);" %>
+      </div>
     </div>
-
-    <hr class="hairline" style="margin: 56px 0 32px;">
-
-    <p>
-      <%= link_to devotionals_path, class: "ulink", style: "color: var(--color-navy); font-size: 15px;" do %>
-        Read past mornings <span aria-hidden="true">→</span>
-      <% end %>
-    </p>
   </div>
 </section>
+
+<%# ============================================================
+     LAST FEW MORNINGS — magazine strip of the most recent words
+     so the page feels populated even when today's isn't out yet.
+     ============================================================ %>
+<% if @recent_devotionals&.any? %>
+  <section class="section-linen pt-14 md:pt-16 pb-16 md:pb-20">
+    <div class="container-page">
+      <div class="flex justify-between items-baseline mb-7 flex-wrap gap-4">
+        <div>
+          <p class="meta">Read while you wait</p>
+          <h2 class="display m-0 mt-2" style="font-size: clamp(26px, 3.4vw, 40px); letter-spacing: -0.01em;">
+            The last few mornings.
+          </h2>
+        </div>
+        <%= link_to "Browse the archive →", devotionals_path, class: "ulink", style: "font-size: 14px; color: var(--color-navy);" %>
+      </div>
+
+      <div class="dev-strip">
+        <% @recent_devotionals.each do |d| %>
+          <%= link_to devotional_path(d.slug), class: "dev-strip-card" do %>
+            <span class="dev-strip-date"><%= d.scheduled_for.strftime("%a · %b %-d") %></span>
+            <h3 class="dev-strip-title"><%= d.title %></h3>
+            <% if d.scripture_reference.present? %>
+              <span class="dev-strip-ref"><%= d.scripture_reference %></span>
+            <% end %>
+            <% if d.excerpt.present? %>
+              <p class="m-0" style="font-family: var(--font-reading); font-size: 14px; line-height: 1.55; color: var(--color-ink);">
+                <%= truncate(d.excerpt, length: 110) %>
+              </p>
+            <% end %>
+            <div class="dev-strip-foot">
+              <span>2 min · read</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>

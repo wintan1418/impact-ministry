@@ -36,11 +36,34 @@ class DevotionalsController < ApplicationController
     if devotional
       redirect_to devotional_path(devotional)
     else
+      load_no_today_locals
       render :no_today, status: :ok
     end
   end
 
   private
+
+  # When today's word isn't ready, show the last few mornings + a quiet
+  # peek at tomorrow's scripture (if known) so the page feels populated
+  # rather than empty.
+  def load_no_today_locals
+    @recent_devotionals  = Devotional.published.recent_first.limit(4)
+    @tomorrow_devotional =
+      Devotional.published.where(scheduled_for: Date.current + 1).first ||
+      Devotional.where(scheduled_for: Date.current + 1).first
+    @tomorrow_book       = tomorrow_book_label(@tomorrow_devotional)
+    @send_hour           = Integer(ENV.fetch("DEVOTIONAL_SEND_HOUR", "5"))
+    @send_time_label     = format("%d:00am", @send_hour)
+    @tomorrow_send_at    = (Date.current + 1).beginning_of_day + @send_hour.hours
+  end
+
+  # "Romans 12:1-3" → "Romans 12". Quiet preview, no verse range.
+  def tomorrow_book_label(devotional)
+    return nil if devotional.blank?
+
+    ref = devotional.scripture_reference.to_s
+    ref.split(":").first.to_s.strip.presence
+  end
 
   def set_devotional
     @devotional = Devotional.friendly.find(params[:slug])
