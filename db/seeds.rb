@@ -792,3 +792,50 @@ if Rails.env.development?
     puts "Partnerships already populated (#{Partnership.count})."
   end
 end
+
+# --- Demo donors + donations ------------------------------------------------
+# Only seeded when GIVING_ENABLED=true so an empty /admin/donations stays
+# accurate during the pre-501(c)(3) state. Uses fake stripe test ids — no
+# Stripe API calls are made here. Idempotent on email.
+if ActiveModel::Type::Boolean.new.cast(ENV.fetch("GIVING_ENABLED", false))
+  puts "GIVING_ENABLED=true — seeding demo donors + donations"
+
+  demo_donor_specs = [
+    { name: "Mary Reeves",        email: "mary.demo@example.com",    designation: "general",   amount_cents: 5_000,  frequency: "once",    age: 2.days.ago  },
+    { name: "James Carrington",   email: "james.demo@example.com",   designation: "youth",     amount_cents: 10_000, frequency: "monthly", age: 5.days.ago  },
+    { name: "Dorothy Pace",       email: "dorothy.demo@example.com", designation: "missions",  amount_cents: 25_000, frequency: "once",    age: 9.days.ago  },
+    { name: "Marcus Lewis",       email: "marcus.demo@example.com",  designation: "education", amount_cents: 2_500,  frequency: "monthly", age: 21.days.ago }
+  ]
+
+  created = 0
+  demo_donor_specs.each_with_index do |spec, i|
+    next if Donor.exists?(email: spec[:email])
+
+    donor = Donor.create!(
+      name: spec[:name],
+      email: spec[:email],
+      stripe_customer_id: "cus_test_seed_#{i}_#{SecureRandom.hex(3)}"
+    )
+
+    donation_attrs = {
+      donor: donor,
+      amount_cents: spec[:amount_cents],
+      currency: "usd",
+      frequency: spec[:frequency],
+      designation: spec[:designation],
+      stripe_checkout_session_id: "cs_test_seed_#{i}_#{SecureRandom.hex(3)}",
+      stripe_payment_intent_id: "pi_test_seed_#{i}_#{SecureRandom.hex(3)}",
+      status: "succeeded",
+      donated_at: spec[:age],
+      receipt_sent_at: spec[:age]
+    }
+    if spec[:frequency] == "monthly"
+      donation_attrs[:stripe_subscription_id] = "sub_test_seed_#{i}_#{SecureRandom.hex(3)}"
+    end
+
+    Donation.create!(donation_attrs)
+    created += 1
+  end
+
+  puts "Seeded #{created} donors with one donation each — now #{Donor.count} donors / #{Donation.count} donations."
+end

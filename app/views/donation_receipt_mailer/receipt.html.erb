@@ -1,0 +1,50 @@
+<% content_for :preheader, "Thank you. Your gift is on its way to work." %>
+
+<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:24px; font-weight:500; color:#1B2A4E; margin:0 0 16px 0;">
+  Thank you, <%= @donor.display_name %>.
+</h1>
+
+<p style="margin:0 0 16px 0;">
+  We received your <%= @donation.recurring? ? "monthly partnership" : "gift" %> of
+  <strong><%= @donation.amount_formatted %></strong>
+  toward the <strong><%= @donation.designation_label %></strong> on
+  <%= @donation.donated_at&.strftime("%B %-d, %Y") %>.
+</p>
+
+<p style="margin:0 0 24px 0;">
+  No campaign noise — just gratitude, and a promise to put it to work the same week
+  it lands. We'll write again when you'd want to hear from us.
+</p>
+
+<hr style="border:none; border-top:1px solid #E8DFD0; margin:24px 0;">
+
+<p style="margin:0 0 6px 0; font-size:13px; color:#8B7355;">For your records</p>
+<table style="border-collapse:collapse; width:100%; font-size:14px; color:#1F1B16;">
+  <tr>
+    <td style="padding:6px 0;">Date</td>
+    <td style="padding:6px 0; text-align:right;"><%= @donation.donated_at&.strftime("%b %-d, %Y") %></td>
+  </tr>
+  <tr>
+    <td style="padding:6px 0;">Amount</td>
+    <td style="padding:6px 0; text-align:right;"><%= @donation.amount_formatted %></td>
+  </tr>
+  <tr>
+    <td style="padding:6px 0;">Designation</td>
+    <td style="padding:6px 0; text-align:right;"><%= @donation.designation_label %></td>
+  </tr>
+  <tr>
+    <td style="padding:6px 0;">Frequency</td>
+    <td style="padding:6px 0; text-align:right;"><%= @donation.recurring? ? "Monthly" : "One time" %></td>
+  </tr>
+  <% if @donation.stripe_payment_intent_id.present? %>
+    <tr>
+      <td style="padding:6px 0;">Reference</td>
+      <td style="padding:6px 0; text-align:right; font-family:monospace; font-size:12px; color:#8B7355;"><%= @donation.stripe_payment_intent_id %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p style="margin:24px 0 0 0; font-size:13px; color:#8B7355;">
+  IMPACT Ministry, Inc. — Mississippi. 501(c)(3) status pending; this receipt is provisional
+  until the IRS determination letter is issued.
+</p>

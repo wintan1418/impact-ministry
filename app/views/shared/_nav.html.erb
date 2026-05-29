@@ -72,6 +72,7 @@
                 <% if signed_in? %>
                   <li><%= link_to "Your account",     account_path,             class: "nav-mega-link" %></li>
                   <li><%= link_to "Saved highlights", account_highlights_path,  class: "nav-mega-link" %></li>
+                  <li><%= link_to "Your gifts",       account_donations_path,   class: "nav-mega-link" %></li>
                   <li><%= link_to "Settings",         account_settings_path,    class: "nav-mega-link" %></li>
                   <li><%= button_to "Sign out", session_path, method: :delete, form: { style: "margin:0;" }, style: "background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; text-align: left;", class: "nav-mega-link" %></li>
                 <% else %>

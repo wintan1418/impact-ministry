@@ -34,6 +34,7 @@ PUBLIC_FORM_PATHS = %w[
   /feedback_messages
   /partnerships
   /partner
+  /give
 ].freeze
 
 Rack::Attack.throttle("public_forms", limit: 5, period: 1) do |req|

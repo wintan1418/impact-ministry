@@ -1,0 +1,18 @@
+Thank you, <%= @donor.display_name %>.
+
+We received your <%= @donation.recurring? ? "monthly partnership" : "gift" %> of
+<%= @donation.amount_formatted %> toward the <%= @donation.designation_label %> on
+<%= @donation.donated_at&.strftime("%B %-d, %Y") %>.
+
+No campaign noise — just gratitude, and a promise to put it to work the same week
+it lands.
+
+— For your records —
+Date:        <%= @donation.donated_at&.strftime("%b %-d, %Y") %>
+Amount:      <%= @donation.amount_formatted %>
+Designation: <%= @donation.designation_label %>
+Frequency:   <%= @donation.recurring? ? "Monthly" : "One time" %>
+<% if @donation.stripe_payment_intent_id.present? %>Reference:   <%= @donation.stripe_payment_intent_id %><% end %>
+
+IMPACT Ministry, Inc. — Mississippi. 501(c)(3) status pending; this receipt is
+provisional until the IRS determination letter is issued.

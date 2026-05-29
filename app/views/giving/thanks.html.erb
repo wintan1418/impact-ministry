@@ -1,0 +1,20 @@
+<% content_for :title, "Thank you — IMPACT Ministry" %>
+<% content_for :description, "Your gift is on its way to work." %>
+
+<section class="container-read" style="padding-top: 14vh; padding-bottom: 20vh; text-align: center;">
+  <p class="meta">A note from us</p>
+  <h1 class="display mt-5" style="font-size: clamp(40px, 5.5vw, 72px); line-height: 1.0; letter-spacing: -0.02em;">
+    Thank you.<br>
+    <span class="italic font-normal">Your gift is on its way to work.</span>
+  </h1>
+
+  <p class="reading mt-7" style="max-width: 540px; margin-left: auto; margin-right: auto;">
+    A receipt will land in your inbox in the next few seconds. We don't run campaigns,
+    but we will write you once a quarter to show what your gift did.
+  </p>
+
+  <div class="mt-10 flex items-center justify-center gap-4 flex-wrap">
+    <%= link_to "Read today's word", devotionals_today_path, class: "btn btn-primary", style: "padding: 14px 28px;" %>
+    <%= link_to "Back home", root_path, class: "ulink", style: "color: var(--color-olive);" %>
+  </div>
+</section>

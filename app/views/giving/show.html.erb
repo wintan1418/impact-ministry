@@ -2,16 +2,7 @@
 <% content_for :description, "A place is being prepared for your generosity." %>
 
 <% if @giving_enabled %>
-  <%# Live state — wired in Phase 3.15. Placeholder until then. %>
-  <section class="container-read" style="padding-top: 96px; padding-bottom: 120px;">
-    <p class="meta">Give</p>
-    <h1 class="display mt-4" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.05;">
-      Live giving — coming Phase 3.
-    </h1>
-    <p class="reading mt-6">
-      Stripe Checkout integration ships in Phase 3.15. Until then, the placeholder below stands.
-    </p>
-  </section>
+  <%= render "live_form" %>
 <% else %>
   <%# Pre-501(c)(3) state — full-bleed image, headline, capture %>
   <section class="relative" style="min-height: 80vh; overflow: hidden;">

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_153940) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_29_102103) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -115,6 +115,42 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_153940) do
     t.index ["slug"], name: "index_devotionals_on_slug", unique: true
     t.index ["tags"], name: "index_devotionals_on_tags", using: :gin
     t.index ["title"], name: "index_devotionals_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "donations", force: :cascade do |t|
+    t.integer "amount_cents", null: false
+    t.datetime "created_at", null: false
+    t.string "currency", default: "usd", null: false
+    t.string "designation", default: "general", null: false
+    t.datetime "donated_at"
+    t.bigint "donor_id", null: false
+    t.string "frequency", default: "once", null: false
+    t.datetime "receipt_sent_at"
+    t.string "status", default: "pending", null: false
+    t.string "stripe_checkout_session_id"
+    t.string "stripe_payment_intent_id"
+    t.string "stripe_subscription_id"
+    t.datetime "updated_at", null: false
+    t.index ["designation"], name: "index_donations_on_designation"
+    t.index ["donated_at"], name: "index_donations_on_donated_at"
+    t.index ["donor_id"], name: "index_donations_on_donor_id"
+    t.index ["status"], name: "index_donations_on_status"
+    t.index ["stripe_checkout_session_id"], name: "index_donations_on_stripe_checkout_session_id", unique: true, where: "(stripe_checkout_session_id IS NOT NULL)"
+    t.index ["stripe_payment_intent_id"], name: "index_donations_on_stripe_payment_intent_id", unique: true, where: "(stripe_payment_intent_id IS NOT NULL)"
+    t.index ["stripe_subscription_id"], name: "index_donations_on_stripe_subscription_id"
+  end
+
+  create_table "donors", force: :cascade do |t|
+    t.jsonb "address", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "name", default: "", null: false
+    t.string "stripe_customer_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["email"], name: "index_donors_on_email"
+    t.index ["stripe_customer_id"], name: "index_donors_on_stripe_customer_id", unique: true, where: "(stripe_customer_id IS NOT NULL)"
+    t.index ["user_id"], name: "index_donors_on_user_id"
   end
 
   create_table "email_subscribers", force: :cascade do |t|
@@ -250,6 +286,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_153940) do
     t.index ["status"], name: "index_prayer_requests_on_status"
   end
 
+  create_table "processed_stripe_events", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "event_type", null: false
+    t.datetime "processed_at", null: false
+    t.string "stripe_event_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_type"], name: "index_processed_stripe_events_on_event_type"
+    t.index ["stripe_event_id"], name: "index_processed_stripe_events_on_stripe_event_id", unique: true
+  end
+
   create_table "resources", force: :cascade do |t|
     t.string "category", default: "guide", null: false
     t.string "cover_photo_slug"
@@ -325,6 +371,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_153940) do
   add_foreign_key "devotional_highlights", "devotionals"
   add_foreign_key "devotional_highlights", "users"
   add_foreign_key "devotionals", "users", column: "author_id"
+  add_foreign_key "donations", "donors"
+  add_foreign_key "donors", "users"
   add_foreign_key "event_rsvps", "events"
   add_foreign_key "sessions", "users"
 end

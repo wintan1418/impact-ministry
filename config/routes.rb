@@ -28,6 +28,8 @@ Rails.application.routes.draw do
   get   "account/highlights" => "account/highlights#index", as: :account_highlights
   get   "account/settings"   => "account/settings#show",    as: :account_settings
   patch "account/settings"   => "account/settings#update"
+  get   "account/donations"          => "account/donations#index",  as: :account_donations
+  post  "account/donations/portal"   => "account/donations#portal", as: :account_donations_portal
 
   resources :highlights, only: %i[ create destroy ]
 
@@ -84,7 +86,15 @@ Rails.application.routes.draw do
   get  "partner" => "partnerships#new",    as: :partner
   post "partner" => "partnerships#create"
 
-  get "give"    => "giving#show",            as: :give
+  get  "give"        => "giving#show",   as: :give
+  post "give"        => "giving#create"
+  get  "give/thanks" => "giving#thanks", as: :give_thanks
+
+  # --- Stripe webhooks (Phase 3.13–3.21) ---
+  # POST /stripe/webhooks — signed-verified, queued on :stripe_webhooks.
+  namespace :stripe do
+    resources :webhooks, only: [ :create ]
+  end
 
   # --- Events + RSVPs (Phase 4.3) ---
   # /events             → events#index

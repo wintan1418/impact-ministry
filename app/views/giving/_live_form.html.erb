@@ -1,0 +1,126 @@
+<%# Live Stripe Checkout form. Submitting POSTs to /give which creates a
+    Stripe::Checkout::Session and redirects to the hosted page. Amount picker
+    is presets + custom; frequency toggle; designation; donor email + name.
+    Turnstile-protected + Rack::Attack-throttled at the route. %>
+<section class="container-read" style="padding-top: 88px; padding-bottom: 96px;">
+  <p class="meta">Give</p>
+  <h1 class="display mt-4" style="font-size: clamp(40px, 5vw, 64px); line-height: 1.04; letter-spacing: -0.02em;">
+    Your gift, going to work<br>
+    <span class="italic font-normal">the same week it lands.</span>
+  </h1>
+
+  <p class="reading mt-6" style="max-width: 560px;">
+    One-time or monthly. You'll be taken to Stripe to enter your card — we never see it —
+    and a receipt lands in your inbox seconds later.
+  </p>
+
+  <%= form_with url: give_path, method: :post, local: true,
+                data: { controller: "give-form" },
+                class: "mt-10" do |f| %>
+    <% if flash.now[:alert].present? %>
+      <div class="card" style="padding: 14px 18px; border: 1px solid var(--color-crimson); background: rgba(200,16,46,0.05); margin-bottom: 24px;">
+        <p class="m-0" style="color: var(--color-crimson); font-size: 14px;"><%= flash.now[:alert] %></p>
+      </div>
+    <% end %>
+
+    <%# --- Frequency toggle --- %>
+    <fieldset class="m-0 p-0" style="border: 0;">
+      <legend class="meta mb-3">Frequency</legend>
+      <div class="grid gap-3" style="grid-template-columns: 1fr 1fr; max-width: 420px;">
+        <% [
+          [ "once",    "One time"        ],
+          [ "monthly", "Monthly partner" ]
+        ].each_with_index do |(val, label), i| %>
+          <label class="card" style="padding: 16px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+            <input type="radio" name="frequency" value="<%= val %>" <%= "checked" if i.zero? %> class="accent-crimson" required>
+            <span style="font-family: var(--font-serif); font-size: 18px; color: var(--color-navy);"><%= label %></span>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+
+    <%# --- Amount picker --- %>
+    <fieldset class="m-0 p-0" style="border: 0; margin-top: 32px;">
+      <legend class="meta mb-3">Amount</legend>
+      <div class="grid gap-3" style="grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); max-width: 560px;">
+        <% [ 25, 50, 100, 250 ].each_with_index do |amt, i| %>
+          <label class="card" style="padding: 18px 14px; cursor: pointer; text-align: center;">
+            <input type="radio" name="amount" value="<%= amt %>" <%= "checked" if i == 1 %> class="sr-only">
+            <span style="font-family: var(--font-serif); font-size: 22px; color: var(--color-navy);">$<%= amt %></span>
+          </label>
+        <% end %>
+      </div>
+      <div class="mt-4" style="max-width: 280px;">
+        <label class="meta mb-2 block" for="custom-amount">Or a custom amount</label>
+        <div class="flex items-center gap-2">
+          <span style="font-family: var(--font-serif); font-size: 20px; color: var(--color-olive);">$</span>
+          <input type="text" inputmode="decimal" id="custom-amount" name="amount_custom"
+                 placeholder="—"
+                 class="input"
+                 style="font-family: var(--font-serif); font-size: 20px; padding: 10px 14px; width: 100%;">
+        </div>
+      </div>
+    </fieldset>
+
+    <%# --- Designation --- %>
+    <fieldset class="m-0 p-0" style="border: 0; margin-top: 32px;">
+      <legend class="meta mb-3">Designation</legend>
+      <div class="grid gap-3" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); max-width: 640px;">
+        <% Donation::DESIGNATIONS.each_with_index do |d, i| %>
+          <label class="card" style="padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+            <input type="radio" name="designation" value="<%= d %>" <%= "checked" if i.zero? %> class="accent-crimson" required>
+            <span style="font-family: var(--font-serif); font-size: 16px; color: var(--color-navy);">
+              <%= Donation::DESIGNATION_LABELS.fetch(d) %>
+            </span>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+
+    <%# --- Donor info --- %>
+    <div class="grid gap-5 mt-10" style="grid-template-columns: 1fr 1fr; max-width: 640px;">
+      <label>
+        <span class="meta mb-2 block">Your name</span>
+        <input type="text" name="donor_name" required class="input" style="font-size: 16px; padding: 12px 14px; width: 100%;">
+      </label>
+      <label>
+        <span class="meta mb-2 block">Email for receipt</span>
+        <input type="email" name="email" required class="input" style="font-size: 16px; padding: 12px 14px; width: 100%;">
+      </label>
+    </div>
+
+    <p class="meta mt-6" style="max-width: 560px;">
+      Cards processed by Stripe — we never see or store them. Receipts arrive within seconds.
+    </p>
+
+    <div class="mt-7 flex items-center gap-4 flex-wrap">
+      <button type="submit" class="btn btn-primary" style="padding: 14px 28px; font-size: 16px;">
+        Continue to Stripe →
+      </button>
+      <%= link_to "Cancel", root_path, class: "ulink", style: "font-size: 14px; color: var(--color-olive);" %>
+    </div>
+  <% end %>
+
+  <%# A tiny Stimulus shim auto-clears the preset selection when the custom
+      input is focused, and copies a custom value into the form's `amount`
+      field on submit so the controller sees a single field. %>
+  <script type="module">
+    document.querySelectorAll("[data-controller='give-form']").forEach((form) => {
+      const presets = form.querySelectorAll("input[name='amount']");
+      const custom  = form.querySelector("#custom-amount");
+      custom.addEventListener("input", () => {
+        presets.forEach(r => r.checked = false);
+      });
+      form.addEventListener("submit", () => {
+        if (custom.value && custom.value.trim().length) {
+          presets.forEach(r => r.disabled = true);
+          const hidden = document.createElement("input");
+          hidden.type = "hidden";
+          hidden.name = "amount";
+          hidden.value = custom.value.trim();
+          form.appendChild(hidden);
+        }
+      });
+    });
+  </script>
+</section>

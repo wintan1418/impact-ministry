@@ -1,0 +1,57 @@
+<% content_for :title, "Your gifts — IMPACT Ministry" %>
+
+<section class="container-read" style="padding-top: 88px; padding-bottom: 80px;">
+  <p class="meta">Account · Gifts</p>
+  <h1 class="display mt-3" style="font-size: clamp(32px, 4vw, 48px); line-height: 1.05;">
+    Your gifts.
+  </h1>
+
+  <% if @donations.any? %>
+    <% if @has_recurring %>
+      <div class="card mt-8" style="padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <p class="meta m-0">Monthly partner</p>
+          <p class="m-0 mt-1" style="font-family: var(--font-serif); color: var(--color-navy); font-size: 18px;">
+            Manage card, amount, or pause.
+          </p>
+        </div>
+        <%= button_to "Open billing portal →",
+              account_donations_portal_path,
+              method: :post,
+              class: "btn btn-primary",
+              style: "padding: 12px 22px; font-size: 14px;",
+              form: { data: { turbo: false } } %>
+      </div>
+    <% end %>
+
+    <ul class="m-0 mt-10" style="list-style: none; padding: 0;">
+      <% @donations.each do |d| %>
+        <li class="py-5" style="border-bottom: 1px solid var(--color-olive-15); display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;">
+          <div>
+            <p class="m-0" style="font-family: var(--font-serif); font-size: 20px; color: var(--color-navy);">
+              <%= d.amount_formatted %>
+              <span style="color: var(--color-olive); font-size: 14px; font-weight: 400;">
+                · <%= d.designation_label %> · <%= d.recurring? ? "monthly" : "one time" %>
+              </span>
+            </p>
+            <p class="meta m-0 mt-1">
+              <%= d.donated_at&.strftime("%B %-d, %Y") || "pending" %>
+              · <%= d.status.titleize %>
+            </p>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="card mt-8" style="padding: 28px;">
+      <p class="m-0" style="font-family: var(--font-serif); color: var(--color-navy); font-size: 19px;">
+        No gifts on file yet.
+      </p>
+      <p class="meta mt-3 m-0">
+        When you give, your history will live here — and recurring partners can manage their
+        card from the same page.
+      </p>
+      <%= link_to "Visit /give →", give_path, class: "ulink mt-4 inline-block", style: "color: var(--color-crimson);" %>
+    </div>
+  <% end %>
+</section>
