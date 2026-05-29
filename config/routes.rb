@@ -51,6 +51,13 @@ Rails.application.routes.draw do
   get "devotionals/today" => "devotionals#today", as: :devotionals_today
   resources :devotionals, only: [ :index, :show ], param: :slug
 
+  # Open Graph / Twitter Card share image (Phase 2.17–2.19).
+  # Format-locked so /devotionals/:slug/share_card.png is the canonical URL.
+  get "devotionals/:slug/share_card.png" => "share_cards#devotional",
+      as: :devotional_share_card,
+      defaults: { format: :png },
+      constraints: { format: :png }
+
   # --- Stub surfaces (placeholder pages until Phase 2/3 controllers land) ---
   # Each links from the nav and renders a real designed page with email capture.
   # NOTE: `.rss` must come BEFORE `podcast` so the format-suffixed URL is not

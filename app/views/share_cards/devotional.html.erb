@@ -1,0 +1,91 @@
+<%# 1200x630 share card — Open Graph / Twitter Card dimensions.
+    Rendered server-side via ShareCardRenderer (libvips on prod; solid cream
+    PNG fallback in dev). Inline styles only — no external CSS reachable
+    from inside the SVG sandbox. Fonts fall back to serif/sans-serif when
+    libvips can't resolve the Google Fonts CSS (acceptable; the card is
+    cached for a day and the layout still reads). %>
+<%
+  title  = (devotional.title || "").to_s.strip
+  scrip  = (devotional.scripture_reference || "").to_s.strip
+  author = devotional.author&.name.presence || "IMPACT Ministry"
+%>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .bg     { fill: #FAF7F2; }
+      .navy   { fill: #1B2A4E; }
+      .crimson{ fill: #C8102E; }
+      .olive  { fill: #8B7355; }
+      .mark-stroke { stroke: #1B2A4E; fill: none; }
+      .display { font-family: "Fraunces", "Times New Roman", Georgia, serif; font-weight: 500; }
+      .ui      { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; }
+      .ref     { letter-spacing: 0.18em; text-transform: uppercase; }
+      .foot    { letter-spacing: 0.14em; text-transform: uppercase; }
+    ]]></style>
+  </defs>
+
+  <%# Cream canvas %>
+  <rect class="bg" x="0" y="0" width="1200" height="630"/>
+
+  <%# Subtle linen wash to keep the card from feeling sterile %>
+  <rect x="0" y="0" width="1200" height="630" fill="#E8DFD0" opacity="0.18"/>
+
+  <%# IMPACT mark + wordmark (top-left) %>
+  <g transform="translate(72, 72)">
+    <g transform="translate(0, -4)">
+      <circle cx="22" cy="22" r="20" class="mark-stroke" stroke-width="1.4"/>
+      <path d="M22 9 L22 35" class="mark-stroke" stroke-width="1.8"/>
+      <path d="M15 16 L29 16" class="mark-stroke" stroke-width="1.8"/>
+    </g>
+    <text x="58" y="29" class="display navy" font-size="22" letter-spacing="2.5">
+      IMPACT <tspan class="olive" font-weight="400">MINISTRY</tspan>
+    </text>
+  </g>
+
+  <%# Scripture reference (top-right, small caps olive) %>
+  <text x="1128" y="101" text-anchor="end" class="ui olive ref" font-size="16">
+    <%= scrip %>
+  </text>
+
+  <%# Crimson hairline divider, top section %>
+  <rect class="crimson" x="72" y="170" width="64" height="2"/>
+
+  <%# Devotional title — 3 visual lines, manually wrapped by character count.
+      svg <text> doesn't auto-wrap; we slice into <tspan> rows at word
+      boundaries so the card still reads even when libvips raster doesn't
+      know the font metrics. %>
+  <%
+    words = title.split(/\s+/)
+    rows = [[]]
+    target_chars = 18 # ~ 18 chars per line at 80px feels right on 1200w
+    words.each do |w|
+      candidate = (rows.last + [w]).join(" ")
+      if candidate.length > target_chars && rows.last.any?
+        rows << [w]
+      else
+        rows.last << w
+      end
+      break if rows.length >= 3
+    end
+    # If we hit the 3-line cap and there are leftover words, ellipsize.
+    consumed = rows.flatten.length
+    if consumed < words.length
+      rows[2] = rows[2] + ["…"]
+    end
+    rows = rows.map { |r| r.join(" ") }
+  %>
+  <text x="72" y="288" class="display navy" font-size="80" letter-spacing="-1">
+    <% rows.each_with_index do |line, i| %>
+      <tspan x="72" dy="<%= i.zero? ? 0 : 92 %>"><%= line %></tspan>
+    <% end %>
+  </text>
+
+  <%# Footer: byline + URL %>
+  <rect class="crimson" x="72" y="538" width="48" height="2"/>
+  <text x="72" y="576" class="ui olive foot" font-size="14">
+    A daily word · By <%= author %>
+  </text>
+  <text x="1128" y="576" text-anchor="end" class="ui navy foot" font-size="14">
+    impactministry.org
+  </text>
+</svg>

@@ -1,6 +1,7 @@
 <% content_for :title, "#{@devotional.title} — The Morning Word · IMPACT Ministry" %>
 <% content_for :description, (@devotional.excerpt.presence || "A short, true word from IMPACT Ministry.") %>
 <% content_for :og_type, "article" %>
+<% content_for :og_image, devotional_share_card_url(@devotional.slug, host: request.host_with_port, protocol: request.protocol) %>
 
 <%# Read-progress bar — Stimulus controller updates width on scroll. %>
 <div data-controller="read-progress">
@@ -17,8 +18,15 @@
         <div class="meta hidden sm:block"><%= @devotional.scheduled_for.strftime("%A, %B %-d") %></div>
       </div>
       <div class="flex items-center gap-1">
-        <%= link_to "Share", "mailto:?subject=#{u(@devotional.title)}&body=#{u(devotional_url(@devotional))}",
-            class: "btn btn-ghost", style: "padding: 8px 14px; font-size: 13px;" %>
+        <button type="button"
+                class="btn btn-ghost"
+                style="padding: 8px 14px; font-size: 13px;"
+                data-controller="share"
+                data-share-url-value="<%= devotional_url(@devotional) %>"
+                data-share-title-value="<%= @devotional.title %>"
+                data-action="click->share#share">
+          <span data-share-target="label">Share this devotional</span>
+        </button>
       </div>
     </div>
   </div>
@@ -139,9 +147,15 @@
           </div>
         </div>
         <div class="flex items-center md:justify-end gap-3">
-          <%= link_to "Share this morning",
-                "mailto:?subject=#{u(@devotional.title)}&body=#{u(devotional_url(@devotional))}",
-                class: "btn btn-ghost", style: "font-size: 14px;" %>
+          <button type="button"
+                  class="btn btn-ghost"
+                  style="font-size: 14px;"
+                  data-controller="share"
+                  data-share-url-value="<%= devotional_url(@devotional) %>"
+                  data-share-title-value="<%= @devotional.title %>"
+                  data-action="click->share#share">
+            <span data-share-target="label">Share this morning</span>
+          </button>
         </div>
       </div>
     <% else %>
