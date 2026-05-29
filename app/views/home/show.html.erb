@@ -4,18 +4,20 @@
 <%# ============================================================
      HERO — today's devotional title, scripture, teaser, CTA
      ============================================================ %>
-<section class="pt-10 md:pt-16 pb-16 md:pb-28 lg:pb-32">
+<section class="pt-10 md:pt-16 pb-16 md:pb-24 lg:pb-28 relative">
+  <%# Vertical scripture marginalia — editorial fingerprint, md+ only. %>
+  <% hero_ref = (@today_devotional&.scripture_reference || "Habakkuk 2:1–4").to_s %>
+  <span class="scripture-mark" aria-hidden="true">
+    <%= hero_ref %> · The Morning Word
+  </span>
+
   <div class="container-page">
     <div class="grid gap-12 md:gap-16 lg:gap-20 lg:grid-cols-[1.05fr_1fr] items-center">
       <div>
         <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-6 sm:mb-7 fade-up">
           <span class="meta">Today · <%= Date.current.strftime("%A, %B %-d") %></span>
           <span class="inline-block" style="width: 4px; height: 4px; border-radius: 9999px; background: var(--color-olive-30);"></span>
-          <% if @today_devotional %>
-            <span class="scripture draw" style="font-size: 14px; color: var(--color-olive);"><%= @today_devotional.scripture_reference %></span>
-          <% else %>
-            <span class="scripture draw" style="font-size: 14px; color: var(--color-olive);">Habakkuk 2:1–4</span>
-          <% end %>
+          <span class="scripture draw" style="font-size: 14px; color: var(--color-olive);"><%= hero_ref %></span>
         </div>
 
         <h1 class="display fade-up m-0" style="font-size: clamp(48px, 6.5vw, 88px); line-height: 0.98; animation-delay: 120ms;">
@@ -34,48 +36,114 @@
           <% end %>
         </p>
 
-        <div class="fade-up mt-10 flex flex-wrap items-center gap-7" style="animation-delay: 380ms;">
+        <div class="fade-up mt-10 flex flex-wrap items-center gap-5 sm:gap-7" style="animation-delay: 380ms;">
           <%= link_to devotionals_today_path, class: "btn btn-primary breath", style: "padding: 16px 28px; font-size: 15px;" do %>
             Read today's devotional <span aria-hidden="true">→</span>
           <% end %>
-          <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--color-olive);">
-            <%= number_with_delimiter(@readers_this_morning) %> people read this morning.
-          </p>
+          <% if @tomorrow_book.present? %>
+            <%= link_to devotionals_path, class: "tomorrow-chip", title: "A look at tomorrow's word" do %>
+              <span>Tomorrow ·</span>
+              <strong><%= @tomorrow_book %></strong>
+            <% end %>
+          <% end %>
+        </div>
+
+        <%# Morning status — hairline-divided micro-stats. Living and specific. %>
+        <div class="morning-status fade-up mt-10" style="animation-delay: 500ms;">
+          <div>
+            <strong>🌅 <%= @sunrise_time %></strong>
+            sunrise in Jackson
+          </div>
+          <div>
+            <strong><%= number_with_delimiter(@readers_this_morning) %></strong>
+            have read this morning
+          </div>
+          <div>
+            <strong><%= (time_ago_in_words(@tomorrow_send_at) rescue "14h") %></strong>
+            until tomorrow's word
+          </div>
         </div>
       </div>
 
-      <%# Right column — phone-preview style devotional card stack %>
-      <div class="relative">
-        <div class="rounded-3xl overflow-hidden p-5 sm:p-6" style="background: var(--color-linen);">
-          <div class="card fade-up" style="background: var(--color-cream); border-radius: 20px; padding: 28px; transform: rotate(-1deg); animation-delay: 200ms;">
-            <p class="meta m-0" style="color: var(--color-olive);">
-              <%= (@today_devotional&.scheduled_for || Date.current).strftime("%a, %b %-d") %> · The Morning Word
-            </p>
-            <h3 class="display mt-3 mb-3" style="font-size: 28px; letter-spacing: -0.01em;">
-              <%= (@today_devotional&.title || "When the Vision Tarries").to_s.truncate(36) %>
-            </h3>
-            <div class="pull" style="font-size: 16px; padding: 2px 0 2px 18px; margin-bottom: 16px;">
-              "Though it tarries, wait for it; because it will surely come."
-            </div>
-            <p class="m-0" style="font-family: var(--font-reading); font-size: 14px; color: var(--color-ink); line-height: 1.65;">
-              <%= (@today_devotional&.excerpt || "Habakkuk stood his watch. He did not pace, he did not panic — he stood, and he wrote down what God said, even though the answer was slow…").to_s.truncate(140) %>
-            </p>
-            <p class="mt-5 m-0" style="font-size: 12px; color: var(--color-crimson); font-weight: 500;">Read 2 more minutes →</p>
+      <%# Right column — breaking-glass photo carousel.
+          6 editorial photographs cycle every ~4.4s. Outgoing slide clip-
+          paths into a jagged shard cluster while a cream sheen sweeps
+          across; the next image cross-fades up underneath. %>
+      <%
+        hero_slides = [
+          { slug: "delta-sunrise",  kicker: "The Yazoo at dawn",     title: "5:48am. The river still." },
+          { slug: "open-bible",     kicker: "Open every morning",    title: "A book older than our hurry." },
+          { slug: "morning-desk",   kicker: "Two minutes, two sips", title: "Coffee, journal, quiet." },
+          { slug: "praying-hands",  kicker: "Folded for a friend",   title: "Carrying weight, briefly." },
+          { slug: "path-pines",     kicker: "A long walk to think",  title: "Mississippi pines, slow steps." },
+          { slug: "doorway-light",  kicker: "Light through a door",  title: "Where the morning enters." }
+        ]
+      %>
+      <div class="hero-shards fade-up"
+           data-controller="hero-shards"
+           style="animation-delay: 220ms;"
+           aria-roledescription="carousel"
+           aria-label="Six morning images of the ministry's daily rhythm">
+        <% hero_slides.each_with_index do |s, i| %>
+          <div class="hero-shard <%= 'is-active' if i.zero? %>"
+               data-hero-shards-target="slide"
+               data-kicker="<%= s[:kicker] %>"
+               data-title="<%= s[:title] %>"
+               aria-hidden="<%= i.zero? ? 'false' : 'true' %>">
+            <%= image_tag photo_url(s[:slug], w: 900, h: 1100),
+                  alt: s[:kicker],
+                  loading: (i.zero? ? "eager" : "lazy") %>
           </div>
+        <% end %>
 
-          <div class="card" style="background: var(--color-cream); border-radius: 20px; padding: 18px; margin-top: -8px; margin-left: 32px; transform: rotate(1.5deg); opacity: 0.7;">
-            <p class="meta m-0" style="color: var(--color-olive);">
-              <%= (Date.current - 1).strftime("%a, %b %-d") %>
-            </p>
-            <p class="display m-0 mt-1" style="font-size: 18px;">
-              <%= Devotional.published.recent_first.where("scheduled_for < ?", Date.current).first&.title&.truncate(30) || "Quieted By His Love" %>
-            </p>
-          </div>
+        <div class="hero-shards-caption">
+          <span class="hero-shards-kicker" data-hero-shards-target="kicker"><%= hero_slides.first[:kicker] %></span>
+          <span class="hero-shards-title"  data-hero-shards-target="title"><%= hero_slides.first[:title] %></span>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<%# ============================================================
+     LATEST DEVOTIONALS — magazine archive strip
+     ============================================================ %>
+<% if @recent_devotionals&.any? %>
+  <section class="section-linen pt-14 md:pt-16 pb-16 md:pb-20">
+    <div class="container-page">
+      <div class="flex justify-between items-baseline mb-7 flex-wrap gap-4">
+        <div>
+          <p class="meta">Lately</p>
+          <h2 class="display m-0 mt-2" style="font-size: clamp(26px, 3.4vw, 40px); letter-spacing: -0.01em;">
+            What we wrote this week.
+          </h2>
+        </div>
+        <%= link_to "Browse the archive →", devotionals_path, class: "ulink", style: "font-size: 14px; color: var(--color-navy);" %>
+      </div>
+
+      <div class="dev-strip">
+        <% @recent_devotionals.each do |d| %>
+          <%= link_to devotional_path(d.slug), class: "dev-strip-card" do %>
+            <span class="dev-strip-date"><%= d.scheduled_for.strftime("%a · %b %-d") %></span>
+            <h3 class="dev-strip-title"><%= d.title %></h3>
+            <% if d.scripture_reference.present? %>
+              <span class="dev-strip-ref"><%= d.scripture_reference %></span>
+            <% end %>
+            <% if d.excerpt.present? %>
+              <p class="m-0" style="font-family: var(--font-reading); font-size: 14px; line-height: 1.55; color: var(--color-ink);">
+                <%= truncate(d.excerpt, length: 110) %>
+              </p>
+            <% end %>
+            <div class="dev-strip-foot">
+              <span>2 min · read</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>
 
 <%# ============================================================
      EMAIL CAPTURE — framed as invitation
@@ -200,6 +268,45 @@
 </section>
 
 <%# ============================================================
+     ON THE WALL — recent public prayer requests
+     ============================================================ %>
+<% if @recent_prayer_requests&.any? %>
+  <section class="section-linen pt-14 md:pt-16 pb-16 md:pb-20">
+    <div class="container-page">
+      <div class="flex justify-between items-baseline mb-7 flex-wrap gap-4">
+        <div>
+          <p class="meta">On the wall this week</p>
+          <h2 class="display m-0 mt-2" style="font-size: clamp(26px, 3.4vw, 40px); letter-spacing: -0.01em;">
+            Carry someone today.
+          </h2>
+        </div>
+        <%= link_to "See the whole wall →", pray_path, class: "ulink", style: "font-size: 14px; color: var(--color-navy);" %>
+      </div>
+
+      <div class="grid gap-5 md:gap-6 md:grid-cols-3">
+        <% @recent_prayer_requests.each do |pr| %>
+          <article class="pulse-card">
+            <p class="pulse-body">
+              "<%= pr.body %>"
+            </p>
+            <div class="pulse-foot">
+              <span><%= pr.is_anonymous? ? "Anonymous" : (pr.name.presence || "A reader") %> · <%= time_ago_in_words(pr.created_at) %> ago</span>
+              <span class="pulse-prayed-count"><%= pluralize(pr.prayed_count, "prayer") %></span>
+            </div>
+          </article>
+        <% end %>
+      </div>
+
+      <div class="mt-10 text-center">
+        <%= link_to pray_path, class: "ulink", style: "font-size: 14px; color: var(--color-crimson); font-weight: 500;" do %>
+          Add your request, or pray with someone here <span aria-hidden="true">→</span>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>
+
+<%# ============================================================
      TESTIMONY — full-width navy band
      ============================================================ %>
 <section class="py-20 md:py-24 lg:py-28" style="background: var(--color-navy); color: var(--color-cream);">
@@ -249,16 +356,35 @@
 </section>
 
 <%# ============================================================
-     GIVE INVITATION — dignified, small
+     GIVE INVITATION — dignified, small. Three tiles + quiet CTA.
      ============================================================ %>
 <section class="py-20 md:py-24 lg:py-28">
-  <div class="mx-auto text-center px-5 md:px-8" style="max-width: 760px;">
-    <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: clamp(18px, 2vw, 26px); color: var(--color-navy); line-height: 1.5;">
-      IMPACT runs on the generosity of people who've been impacted.
-    </p>
-    <div class="mt-6">
+  <div class="container-page">
+    <div class="mx-auto text-center mb-10 md:mb-12" style="max-width: 720px;">
+      <p class="meta mb-4">Where it goes</p>
+      <p class="m-0" style="font-family: var(--font-serif); font-style: italic; font-size: clamp(20px, 2.4vw, 28px); color: var(--color-navy); line-height: 1.4;">
+        IMPACT runs on the generosity of people<br class="hidden sm:inline">who've been impacted.
+      </p>
+    </div>
+
+    <div class="grid gap-5 md:gap-6 md:grid-cols-3 mx-auto" style="max-width: 980px;">
+      <%= link_to give_path, class: "give-tile" do %>
+        <span class="give-tile-kicker">Devotionals</span>
+        <p class="give-tile-body">Daily writing, editing, and email delivery — the morning word reaches every subscriber free of charge.</p>
+      <% end %>
+      <%= link_to give_path, class: "give-tile" do %>
+        <span class="give-tile-kicker">Partner churches</span>
+        <p class="give-tile-body">Small grants to congregations doing faithful work in towns most ministry money never reaches.</p>
+      <% end %>
+      <%= link_to give_path, class: "give-tile" do %>
+        <span class="give-tile-kicker">Local need</span>
+        <p class="give-tile-body">A small fund that pays a neighbor's rent or grocery bill the same week she asks.</p>
+      <% end %>
+    </div>
+
+    <div class="text-center mt-10 md:mt-12">
       <%= link_to give_path, class: "ulink", style: "color: var(--color-crimson); font-size: 14px; font-weight: 500;" do %>
-        Learn how to give →
+        Learn how to give <span aria-hidden="true">→</span>
       <% end %>
     </div>
   </div>

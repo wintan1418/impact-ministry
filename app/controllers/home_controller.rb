@@ -20,6 +20,32 @@ class HomeController < ApplicationController
     @readers_this_week    = readers_this_week_count
     @average_read_minutes = 2
     @open_rate_percent    = open_rate_this_week
+
+    # Magazine strip — last several published, NOT today's (which is the hero).
+    @recent_devotionals =
+      Devotional.published
+                .where.not(id: @today_devotional&.id)
+                .recent_first
+                .limit(6)
+
+    # Tomorrow teaser — show the scripture book for tomorrow's word (CLAUDE.md §5).
+    @tomorrow_devotional = Devotional.published.where(scheduled_for: Date.current + 1).first ||
+                           Devotional.where(scheduled_for: Date.current + 1).first
+    @tomorrow_book = tomorrow_book_label(@tomorrow_devotional)
+
+    # Community pulse — 3 recent public prayers for the on-the-wall section.
+    @recent_prayer_requests =
+      if defined?(PrayerRequest) && PrayerRequest.table_exists?
+        PrayerRequest.visible.order(created_at: :desc).limit(3)
+      else
+        PrayerRequest.none
+      end
+
+    @prayed_total = (defined?(PrayerRequest) && PrayerRequest.table_exists?) ? PrayerRequest.sum(:prayed_count) : 0
+
+    # Cheap, charming morning markers.
+    @sunrise_time     = "5:48am"  # editorial license; a fixed early-Mississippi sunrise
+    @tomorrow_send_at = (Date.current + 1).beginning_of_day + Integer(ENV.fetch("DEVOTIONAL_SEND_HOUR", "5")).hours
   end
 
   private
@@ -43,5 +69,14 @@ class HomeController < ApplicationController
     ((opens.to_f / total) * 100).round
   rescue ActiveRecord::StatementInvalid
     52
+  end
+
+  # Just the book + chapter — "Romans 12" not "Romans 12:1-3". Quiet, no verse.
+  def tomorrow_book_label(devotional)
+    return nil if devotional.blank?
+
+    ref = devotional.scripture_reference.to_s
+    # Strip everything after the first colon (verse range) and any trailing whitespace.
+    ref.split(":").first.to_s.strip.presence
   end
 end

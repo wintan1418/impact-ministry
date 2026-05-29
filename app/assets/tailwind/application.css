@@ -562,4 +562,378 @@
     50%  { transform: scale(1.03); }
     100% { transform: scale(1); }
   }
+
+  /* ============================================================
+     Homepage editorial utilities — Round D refresh
+     ============================================================ */
+
+  /* Soft linen-tint band — used to alternate section backgrounds so the
+     page reads like a magazine spread instead of a single cream wall. */
+  .section-linen {
+    background: linear-gradient(180deg,
+      rgba(232, 223, 208, 0.0)   0%,
+      rgba(232, 223, 208, 0.55) 12%,
+      rgba(232, 223, 208, 0.55) 88%,
+      rgba(232, 223, 208, 0.0) 100%);
+  }
+
+  /* Vertical scripture marginalia — rotated 90° on the left edge of the
+     hero. Editorial fingerprint; only renders on md+ where there's room. */
+  .scripture-mark {
+    position: absolute;
+    left: -8px;
+    top: 30%;
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-olive);
+    white-space: nowrap;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  @media (max-width: 768px) { .scripture-mark { display: none; } }
+
+  /* Morning status — hairline-divided micro-stat strip under the hero CTA.
+     Subtler than the existing big "stats" block; lives in the hero copy. */
+  .morning-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 20px 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-olive-15);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--color-olive);
+  }
+  .morning-status strong {
+    display: block;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    color: var(--color-navy);
+    font-size: 18px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  /* Tomorrow teaser chip — quiet "Tomorrow · Romans 12" pill. */
+  .tomorrow-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--color-olive-30);
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.4);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--color-olive);
+  }
+  .tomorrow-chip strong {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    color: var(--color-navy);
+    font-size: 13px;
+    letter-spacing: 0;
+  }
+  .tomorrow-chip::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--color-crimson);
+    opacity: 0.7;
+  }
+
+  /* Latest devotionals magazine strip ---------------------------------- */
+  .dev-strip {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(240px, 1fr);
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    padding: 8px 4px 24px;
+  }
+  .dev-strip > * { scroll-snap-align: start; }
+
+  .dev-strip-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px 22px 26px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--color-olive-15);
+    border-radius: 18px;
+    transition: transform 240ms var(--ease-impact), box-shadow 240ms var(--ease-impact), border-color 240ms var(--ease-impact);
+    color: var(--color-navy);
+  }
+  .dev-strip-card:nth-child(odd)  { transform: rotate(-0.4deg); }
+  .dev-strip-card:nth-child(even) { transform: rotate(0.4deg); }
+  .dev-strip-card:hover {
+    transform: translateY(-3px) rotate(0deg);
+    border-color: var(--color-olive-30);
+    box-shadow: var(--shadow-card);
+  }
+  .dev-strip-card .dev-strip-date {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-olive);
+  }
+  .dev-strip-card .dev-strip-title {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 1.15;
+    color: var(--color-navy);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .dev-strip-card .dev-strip-ref {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--color-olive);
+  }
+  .dev-strip-card .dev-strip-foot {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px dashed var(--color-olive-15);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--color-olive);
+  }
+  .dev-strip-card .dev-strip-foot .arrow {
+    color: var(--color-crimson);
+    transition: transform 200ms var(--ease-impact);
+    display: inline-block;
+  }
+  .dev-strip-card:hover .dev-strip-foot .arrow { transform: translateX(4px); }
+
+  /* On-the-wall (prayer pulse) ---------------------------------------- */
+  .pulse-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 26px;
+    background: rgba(255,255,255,0.65);
+    border: 1px solid var(--color-olive-15);
+    border-radius: 18px;
+    transition: transform 240ms var(--ease-impact), box-shadow 240ms var(--ease-impact);
+  }
+  .pulse-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+  }
+  .pulse-card .pulse-body {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--color-navy);
+    margin: 0;
+    /* Wrap to 4 lines; longer prayers truncate. */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .pulse-card .pulse-foot {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px dashed var(--color-olive-15);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--color-olive);
+  }
+  .pulse-card .pulse-prayed-count {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-crimson);
+  }
+
+  /* Give-where-it-goes tiles ------------------------------------------ */
+  .give-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px;
+    background: rgba(255,255,255,0.55);
+    border: 1px solid var(--color-olive-15);
+    border-radius: 16px;
+    text-align: left;
+    transition: border-color 240ms var(--ease-impact), background 240ms var(--ease-impact);
+  }
+  .give-tile:hover { border-color: var(--color-olive-30); background: rgba(255,255,255,0.85); }
+  .give-tile .give-tile-kicker {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-crimson);
+  }
+  .give-tile .give-tile-body {
+    font-family: var(--font-reading);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  /* Gentle drift — 4s sin oscillation, used on the tilted hero card.
+     Not a spring; a slow breath. Honors prefers-reduced-motion below. */
+  .drift {
+    animation: drift 4800ms var(--ease-impact) 800ms infinite alternate;
+  }
+  @keyframes drift {
+    from { transform: rotate(-1deg)   translateY(0); }
+    to   { transform: rotate(-0.4deg) translateY(-4px); }
+  }
+  .drift-slow {
+    animation: driftSlow 6200ms var(--ease-impact) 1200ms infinite alternate;
+  }
+  @keyframes driftSlow {
+    from { transform: rotate(1.5deg) translateY(0); }
+    to   { transform: rotate(2deg)   translateY(2px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .drift, .drift-slow { animation: none; }
+  }
+
+  /* ============================================================
+     Hero shards — breaking-glass photo carousel (Stimulus: hero-shards)
+     ============================================================ */
+  .hero-shards {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: 620px;
+    border-radius: var(--radius-image);
+    overflow: hidden;
+    background: var(--color-linen);
+    box-shadow: var(--shadow-soft);
+    isolation: isolate;
+  }
+
+  .hero-shard {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.04);
+    transition:
+      opacity 700ms var(--ease-impact),
+      transform 900ms var(--ease-impact);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    z-index: 1;
+    will-change: opacity, transform, clip-path;
+  }
+  .hero-shard.is-active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 2;
+  }
+  /* The shattering exit — clip-path collapses the rectangle into a
+     jagged irregular polygon, opacity drops, slight scale-out + rotate. */
+  .hero-shard.is-exiting {
+    opacity: 0;
+    z-index: 3;
+    transform: scale(1.02) rotate(0.6deg);
+    clip-path: polygon(
+      18% 22%, 42% 8%,  62% 26%, 82% 14%, 92% 44%,
+      78% 64%, 88% 88%, 56% 80%, 32% 96%, 8% 72%
+    );
+    transition:
+      opacity 700ms var(--ease-impact),
+      transform 900ms var(--ease-impact),
+      clip-path 750ms var(--ease-impact);
+  }
+  .hero-shard img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* Cream sheen swept across on exit — the "glass crack" highlight. */
+  .hero-shard::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+      transparent 30%,
+      rgba(250, 247, 242, 0.42) 50%,
+      transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-30%);
+    transition:
+      opacity 250ms var(--ease-impact),
+      transform 700ms var(--ease-impact);
+  }
+  .hero-shard.is-exiting::after {
+    opacity: 1;
+    transform: translateX(30%);
+  }
+
+  /* Caption pinned at the bottom — kicker + serif italic title.
+     Stays editorial; never the focal point. */
+  .hero-shards-caption {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 5;
+    padding: 36px 28px 26px;
+    color: var(--color-cream);
+    background: linear-gradient(180deg, transparent 0%, rgba(27,42,78,0.0) 25%, rgba(27,42,78,0.78) 100%);
+    pointer-events: none;
+  }
+  .hero-shards-kicker {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(250,247,242,0.78);
+    margin-bottom: 8px;
+    transition: opacity 220ms var(--ease-impact);
+  }
+  .hero-shards-title {
+    display: block;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(20px, 2.2vw, 26px);
+    line-height: 1.25;
+    color: var(--color-cream);
+    transition: opacity 220ms var(--ease-impact);
+  }
+
+  /* Hairline crimson "frame" along the inside edge — magazine spread. */
+  .hero-shards::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(200, 16, 46, 0.0);
+    z-index: 4;
+    pointer-events: none;
+    transition: border-color 600ms var(--ease-impact);
+  }
+  .hero-shards:hover::before { border-color: rgba(200, 16, 46, 0.25); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-shard,
+    .hero-shard.is-exiting {
+      transition: opacity 220ms linear !important;
+      transform: none !important;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%) !important;
+    }
+    .hero-shard::after { display: none; }
+  }
 }
