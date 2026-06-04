@@ -58,7 +58,7 @@ gem "activeadmin", github: "activeadmin/activeadmin", branch: "master"
 gem "postmark-rails", "~> 0.22"
 
 # Payments (Phase 3+; ENV-gated via GIVING_ENABLED)
-gem "stripe", "~> 13.0"
+gem "stripe", "~> 19.2"
 
 # Cloudflare R2 via S3-compatible API
 gem "aws-sdk-s3", "~> 1.180", require: false
