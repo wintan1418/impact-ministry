@@ -61,7 +61,7 @@ gem "postmark-rails", "~> 0.22"
 gem "stripe", "~> 13.0"
 
 # Cloudflare R2 via S3-compatible API
-gem "aws-sdk-s3", "~> 1.180", require: false
+gem "aws-sdk-s3", "~> 1.225", require: false
 
 # In-app + email notification orchestration
 gem "noticed", "~> 2.6"
