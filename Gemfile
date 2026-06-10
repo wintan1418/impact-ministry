@@ -71,7 +71,7 @@ gem "rack-attack", "~> 6.7"
 
 # Components with logic — used sparingly (see CLAUDE.md §3)
 # 4.9+ closes GHSA-7f3r-gwc9-2995 and GHSA-hg3h-g7xc-f7vp.
-gem "view_component", "~> 4.9"
+gem "view_component", "~> 4.12"
 
 # Local ENV loading; secrets in encrypted credentials in prod
 gem "dotenv-rails"
